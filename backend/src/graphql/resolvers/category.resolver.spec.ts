@@ -1,0 +1,143 @@
+import 'reflect-metadata'
+
+import { ApolloServer } from '@apollo/server'
+import { faker } from '@faker-js/faker'
+import type { GraphQLSchema } from 'graphql'
+import { buildSchema } from 'type-graphql'
+import { beforeAll, describe, expect, it } from 'vitest'
+
+import { registerUser } from '@/app/auth/register-user'
+import type { GraphqlContext } from '@/graphql/context'
+import { AuthResolver } from './auth.resolver'
+import { CategoryResolver } from './category.resolver'
+
+type SingleResult = {
+  data?: Record<string, unknown> | null
+  errors?: ReadonlyArray<{ message: string }>
+}
+
+let schema: GraphQLSchema
+let server: ApolloServer<GraphqlContext>
+
+beforeAll(async () => {
+  schema = await buildSchema({
+    resolvers: [AuthResolver, CategoryResolver],
+    validate: false,
+  })
+  server = new ApolloServer<GraphqlContext>({ schema })
+})
+
+function ctx(userId?: string): GraphqlContext {
+  return {
+    user: userId,
+    token: undefined,
+    // biome-ignore lint/suspicious/noExplicitAny: integration test stub for req/res
+    req: {} as any,
+    // biome-ignore lint/suspicious/noExplicitAny: integration test stub for req/res
+    res: {} as any,
+  }
+}
+
+async function execute(
+  query: string,
+  variables: Record<string, unknown>,
+  userId?: string,
+) {
+  const response = await server.executeOperation(
+    { query, variables },
+    { contextValue: ctx(userId) },
+  )
+  if (response.body.kind !== 'single') {
+    throw new Error('Expected single result')
+  }
+  return response.body.singleResult as SingleResult
+}
+
+async function makeUser() {
+  const { user } = await registerUser({
+    name: faker.person.fullName(),
+    email: faker.internet.email().toLowerCase(),
+    password: faker.internet.password({ length: 12 }),
+  })
+  return user
+}
+
+const CREATE_CATEGORY = /* GraphQL */ `
+  mutation CreateCategory($data: CreateCategoryInput!) {
+    createCategory(data: $data) {
+      id
+      name
+      color
+      icon
+      description
+    }
+  }
+`
+
+describe('CategoryResolver', () => {
+  it('createCategory com token cria categoria', async () => {
+    const user = await makeUser()
+
+    const result = await execute(
+      CREATE_CATEGORY,
+      {
+        data: {
+          name: 'Lazer',
+          color: '#22BB55',
+          icon: 'gamepad',
+          description: 'Jogos e cinema',
+        },
+      },
+      user.id,
+    )
+
+    expect(result.errors).toBeUndefined()
+    const created = result.data?.createCategory as {
+      id: string
+      name: string
+      color: string
+      icon: string
+      description: string | null
+    }
+    expect(created.id).toEqual(expect.any(String))
+    expect(created.name).toBe('Lazer')
+    expect(created.color).toBe('#22BB55')
+    expect(created.icon).toBe('gamepad')
+    expect(created.description).toBe('Jogos e cinema')
+  })
+
+  it('createCategory sem description retorna null', async () => {
+    const user = await makeUser()
+
+    const result = await execute(
+      CREATE_CATEGORY,
+      {
+        data: {
+          name: 'Saúde',
+          color: '#FF0066',
+          icon: 'heart',
+        },
+      },
+      user.id,
+    )
+
+    expect(result.errors).toBeUndefined()
+    const created = result.data?.createCategory as {
+      description: string | null
+    }
+    expect(created.description).toBeNull()
+  })
+
+  it('createCategory sem token lança Usuário não autenticado!', async () => {
+    const result = await execute(CREATE_CATEGORY, {
+      data: {
+        name: 'Bloqueado',
+        color: '#000000',
+        icon: 'lock',
+      },
+    })
+
+    expect(result.data).toBeNull()
+    expect(result.errors?.[0]?.message).toBe('Usuário não autenticado!')
+  })
+})
