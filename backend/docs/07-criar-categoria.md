@@ -65,20 +65,20 @@ Ver [02 — Escopo por usuário](./02-escopo-por-usuario.md). `userId` vem de `@
 ## Testing
 
 - `src/app/categories/create-category.spec.ts`
-  - [ ] cria categoria e retorna o objeto com `userId` correto.
-  - [ ] `description` opcional vira `null` quando ausente.
+  - [x] cria categoria e retorna o objeto com `userId` correto.
+  - [x] `description` opcional vira `null` quando ausente.
 - `src/graphql/resolvers/category.resolver.spec.ts`
-  - [ ] mutation `createCategory` com token cria.
-  - [ ] sem token → erro de autenticação.
+  - [x] mutation `createCategory` com token cria.
+  - [x] sem token → erro de autenticação.
 - Atualizar `src/test/setup.ts` para `await prisma.category.deleteMany()` antes de `prisma.user.deleteMany()`.
 
 ## Acceptance criteria
 
-- [ ] Criar categoria válida retorna o objeto.
-- [ ] `color` armazenada como string (sem validação hex — frontend valida).
-- [ ] `description` opcional.
-- [ ] Sem JWT → `Usuário não autenticado!`.
-- [ ] Suite verde.
+- [x] Criar categoria válida retorna o objeto.
+- [x] `color` armazenada como string (sem validação hex — frontend valida).
+- [x] `description` opcional.
+- [x] Sem JWT → `Usuário não autenticado!`.
+- [x] Suite verde.
 
 ## Depends on
 

@@ -86,8 +86,20 @@ const LIST_CATEGORIES = /* GraphQL */ `
   }
 `
 
+const UPDATE_CATEGORY = /* GraphQL */ `
+  mutation UpdateCategory($id: ID!, $data: UpdateCategoryInput!) {
+    updateCategory(id: $id, data: $data) {
+      id
+      name
+      color
+      icon
+      description
+    }
+  }
+`
+
 describe('CategoryResolver', () => {
-  it('createCategory com token cria categoria', async () => {
+  it('createCategory with token creates a category', async () => {
     const user = await makeUser()
 
     const result = await execute(
@@ -118,7 +130,7 @@ describe('CategoryResolver', () => {
     expect(created.description).toBe('Jogos e cinema')
   })
 
-  it('createCategory sem description retorna null', async () => {
+  it('createCategory without description returns null', async () => {
     const user = await makeUser()
 
     const result = await execute(
@@ -140,7 +152,7 @@ describe('CategoryResolver', () => {
     expect(created.description).toBeNull()
   })
 
-  it('createCategory sem token lança Usuário não autenticado!', async () => {
+  it('createCategory without token rejects with auth error', async () => {
     const result = await execute(CREATE_CATEGORY, {
       data: {
         name: 'Bloqueado',
@@ -153,7 +165,7 @@ describe('CategoryResolver', () => {
     expect(result.errors?.[0]?.message).toBe('Usuário não autenticado!')
   })
 
-  it('listCategories retorna lista do autenticado em ordem name asc', async () => {
+  it('listCategories returns the authenticated user list ordered by name asc', async () => {
     const userA = await makeUser()
     const userB = await makeUser()
 
@@ -180,8 +192,72 @@ describe('CategoryResolver', () => {
     expect(list.map(c => c.name)).toEqual(['Alimentação', 'Casa'])
   })
 
-  it('listCategories sem token lança Usuário não autenticado!', async () => {
+  it('listCategories without token rejects with auth error', async () => {
     const result = await execute(LIST_CATEGORIES, {})
+
+    expect(result.data).toBeNull()
+    expect(result.errors?.[0]?.message).toBe('Usuário não autenticado!')
+  })
+
+  it('updateCategory updates the provided fields', async () => {
+    const user = await makeUser()
+
+    const created = await execute(
+      CREATE_CATEGORY,
+      {
+        data: {
+          name: 'Comida',
+          color: '#FF5733',
+          icon: 'utensils',
+          description: 'Mercado',
+        },
+      },
+      user.id,
+    )
+    const id = (created.data?.createCategory as { id: string }).id
+
+    const result = await execute(
+      UPDATE_CATEGORY,
+      { id, data: { name: 'Alimentação', color: '#AA0000' } },
+      user.id,
+    )
+
+    expect(result.errors).toBeUndefined()
+    expect(result.data?.updateCategory).toMatchObject({
+      id,
+      name: 'Alimentação',
+      color: '#AA0000',
+      icon: 'utensils',
+      description: 'Mercado',
+    })
+  })
+
+  it('updateCategory on another user category rejects with not-found', async () => {
+    const userA = await makeUser()
+    const userB = await makeUser()
+
+    const created = await execute(
+      CREATE_CATEGORY,
+      { data: { name: 'Privada', color: '#000', icon: 'lock' } },
+      userA.id,
+    )
+    const id = (created.data?.createCategory as { id: string }).id
+
+    const result = await execute(
+      UPDATE_CATEGORY,
+      { id, data: { name: 'Hackeada' } },
+      userB.id,
+    )
+
+    expect(result.data).toBeNull()
+    expect(result.errors?.[0]?.message).toBe('Categoria não encontrada')
+  })
+
+  it('updateCategory without token rejects with auth error', async () => {
+    const result = await execute(UPDATE_CATEGORY, {
+      id: 'whatever',
+      data: { name: 'X' },
+    })
 
     expect(result.data).toBeNull()
     expect(result.errors?.[0]?.message).toBe('Usuário não autenticado!')

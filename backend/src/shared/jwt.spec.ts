@@ -7,14 +7,14 @@ import { env } from '@/env'
 import { signJwt, verifyJwt } from './jwt'
 
 describe('jwt', () => {
-  it('signJwt + verifyJwt roundtrip preserva payload', () => {
+  it('signJwt + verifyJwt roundtrip preserves payload', () => {
     const payload = { id: 'user-123', email: 'alice@example.com' }
     const token = signJwt(payload)
     const decoded = verifyJwt(token)
     expect(decoded).toEqual(payload)
   })
 
-  it('verifyJwt rejeita token expirado', () => {
+  it('verifyJwt rejects an expired token', () => {
     const expired = sign(
       { id: 'user-123', email: 'alice@example.com' },
       env.JWT_SECRET,

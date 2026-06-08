@@ -87,7 +87,7 @@ const ME = /* GraphQL */ `
 `
 
 describe('AuthResolver', () => {
-  it('register retorna token + user via GraphQL', async () => {
+  it('register returns token + user via GraphQL', async () => {
     const data = {
       name: faker.person.fullName(),
       email: faker.internet.email().toLowerCase(),
@@ -108,7 +108,7 @@ describe('AuthResolver', () => {
     expect(verifyJwt(register.token).id).toBe(register.user.id)
   })
 
-  it('login retorna token + user via GraphQL', async () => {
+  it('login returns token + user via GraphQL', async () => {
     const data = {
       name: faker.person.fullName(),
       email: faker.internet.email().toLowerCase(),
@@ -129,11 +129,11 @@ describe('AuthResolver', () => {
     expect(login.user.email).toBe(data.email)
   })
 
-  it('propaga erro de domínio em GraphQL errors[]', async () => {
+  it('propagates domain errors via GraphQL errors[]', async () => {
     const result = await execute(LOGIN, {
       data: {
         email: faker.internet.email().toLowerCase(),
-        password: 'qualquer',
+        password: 'whatever',
       },
     })
 
@@ -141,14 +141,14 @@ describe('AuthResolver', () => {
     expect(result.errors?.[0]?.message).toBe('Usuário não cadastrado!')
   })
 
-  it('me sem token lança Usuário não autenticado!', async () => {
+  it('me without a token rejects with auth error', async () => {
     const result = await execute(ME, {})
 
     expect(result.data).toBeNull()
     expect(result.errors?.[0]?.message).toBe('Usuário não autenticado!')
   })
 
-  it('me com token válido retorna o usuário', async () => {
+  it('me with a valid token returns the user', async () => {
     const data = {
       name: faker.person.fullName(),
       email: faker.internet.email().toLowerCase(),

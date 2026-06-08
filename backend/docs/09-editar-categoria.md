@@ -42,20 +42,20 @@ Ver [02 — Escopo por usuário](./02-escopo-por-usuario.md).
 ## Testing
 
 - `src/app/categories/update-category.spec.ts`
-  - [ ] update parcial preserva campos não enviados.
-  - [ ] id alheio → `Categoria não encontrada`.
-  - [ ] `updatedAt` é atualizado.
+  - [x] update parcial preserva campos não enviados.
+  - [x] id alheio → `Categoria não encontrada`.
+  - [x] `updatedAt` é atualizado.
 - `src/graphql/resolvers/category.resolver.spec.ts`
-  - [ ] mutation retorna o objeto atualizado.
-  - [ ] usuário A não consegue editar categoria de B.
+  - [x] mutation retorna o objeto atualizado.
+  - [x] usuário A não consegue editar categoria de B.
 
 ## Acceptance criteria
 
-- [ ] Update parcial só altera os campos enviados.
-- [ ] Update cross-user → `Categoria não encontrada`.
-- [ ] `updatedAt` atualizado automaticamente.
-- [ ] Sem JWT → `Usuário não autenticado!`.
-- [ ] Suite verde.
+- [x] Update parcial só altera os campos enviados.
+- [x] Update cross-user → `Categoria não encontrada`.
+- [x] `updatedAt` atualizado automaticamente.
+- [x] Sem JWT → `Usuário não autenticado!`.
+- [x] Suite verde.
 
 ## Depends on
 

@@ -15,7 +15,7 @@ async function makeUser() {
 }
 
 describe('createCategory', () => {
-  it('cria categoria e retorna objeto com userId correto', async () => {
+  it('creates a category and returns the object with the correct userId', async () => {
     const user = await makeUser()
 
     const category = await createCategory(
@@ -41,7 +41,7 @@ describe('createCategory', () => {
     expect(stored.userId).toBe(user.id)
   })
 
-  it('description opcional vira null quando ausente', async () => {
+  it('omitted description becomes null', async () => {
     const user = await makeUser()
 
     const category = await createCategory(
