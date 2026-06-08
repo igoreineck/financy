@@ -14,9 +14,6 @@
     "generate": "prisma generate",
     "seed": "tsx prisma/seed.ts"
   },
-  "prisma": {
-    "seed": "tsx prisma/seed.ts"
-  },
   "keywords": [],
   "author": "Igor Eineck",
   "license": "ISC",
@@ -39,6 +36,7 @@
   },
   "devDependencies": {
     "@biomejs/biome": "^1.9.4",
+    "@faker-js/faker": "^10.4.0",
     "@types/express": "^5.0.3",
     "@types/node": "^24.5.2",
     "dotenv-cli": "^7.4.4",

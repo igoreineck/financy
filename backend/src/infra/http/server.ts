@@ -7,7 +7,8 @@ import express from 'express'
 import { buildSchema } from 'type-graphql'
 
 import { env } from '@/env'
-import { HealthResolver } from '@/graphql/resolvers/health.resolver'
+import { type GraphqlContext, buildContext } from '@/graphql/context'
+import { AuthResolver } from '@/graphql/resolvers/auth.resolver'
 
 async function bootstrap() {
   const app = express()
@@ -20,15 +21,21 @@ async function bootstrap() {
   )
 
   const schema = await buildSchema({
-    resolvers: [HealthResolver],
+    resolvers: [AuthResolver],
     validate: false,
     emitSchemaFile: './schema.graphql',
   })
 
-  const server = new ApolloServer({ schema })
+  const server = new ApolloServer<GraphqlContext>({ schema })
   await server.start()
 
-  app.use('/graphql', express.json(), expressMiddleware(server))
+  app.use(
+    '/graphql',
+    express.json(),
+    expressMiddleware(server, {
+      context: async ({ req, res }) => buildContext({ req, res }),
+    }),
+  )
 
   app.listen({ port: env.PORT }, () => {
     console.log(`Servidor iniciado na porta ${env.PORT}!`)
