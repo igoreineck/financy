@@ -98,6 +98,12 @@ const UPDATE_CATEGORY = /* GraphQL */ `
   }
 `
 
+const DELETE_CATEGORY = /* GraphQL */ `
+  mutation DeleteCategory($id: ID!) {
+    deleteCategory(id: $id)
+  }
+`
+
 describe('CategoryResolver', () => {
   it('createCategory with token creates a category', async () => {
     const user = await makeUser()
@@ -258,6 +264,49 @@ describe('CategoryResolver', () => {
       id: 'whatever',
       data: { name: 'X' },
     })
+
+    expect(result.data).toBeNull()
+    expect(result.errors?.[0]?.message).toBe('Usuário não autenticado!')
+  })
+
+  it('deleteCategory returns true on success', async () => {
+    const user = await makeUser()
+
+    const created = await execute(
+      CREATE_CATEGORY,
+      { data: { name: 'Temporária', color: '#999', icon: 'trash' } },
+      user.id,
+    )
+    const id = (created.data?.createCategory as { id: string }).id
+
+    const result = await execute(DELETE_CATEGORY, { id }, user.id)
+
+    expect(result.errors).toBeUndefined()
+    expect(result.data?.deleteCategory).toBe(true)
+
+    const list = await execute(LIST_CATEGORIES, {}, user.id)
+    expect((list.data?.listCategories as unknown[]).length).toBe(0)
+  })
+
+  it('deleteCategory on another user category rejects with not-found', async () => {
+    const userA = await makeUser()
+    const userB = await makeUser()
+
+    const created = await execute(
+      CREATE_CATEGORY,
+      { data: { name: 'Privada', color: '#000', icon: 'lock' } },
+      userA.id,
+    )
+    const id = (created.data?.createCategory as { id: string }).id
+
+    const result = await execute(DELETE_CATEGORY, { id }, userB.id)
+
+    expect(result.data).toBeNull()
+    expect(result.errors?.[0]?.message).toBe('Categoria não encontrada')
+  })
+
+  it('deleteCategory without token rejects with auth error', async () => {
+    const result = await execute(DELETE_CATEGORY, { id: 'whatever' })
 
     expect(result.data).toBeNull()
     expect(result.errors?.[0]?.message).toBe('Usuário não autenticado!')

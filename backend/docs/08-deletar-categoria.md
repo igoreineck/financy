@@ -51,22 +51,22 @@ Alternativa rejeitada: `onDelete: Cascade` apagaria as transações sem confirma
 ## Testing
 
 - `src/app/categories/delete-category.spec.ts`
-  - [ ] delete de categoria sem transações vinculadas retorna sem erro.
-  - [ ] delete de categoria com transações vinculadas lança `Categoria possui transações associadas...`.
-  - [ ] id inexistente → `Categoria não encontrada`.
-  - [ ] id de outro usuário → `Categoria não encontrada`.
+  - [x] delete de categoria sem transações vinculadas retorna sem erro.
+  - [ ] delete de categoria com transações vinculadas lança `Categoria possui transações associadas...`. _(deferred — depende do modelo `Transaction` em tarefa 03)_
+  - [x] id inexistente → `Categoria não encontrada`.
+  - [x] id de outro usuário → `Categoria não encontrada`.
 - `src/graphql/resolvers/category.resolver.spec.ts`
-  - [ ] mutation retorna `true` em sucesso.
-  - [ ] traduz `P2003` em mensagem amigável.
+  - [x] mutation retorna `true` em sucesso.
+  - [ ] traduz `P2003` em mensagem amigável. _(deferred — depende do modelo `Transaction` em tarefa 03)_
 
 ## Acceptance criteria
 
-- [ ] Delete sem transações vinculadas retorna `true`.
-- [ ] Delete com transações vinculadas lança `Categoria possui transações associadas e não pode ser excluída`.
-- [ ] Id inexistente → `Categoria não encontrada`.
-- [ ] Id alheio → `Categoria não encontrada`.
-- [ ] Sem JWT → `Usuário não autenticado!`.
-- [ ] Suite verde.
+- [x] Delete sem transações vinculadas retorna `true`.
+- [ ] Delete com transações vinculadas lança `Categoria possui transações associadas e não pode ser excluída`. _(código pronto; teste depende de tarefa 03)_
+- [x] Id inexistente → `Categoria não encontrada`.
+- [x] Id alheio → `Categoria não encontrada`.
+- [x] Sem JWT → `Usuário não autenticado!`.
+- [x] Suite verde.
 
 ## Depends on
 

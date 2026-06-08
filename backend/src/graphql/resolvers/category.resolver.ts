@@ -2,6 +2,7 @@ import type { Category, User } from '@prisma/client'
 import { Arg, ID, Mutation, Query, Resolver, UseMiddleware } from 'type-graphql'
 
 import { createCategory } from '@/app/categories/create-category'
+import { deleteCategory } from '@/app/categories/delete-category'
 import { listCategories } from '@/app/categories/list-categories'
 import { updateCategory } from '@/app/categories/update-category'
 import { GqlUser } from '@/graphql/decorators/gql-user.decorator'
@@ -35,5 +36,13 @@ export class CategoryResolver {
     @GqlUser() user: User,
   ): Promise<Category> {
     return updateCategory(id, data, user.id)
+  }
+
+  @Mutation(() => Boolean)
+  async deleteCategory(
+    @Arg('id', () => ID) id: string,
+    @GqlUser() user: User,
+  ): Promise<boolean> {
+    return deleteCategory(id, user.id)
   }
 }
