@@ -14,6 +14,7 @@ beforeEach(async () => {
   // Wipe user data between tests. Each tarefa that adds a Prisma model must
   // extend this block with the corresponding `prisma.<model>.deleteMany()`,
   // in dependency order (children before parents).
+  await prisma.category.deleteMany()
   await prisma.user.deleteMany()
 })
 
