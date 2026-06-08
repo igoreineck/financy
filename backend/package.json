@@ -1,0 +1,51 @@
+{
+  "name": "financy",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "dev": "tsx watch --env-file=.env src/infra/http/server.ts",
+    "test": "dotenv -e .env.test -- vitest run",
+    "test:watch": "dotenv -e .env.test -- vitest",
+    "test:reset": "dotenv -e .env.test -- prisma migrate reset --force --skip-seed",
+    "lint": "biome lint .",
+    "format": "biome format --write .",
+    "check": "biome check --write .",
+    "migrate": "prisma migrate dev",
+    "generate": "prisma generate",
+    "seed": "tsx prisma/seed.ts"
+  },
+  "prisma": {
+    "seed": "tsx prisma/seed.ts"
+  },
+  "keywords": [],
+  "author": "Igor Eineck",
+  "license": "ISC",
+  "description": "",
+  "type": "module",
+  "dependencies": {
+    "@apollo/server": "^5.0.0",
+    "@as-integrations/express5": "^1.1.2",
+    "@prisma/client": "^6.16.2",
+    "@types/cors": "^2.8.19",
+    "@types/jsonwebtoken": "^9.0.10",
+    "bcryptjs": "^3.0.2",
+    "cors": "^2.8.5",
+    "express": "^5.1.0",
+    "graphql": "^16.11.0",
+    "jsonwebtoken": "^9.0.2",
+    "reflect-metadata": "^0.2.2",
+    "type-graphql": "^2.0.0-rc.2",
+    "zod": "^3.24.1"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^1.9.4",
+    "@types/express": "^5.0.3",
+    "@types/node": "^24.5.2",
+    "dotenv-cli": "^7.4.4",
+    "prisma": "^6.16.2",
+    "tsx": "^4.20.5",
+    "typescript": "^5.9.2",
+    "vite-tsconfig-paths": "^5.1.4",
+    "vitest": "^3.0.2"
+  }
+}

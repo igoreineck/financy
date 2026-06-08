@@ -1,0 +1,20 @@
+{
+  "compilerOptions": {
+    "lib": ["ES2023"],
+    "target": "ES2023",
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "strict": true,
+    "noUncheckedIndexedAccess": true,
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "types": ["node"],
+    "outDir": "dist",
+    "paths": {
+      "@/*": ["./src/*"]
+    }
+  },
+  "include": ["src/**/*", "prisma/seed.ts"]
+}
