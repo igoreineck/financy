@@ -15,7 +15,7 @@ async function makeUser() {
 }
 
 describe('updateCategory', () => {
-  it('update parcial preserva campos não enviados', async () => {
+  it('partial update preserves untouched fields', async () => {
     const user = await makeUser()
     const original = await createCategory(
       {
@@ -39,7 +39,7 @@ describe('updateCategory', () => {
     expect(updated.description).toBe('Mercado')
   })
 
-  it('description = null limpa o campo', async () => {
+  it('description set to null clears the field', async () => {
     const user = await makeUser()
     const original = await createCategory(
       {
@@ -60,7 +60,7 @@ describe('updateCategory', () => {
     expect(updated.description).toBeNull()
   })
 
-  it('id de outro usuário → Categoria não encontrada', async () => {
+  it('rejects update on another user category', async () => {
     const userA = await makeUser()
     const userB = await makeUser()
     const fromA = await createCategory(
@@ -73,7 +73,7 @@ describe('updateCategory', () => {
     ).rejects.toThrow('Categoria não encontrada')
   })
 
-  it('updatedAt é atualizado', async () => {
+  it('bumps updatedAt on change', async () => {
     const user = await makeUser()
     const original = await createCategory(
       { name: 'Casa', color: '#111', icon: 'home' },

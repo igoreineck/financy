@@ -15,7 +15,7 @@ async function seedUser() {
 }
 
 describe('loginUser', () => {
-  it('retorna token e user com credenciais válidas', async () => {
+  it('returns token and user with valid credentials', async () => {
     const { user, password } = await seedUser()
 
     const result = await loginUser({ email: user.email, password })
@@ -25,7 +25,7 @@ describe('loginUser', () => {
     expect(result.user.email).toBe(user.email)
   })
 
-  it('lança Usuário não cadastrado! quando o email não existe', async () => {
+  it('rejects when the email is not registered', async () => {
     await expect(
       loginUser({
         email: faker.internet.email().toLowerCase(),
@@ -34,11 +34,11 @@ describe('loginUser', () => {
     ).rejects.toThrow('Usuário não cadastrado!')
   })
 
-  it('lança Senha inválida! quando a senha está errada', async () => {
+  it('rejects when the password is wrong', async () => {
     const { user } = await seedUser()
 
     await expect(
-      loginUser({ email: user.email, password: 'senha-errada' }),
+      loginUser({ email: user.email, password: 'wrong-password' }),
     ).rejects.toThrow('Senha inválida!')
   })
 })

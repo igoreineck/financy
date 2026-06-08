@@ -33,20 +33,20 @@ Ver [02 — Escopo por usuário](./02-escopo-por-usuario.md). `findMany` **deve*
 ## Testing
 
 - `src/app/categories/list-categories.spec.ts`
-  - [ ] retorna só as categorias do autenticado (criar categorias de A e B, listar como A, B não aparece).
-  - [ ] ordem `name` ascendente.
-  - [ ] usuário sem categorias recebe `[]`.
+  - [x] retorna só as categorias do autenticado (criar categorias de A e B, listar como A, B não aparece).
+  - [x] ordem `name` ascendente.
+  - [x] usuário sem categorias recebe `[]`.
 - `src/graphql/resolvers/category.resolver.spec.ts`
-  - [ ] query retorna lista.
-  - [ ] sem token → erro de autenticação.
+  - [x] query retorna lista.
+  - [x] sem token → erro de autenticação.
 
 ## Acceptance criteria
 
-- [ ] `listCategories` retorna só as categorias do autenticado.
-- [ ] Ordem: `name` asc.
-- [ ] Vazio → `[]`.
-- [ ] Sem JWT → `Usuário não autenticado!`.
-- [ ] Suite verde.
+- [x] `listCategories` retorna só as categorias do autenticado.
+- [x] Ordem: `name` asc.
+- [x] Vazio → `[]`.
+- [x] Sem JWT → `Usuário não autenticado!`.
+- [x] Suite verde.
 
 ## Depends on
 

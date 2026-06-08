@@ -82,31 +82,31 @@ Esta tarefa **estabelece** o mecanismo. `register` e `login` são públicos; tud
 ## Testing (obrigatório — ver CLAUDE.md > Testing)
 
 - `src/app/auth/register-user.spec.ts`
-  - [ ] cria usuário e retorna `{ token, user }` com password hasheada (verificar bcrypt).
-  - [ ] lança `E-mail já cadastrado!` quando email duplicado.
+  - [x] cria usuário e retorna `{ token, user }` com password hasheada (verificar bcrypt).
+  - [x] lança `E-mail já cadastrado!` quando email duplicado.
 - `src/app/auth/login-user.spec.ts`
-  - [ ] login com credenciais válidas retorna `token` e o user correto.
-  - [ ] email inexistente lança `Usuário não cadastrado!`.
-  - [ ] senha errada lança `Senha inválida!`.
+  - [x] login com credenciais válidas retorna `token` e o user correto.
+  - [x] email inexistente lança `Usuário não cadastrado!`.
+  - [x] senha errada lança `Senha inválida!`.
 - `src/shared/jwt.spec.ts`
-  - [ ] `signJwt`/`verifyJwt` roundtrip preserva payload.
-  - [ ] token expirado falha em `verifyJwt`.
+  - [x] `signJwt`/`verifyJwt` roundtrip preserva payload.
+  - [x] token expirado falha em `verifyJwt`.
 - `src/graphql/resolvers/auth.resolver.spec.ts` (integration)
-  - [ ] `mutation register` retorna `token` + `user` em GraphQL.
-  - [ ] `mutation login` retorna `token` + `user` em GraphQL.
-  - [ ] formato dos erros propagados é o esperado pelo Apollo.
+  - [x] `mutation register` retorna `token` + `user` em GraphQL.
+  - [x] `mutation login` retorna `token` + `user` em GraphQL.
+  - [x] formato dos erros propagados é o esperado pelo Apollo.
 - Atualizar `src/test/setup.ts` para incluir `await prisma.user.deleteMany()` em `beforeEach`.
 
 ## Acceptance criteria
 
-- [ ] Mutation `register` cria usuário com senha hasheada (bcrypt, salt 10) e retorna `token` + `user`.
-- [ ] Registro com email duplicado lança `E-mail já cadastrado!`.
-- [ ] Mutation `login` com credenciais válidas retorna `token` + `user`.
-- [ ] Login com email inexistente: `Usuário não cadastrado!`.
-- [ ] Login com senha errada: `Senha inválida!`.
-- [ ] JWT decodificável com `env.JWT_SECRET`, payload `{ id, email }`, expiração 1 dia.
-- [ ] Requisição com `Authorization: Bearer <token>` válido passa em resolvers protegidos; sem header ou token inválido lança `Usuário não autenticado!`.
-- [ ] `pnpm check` limpo; `npx tsc --noEmit` limpo; `pnpm test` verde.
+- [x] Mutation `register` cria usuário com senha hasheada (bcrypt, salt 10) e retorna `token` + `user`.
+- [x] Registro com email duplicado lança `E-mail já cadastrado!`.
+- [x] Mutation `login` com credenciais válidas retorna `token` + `user`.
+- [x] Login com email inexistente: `Usuário não cadastrado!`.
+- [x] Login com senha errada: `Senha inválida!`.
+- [x] JWT decodificável com `env.JWT_SECRET`, payload `{ id, email }`, expiração 1 dia.
+- [x] Requisição com `Authorization: Bearer <token>` válido passa em resolvers protegidos; sem header ou token inválido lança `Usuário não autenticado!`.
+- [x] `pnpm check` limpo; `npx tsc --noEmit` limpo; `pnpm test` verde.
 
 ## Depends on
 

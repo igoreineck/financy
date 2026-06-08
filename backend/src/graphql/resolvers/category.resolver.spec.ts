@@ -99,7 +99,7 @@ const UPDATE_CATEGORY = /* GraphQL */ `
 `
 
 describe('CategoryResolver', () => {
-  it('createCategory com token cria categoria', async () => {
+  it('createCategory with token creates a category', async () => {
     const user = await makeUser()
 
     const result = await execute(
@@ -130,7 +130,7 @@ describe('CategoryResolver', () => {
     expect(created.description).toBe('Jogos e cinema')
   })
 
-  it('createCategory sem description retorna null', async () => {
+  it('createCategory without description returns null', async () => {
     const user = await makeUser()
 
     const result = await execute(
@@ -152,7 +152,7 @@ describe('CategoryResolver', () => {
     expect(created.description).toBeNull()
   })
 
-  it('createCategory sem token lança Usuário não autenticado!', async () => {
+  it('createCategory without token rejects with auth error', async () => {
     const result = await execute(CREATE_CATEGORY, {
       data: {
         name: 'Bloqueado',
@@ -165,7 +165,7 @@ describe('CategoryResolver', () => {
     expect(result.errors?.[0]?.message).toBe('Usuário não autenticado!')
   })
 
-  it('listCategories retorna lista do autenticado em ordem name asc', async () => {
+  it('listCategories returns the authenticated user list ordered by name asc', async () => {
     const userA = await makeUser()
     const userB = await makeUser()
 
@@ -192,14 +192,14 @@ describe('CategoryResolver', () => {
     expect(list.map(c => c.name)).toEqual(['Alimentação', 'Casa'])
   })
 
-  it('listCategories sem token lança Usuário não autenticado!', async () => {
+  it('listCategories without token rejects with auth error', async () => {
     const result = await execute(LIST_CATEGORIES, {})
 
     expect(result.data).toBeNull()
     expect(result.errors?.[0]?.message).toBe('Usuário não autenticado!')
   })
 
-  it('updateCategory atualiza campos enviados', async () => {
+  it('updateCategory updates the provided fields', async () => {
     const user = await makeUser()
 
     const created = await execute(
@@ -232,7 +232,7 @@ describe('CategoryResolver', () => {
     })
   })
 
-  it('updateCategory de outro usuário lança Categoria não encontrada', async () => {
+  it('updateCategory on another user category rejects with not-found', async () => {
     const userA = await makeUser()
     const userB = await makeUser()
 
@@ -253,9 +253,9 @@ describe('CategoryResolver', () => {
     expect(result.errors?.[0]?.message).toBe('Categoria não encontrada')
   })
 
-  it('updateCategory sem token lança Usuário não autenticado!', async () => {
+  it('updateCategory without token rejects with auth error', async () => {
     const result = await execute(UPDATE_CATEGORY, {
-      id: 'qualquer',
+      id: 'whatever',
       data: { name: 'X' },
     })
 

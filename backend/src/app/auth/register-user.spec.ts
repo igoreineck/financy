@@ -6,7 +6,7 @@ import { prisma } from '@/infra/db/prisma'
 import { registerUser } from './register-user'
 
 describe('registerUser', () => {
-  it('cria usuário e retorna token + user com password hasheada', async () => {
+  it('creates user and returns token + user with hashed password', async () => {
     const password = faker.internet.password({ length: 12 })
     const input = {
       name: faker.person.fullName(),
@@ -28,7 +28,7 @@ describe('registerUser', () => {
     expect(await compare(password, stored.password)).toBe(true)
   })
 
-  it('lança E-mail já cadastrado! quando o email já existe', async () => {
+  it('rejects when the email is already registered', async () => {
     const input = {
       name: faker.person.fullName(),
       email: faker.internet.email().toLowerCase(),

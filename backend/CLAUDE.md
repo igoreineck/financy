@@ -35,17 +35,22 @@ git checkout -b feat/NN-slug                    # e.g. feat/01-criar-conta-e-log
 # 2. Implement following the doc in docs/NN-*.md.
 #    Write tests alongside source as *.spec.ts.
 
-# 3. Verify locally before pushing
+# 3. Mark progress — part of the PR, not a follow-up
+#    - Check off each satisfied bullet in docs/NN-*.md (Testing + Acceptance criteria).
+#    - Check off the matching `- [ ]` line in requisitos.md (Tarefas section).
+#    This keeps overall progress visible at a glance from the repo root.
+
+# 4. Verify locally before pushing
 pnpm check                                       # Biome lint + format autofix
 npx tsc --noEmit                                 # type check
 pnpm test                                        # all vitest specs pass
 
-# 4. Commit and push
+# 5. Commit and push
 git add .
 git commit -m "feat(NN): <short summary>"        # conventional-commits style
 git push -u origin feat/NN-slug
 
-# 5. Open a draft PR — always use the gh CLI, never the GitHub web UI
+# 6. Open a draft PR — always use the gh CLI, never the GitHub web UI
 gh pr create --draft \
   --title "feat(NN): <tarefa title>" \
   --body "$(cat <<'EOF'
@@ -117,7 +122,7 @@ Conventions Biome can't enforce:
 - **Filenames are kebab-case**: `create-category.ts`, `auth.resolver.ts`. Test files are `*.spec.ts` colocated next to source.
 - **Functions over classes for domain logic** in `src/app/`. TypeGraphQL forces classes for `@Resolver`, `@ObjectType`, `@InputType` — that's fine. Plain business logic isn't class-based.
 - **Named exports** everywhere. No default exports.
-- **Portuguese for user-facing error messages** (matches the assignment context). English for code, comments, and commits.
+- **Portuguese only in user-facing strings** — error messages thrown by `src/app/...` functions, and any literal the frontend will render. **Everything else is English**: code, comments, commits, PR descriptions, test names (`describe`/`it`), variable names, internal types. Test assertions that quote a thrown error keep the Portuguese inside the quoted string, but the `it(...)` description itself stays English.
 
 ## Architecture
 
@@ -183,6 +188,8 @@ backend/
 1. **Unit tests for `src/app/...` functions.** Colocated as `*.spec.ts`. Hit the real Prisma client against the test DB. Cover the happy path, validation failures, and — for any function that mutates user data — at least one cross-user authorization assertion.
 2. **Integration tests for GraphQL resolvers.** Colocated next to the resolver as `*.resolver.spec.ts`. Build the schema once, execute mutations/queries through `ApolloServer.executeOperation`, assert on the GraphQL response (including auth errors with no token / a token for another user).
 3. **Smoke test for ownership.** At minimum: a test that signs up user A, signs up user B, has A create a resource, and asserts B cannot read/update/delete it. This is the IDOR backstop required by `docs/02-escopo-por-usuario.md`.
+
+**Choose tests by realism, not by checklist.** Add a case when a real user could plausibly hit it (sending whitespace, updating the same field twice, filtering by category they no longer own, etc.). Skip the contrived "what if the input is exactly 257 chars" cases unless the code actually branches on them. A few rich scenarios that read like a user story beat a long matrix of synthetic permutations. When the doc's listed cases feel thin, extend them — but only with cases that pull their weight.
 
 Test data:
 

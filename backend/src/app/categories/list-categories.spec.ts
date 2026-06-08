@@ -15,7 +15,7 @@ async function makeUser() {
 }
 
 describe('listCategories', () => {
-  it('retorna só as categorias do autenticado', async () => {
+  it('returns only categories owned by the authenticated user', async () => {
     const userA = await makeUser()
     const userB = await makeUser()
 
@@ -39,7 +39,7 @@ describe('listCategories', () => {
     expect(result.map(c => c.name)).not.toContain('Saúde')
   })
 
-  it('ordem name ascendente', async () => {
+  it('orders results by name ascending', async () => {
     const user = await makeUser()
 
     await createCategory(
@@ -60,7 +60,7 @@ describe('listCategories', () => {
     expect(result.map(c => c.name)).toEqual(['Alimentação', 'Beleza', 'Casa'])
   })
 
-  it('usuário sem categorias recebe []', async () => {
+  it('returns [] when user has no categories', async () => {
     const user = await makeUser()
 
     const result = await listCategories(user.id)
