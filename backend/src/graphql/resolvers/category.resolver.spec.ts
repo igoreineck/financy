@@ -74,6 +74,18 @@ const CREATE_CATEGORY = /* GraphQL */ `
   }
 `
 
+const LIST_CATEGORIES = /* GraphQL */ `
+  query ListCategories {
+    listCategories {
+      id
+      name
+      color
+      icon
+      description
+    }
+  }
+`
+
 describe('CategoryResolver', () => {
   it('createCategory com token cria categoria', async () => {
     const user = await makeUser()
@@ -136,6 +148,40 @@ describe('CategoryResolver', () => {
         icon: 'lock',
       },
     })
+
+    expect(result.data).toBeNull()
+    expect(result.errors?.[0]?.message).toBe('Usuário não autenticado!')
+  })
+
+  it('listCategories retorna lista do autenticado em ordem name asc', async () => {
+    const userA = await makeUser()
+    const userB = await makeUser()
+
+    await execute(
+      CREATE_CATEGORY,
+      { data: { name: 'Casa', color: '#111', icon: 'home' } },
+      userA.id,
+    )
+    await execute(
+      CREATE_CATEGORY,
+      { data: { name: 'Alimentação', color: '#222', icon: 'utensils' } },
+      userA.id,
+    )
+    await execute(
+      CREATE_CATEGORY,
+      { data: { name: 'Outra pessoa', color: '#333', icon: 'user' } },
+      userB.id,
+    )
+
+    const result = await execute(LIST_CATEGORIES, {}, userA.id)
+
+    expect(result.errors).toBeUndefined()
+    const list = result.data?.listCategories as Array<{ name: string }>
+    expect(list.map(c => c.name)).toEqual(['Alimentação', 'Casa'])
+  })
+
+  it('listCategories sem token lança Usuário não autenticado!', async () => {
+    const result = await execute(LIST_CATEGORIES, {})
 
     expect(result.data).toBeNull()
     expect(result.errors?.[0]?.message).toBe('Usuário não autenticado!')
