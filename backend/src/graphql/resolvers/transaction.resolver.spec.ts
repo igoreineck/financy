@@ -88,6 +88,24 @@ const CREATE_TRANSACTION = /* GraphQL */ `
   }
 `
 
+const LIST_TRANSACTIONS = /* GraphQL */ `
+  query ListTransactions {
+    listTransactions {
+      id
+      description
+      amount
+      type
+      occurredAt
+      category {
+        id
+        name
+        color
+        icon
+      }
+    }
+  }
+`
+
 describe('TransactionResolver', () => {
   it('createTransaction with token creates and returns the object', async () => {
     const user = await makeUser()
@@ -161,6 +179,60 @@ describe('TransactionResolver', () => {
 
     expect(result.data).toBeNull()
     expect(result.errors?.[0]?.message).toBe('Categoria não encontrada')
+  })
+
+  it('listTransactions returns the user transactions with resolved category', async () => {
+    const user = await makeUser()
+    const category = await makeCategory(user.id)
+
+    await execute(
+      CREATE_TRANSACTION,
+      {
+        data: {
+          description: 'Almoço',
+          amount: 1234,
+          type: 'EXPENSE',
+          occurredAt: '2026-06-01T12:00:00.000Z',
+          categoryId: category.id,
+        },
+      },
+      user.id,
+    )
+    await execute(
+      CREATE_TRANSACTION,
+      {
+        data: {
+          description: 'Salário',
+          amount: 500000,
+          type: 'INCOME',
+          occurredAt: '2026-06-05T12:00:00.000Z',
+          categoryId: category.id,
+        },
+      },
+      user.id,
+    )
+
+    const result = await execute(LIST_TRANSACTIONS, {}, user.id)
+
+    expect(result.errors).toBeUndefined()
+    const list = result.data?.listTransactions as Array<{
+      description: string
+      category: { id: string; name: string; color: string; icon: string }
+    }>
+    expect(list.map(t => t.description)).toEqual(['Salário', 'Almoço'])
+    expect(list[0]?.category).toMatchObject({
+      id: category.id,
+      name: category.name,
+      color: category.color,
+      icon: category.icon,
+    })
+  })
+
+  it('listTransactions without token rejects with auth error', async () => {
+    const result = await execute(LIST_TRANSACTIONS, {})
+
+    expect(result.data).toBeNull()
+    expect(result.errors?.[0]?.message).toBe('Usuário não autenticado!')
   })
 
   it('createTransaction rejects invalid type values at the schema level', async () => {

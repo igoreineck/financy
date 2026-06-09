@@ -38,21 +38,21 @@ Ver [02 — Escopo por usuário](./02-escopo-por-usuario.md). O `findMany` **dev
 ## Testing
 
 - `src/app/transactions/list-transactions.spec.ts`
-  - [ ] retorna só as transações do usuário autenticado (criar transações de A e B, listar como A, garantir que B não aparece).
-  - [ ] ordem `occurredAt` descendente.
-  - [ ] usuário sem transações recebe `[]`.
+  - [x] retorna só as transações do usuário autenticado (criar transações de A e B, listar como A, garantir que B não aparece).
+  - [x] ordem `occurredAt` descendente.
+  - [x] usuário sem transações recebe `[]`.
 - `src/graphql/resolvers/transaction.resolver.spec.ts`
-  - [ ] query retorna lista populada com `category` resolvida.
-  - [ ] sem token → erro de autenticação.
+  - [x] query retorna lista populada com `category` resolvida.
+  - [x] sem token → erro de autenticação.
 
 ## Acceptance criteria
 
-- [ ] `listTransactions` retorna só as transações do autenticado.
-- [ ] Ordem: `occurredAt` desc.
-- [ ] `category` resolvida com nome/cor/ícone.
-- [ ] Vazio → `[]`.
-- [ ] Sem JWT → `Usuário não autenticado!`.
-- [ ] Suite verde.
+- [x] `listTransactions` retorna só as transações do autenticado.
+- [x] Ordem: `occurredAt` desc.
+- [x] `category` resolvida com nome/cor/ícone.
+- [x] Vazio → `[]`.
+- [x] Sem JWT → `Usuário não autenticado!`.
+- [x] Suite verde.
 
 ## Depends on
 
