@@ -1,5 +1,6 @@
 import { Field, ID, Int, ObjectType } from 'type-graphql'
 
+import { CategoryModel } from './category.model'
 import { TransactionType } from './transaction-type.enum'
 
 @ObjectType()
@@ -21,6 +22,9 @@ export class TransactionModel {
 
   @Field(() => ID)
   categoryId!: string
+
+  @Field(() => CategoryModel)
+  category!: CategoryModel
 
   @Field(() => Date)
   createdAt!: Date

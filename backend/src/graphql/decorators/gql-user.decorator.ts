@@ -1,22 +1,26 @@
 import { createParameterDecorator } from 'type-graphql'
 
+import type { SafeUser } from '@/app/auth/register-user'
 import type { GraphqlContext } from '@/graphql/context'
 import { prisma } from '@/infra/db/prisma'
 
 export function GqlUser() {
-  return createParameterDecorator<GraphqlContext>(async ({ context }) => {
-    if (!context.user) {
-      throw new Error('Usuário não autenticado!')
-    }
+  return createParameterDecorator<GraphqlContext>(
+    async ({ context }): Promise<SafeUser> => {
+      if (!context.user) {
+        throw new Error('Usuário não autenticado!')
+      }
 
-    const user = await prisma.user.findUnique({
-      where: { id: context.user },
-    })
+      const user = await prisma.user.findUnique({
+        where: { id: context.user },
+        omit: { password: true },
+      })
 
-    if (!user) {
-      throw new Error('Usuário não autenticado!')
-    }
+      if (!user) {
+        throw new Error('Usuário não autenticado!')
+      }
 
-    return user
-  })
+      return user
+    },
+  )
 }

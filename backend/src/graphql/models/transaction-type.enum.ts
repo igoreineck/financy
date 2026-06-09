@@ -1,8 +1,7 @@
 import { registerEnumType } from 'type-graphql'
 
-export enum TransactionType {
-  INCOME = 'INCOME',
-  EXPENSE = 'EXPENSE',
-}
+import { TransactionType } from '@/app/transactions/transaction-type'
 
 registerEnumType(TransactionType, { name: 'TransactionType' })
+
+export { TransactionType }

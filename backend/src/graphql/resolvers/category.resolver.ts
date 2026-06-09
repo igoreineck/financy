@@ -1,4 +1,4 @@
-import type { Category, User } from '@prisma/client'
+import type { Category } from '@prisma/client'
 import { Arg, ID, Mutation, Query, Resolver, UseMiddleware } from 'type-graphql'
 
 import { createCategory } from '@/app/categories/create-category'
@@ -6,7 +6,7 @@ import { deleteCategory } from '@/app/categories/delete-category'
 import { getCategory } from '@/app/categories/get-category'
 import { listCategories } from '@/app/categories/list-categories'
 import { updateCategory } from '@/app/categories/update-category'
-import { GqlUser } from '@/graphql/decorators/gql-user.decorator'
+import { GqlUserId } from '@/graphql/decorators/gql-user-id.decorator'
 import {
   CreateCategoryInput,
   UpdateCategoryInput,
@@ -20,38 +20,38 @@ export class CategoryResolver {
   @Mutation(() => CategoryModel)
   async createCategory(
     @Arg('data', () => CreateCategoryInput) data: CreateCategoryInput,
-    @GqlUser() user: User,
+    @GqlUserId() userId: string,
   ): Promise<Category> {
-    return createCategory(data, user.id)
+    return createCategory(data, userId)
   }
 
   @Query(() => [CategoryModel])
-  async listCategories(@GqlUser() user: User): Promise<Category[]> {
-    return listCategories(user.id)
+  async listCategories(@GqlUserId() userId: string): Promise<Category[]> {
+    return listCategories(userId)
   }
 
   @Query(() => CategoryModel)
   async category(
     @Arg('id', () => ID) id: string,
-    @GqlUser() user: User,
+    @GqlUserId() userId: string,
   ): Promise<Category> {
-    return getCategory(id, user.id)
+    return getCategory(id, userId)
   }
 
   @Mutation(() => CategoryModel)
   async updateCategory(
     @Arg('id', () => ID) id: string,
     @Arg('data', () => UpdateCategoryInput) data: UpdateCategoryInput,
-    @GqlUser() user: User,
+    @GqlUserId() userId: string,
   ): Promise<Category> {
-    return updateCategory(id, data, user.id)
+    return updateCategory(id, data, userId)
   }
 
   @Mutation(() => Boolean)
   async deleteCategory(
     @Arg('id', () => ID) id: string,
-    @GqlUser() user: User,
+    @GqlUserId() userId: string,
   ): Promise<boolean> {
-    return deleteCategory(id, user.id)
+    return deleteCategory(id, userId)
   }
 }

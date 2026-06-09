@@ -1,8 +1,7 @@
-import type { Transaction } from '@prisma/client'
+import type { Category, Transaction } from '@prisma/client'
 
 import { prisma } from '@/infra/db/prisma'
-
-export type TransactionType = 'INCOME' | 'EXPENSE'
+import type { TransactionType } from './transaction-type'
 
 type CreateTransactionInput = {
   description: string
@@ -12,10 +11,12 @@ type CreateTransactionInput = {
   categoryId: string
 }
 
+export type TransactionWithCategory = Transaction & { category: Category }
+
 export async function createTransaction(
   input: CreateTransactionInput,
   userId: string,
-): Promise<Transaction> {
+): Promise<TransactionWithCategory> {
   const category = await prisma.category.findFirst({
     where: { id: input.categoryId, userId },
   })
@@ -30,5 +31,6 @@ export async function createTransaction(
       categoryId: input.categoryId,
       userId,
     },
+    include: { category: true },
   })
 }

@@ -6,7 +6,8 @@ import type { GraphQLSchema } from 'graphql'
 import { buildSchema } from 'type-graphql'
 import { beforeAll, describe, expect, it } from 'vitest'
 
-import type { GraphqlContext } from '@/graphql/context'
+import type { AuthErrorReason, GraphqlContext } from '@/graphql/context'
+import { prisma } from '@/infra/db/prisma'
 import { verifyJwt } from '@/shared/jwt'
 import { AuthResolver } from './auth.resolver'
 
@@ -26,10 +27,11 @@ beforeAll(async () => {
   server = new ApolloServer<GraphqlContext>({ schema })
 })
 
-function ctx(userId?: string): GraphqlContext {
+function ctx(userId?: string, authError?: AuthErrorReason): GraphqlContext {
   return {
     user: userId,
     token: undefined,
+    authError,
     // biome-ignore lint/suspicious/noExplicitAny: integration test stub for req/res
     req: {} as any,
     // biome-ignore lint/suspicious/noExplicitAny: integration test stub for req/res
@@ -41,10 +43,11 @@ async function execute(
   query: string,
   variables: Record<string, unknown>,
   userId?: string,
+  authError?: AuthErrorReason,
 ) {
   const response = await server.executeOperation(
     { query, variables },
-    { contextValue: ctx(userId) },
+    { contextValue: ctx(userId, authError) },
   )
   if (response.body.kind !== 'single') {
     throw new Error('Expected single result')
@@ -138,11 +141,65 @@ describe('AuthResolver', () => {
     })
 
     expect(result.data).toBeNull()
-    expect(result.errors?.[0]?.message).toBe('Usuário não cadastrado!')
+    expect(result.errors?.[0]?.message).toBe('Credenciais inválidas!')
+  })
+
+  it('register response does not include the password field', async () => {
+    const data = {
+      name: faker.person.fullName(),
+      email: faker.internet.email().toLowerCase(),
+      password: faker.internet.password({ length: 12 }),
+    }
+    const SELECT_PASSWORD = /* GraphQL */ `
+      mutation Register($data: RegisterInput!) {
+        register(data: $data) {
+          user { password }
+        }
+      }
+    `
+
+    const result = await execute(SELECT_PASSWORD, { data })
+
+    expect(result.data).toBeUndefined()
+    expect(result.errors?.[0]?.message).toMatch(/Cannot query field "password"/)
   })
 
   it('me without a token rejects with auth error', async () => {
     const result = await execute(ME, {})
+
+    expect(result.data).toBeNull()
+    expect(result.errors?.[0]?.message).toBe('Usuário não autenticado!')
+  })
+
+  it('me with an expired token surfaces "Sessão expirada!"', async () => {
+    const result = await execute(ME, {}, undefined, 'expired')
+
+    expect(result.data).toBeNull()
+    expect(result.errors?.[0]?.message).toBe('Sessão expirada!')
+  })
+
+  it('me with an invalid token surfaces "Token inválido!"', async () => {
+    const result = await execute(ME, {}, undefined, 'invalid')
+
+    expect(result.data).toBeNull()
+    expect(result.errors?.[0]?.message).toBe('Token inválido!')
+  })
+
+  it('me with a token for a deleted user rejects with auth error', async () => {
+    const data = {
+      name: faker.person.fullName(),
+      email: faker.internet.email().toLowerCase(),
+      password: faker.internet.password({ length: 12 }),
+    }
+    const registered = await execute(REGISTER, { data })
+    const register = registered.data?.register as {
+      token: string
+      user: { id: string }
+    }
+
+    await prisma.user.delete({ where: { id: register.user.id } })
+
+    const result = await execute(ME, {}, register.user.id)
 
     expect(result.data).toBeNull()
     expect(result.errors?.[0]?.message).toBe('Usuário não autenticado!')

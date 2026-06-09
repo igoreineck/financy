@@ -44,4 +44,31 @@ describe('registerUser', () => {
       }),
     ).rejects.toThrow('E-mail já cadastrado!')
   })
+
+  it('normalizes email casing and rejects duplicates regardless of case', async () => {
+    const email = faker.internet.email().toLowerCase()
+    await registerUser({
+      name: faker.person.fullName(),
+      email: `  ${email.toUpperCase()}  `,
+      password: faker.internet.password({ length: 12 }),
+    })
+
+    await expect(
+      registerUser({
+        name: faker.person.fullName(),
+        email,
+        password: faker.internet.password({ length: 12 }),
+      }),
+    ).rejects.toThrow('E-mail já cadastrado!')
+  })
+
+  it('returns a user object without the password field', async () => {
+    const { user } = await registerUser({
+      name: faker.person.fullName(),
+      email: faker.internet.email().toLowerCase(),
+      password: faker.internet.password({ length: 12 }),
+    })
+
+    expect(user).not.toHaveProperty('password')
+  })
 })

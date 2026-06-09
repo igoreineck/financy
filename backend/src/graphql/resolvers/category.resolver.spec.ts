@@ -31,6 +31,7 @@ function ctx(userId?: string): GraphqlContext {
   return {
     user: userId,
     token: undefined,
+    authError: undefined,
     // biome-ignore lint/suspicious/noExplicitAny: integration test stub for req/res
     req: {} as any,
     // biome-ignore lint/suspicious/noExplicitAny: integration test stub for req/res

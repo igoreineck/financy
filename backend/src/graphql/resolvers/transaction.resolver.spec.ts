@@ -33,6 +33,7 @@ function ctx(userId?: string): GraphqlContext {
   return {
     user: userId,
     token: undefined,
+    authError: undefined,
     // biome-ignore lint/suspicious/noExplicitAny: integration test stub for req/res
     req: {} as any,
     // biome-ignore lint/suspicious/noExplicitAny: integration test stub for req/res
@@ -442,6 +443,32 @@ describe('TransactionResolver', () => {
   })
 
   it('transaction rejects fetching another user transaction', async () => {
+    const owner = await makeUser()
+    const attacker = await makeUser()
+    const category = await makeCategory(owner.id)
+
+    const created = await execute(
+      CREATE_TRANSACTION,
+      {
+        data: {
+          description: 'Privada',
+          amount: 1234,
+          type: 'EXPENSE',
+          occurredAt: '2026-06-08T12:00:00.000Z',
+          categoryId: category.id,
+        },
+      },
+      owner.id,
+    )
+    const id = (created.data?.createTransaction as { id: string }).id
+
+    const result = await execute(GET_TRANSACTION, { id }, attacker.id)
+
+    expect(result.data).toBeNull()
+    expect(result.errors?.[0]?.message).toBe('Transação não encontrada')
+  })
+
+  it('transaction including the category field rejects when the parent belongs to another user', async () => {
     const owner = await makeUser()
     const attacker = await makeUser()
     const category = await makeCategory(owner.id)

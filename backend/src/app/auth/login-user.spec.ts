@@ -31,7 +31,7 @@ describe('loginUser', () => {
         email: faker.internet.email().toLowerCase(),
         password: faker.internet.password({ length: 12 }),
       }),
-    ).rejects.toThrow('Usuário não cadastrado!')
+    ).rejects.toThrow('Credenciais inválidas!')
   })
 
   it('rejects when the password is wrong', async () => {
@@ -39,6 +39,25 @@ describe('loginUser', () => {
 
     await expect(
       loginUser({ email: user.email, password: 'wrong-password' }),
-    ).rejects.toThrow('Senha inválida!')
+    ).rejects.toThrow('Credenciais inválidas!')
+  })
+
+  it('matches the user when email casing differs from registration', async () => {
+    const { user, password } = await seedUser()
+
+    const result = await loginUser({
+      email: user.email.toUpperCase(),
+      password,
+    })
+
+    expect(result.user.id).toBe(user.id)
+  })
+
+  it('returns a user object without the password field', async () => {
+    const { user, password } = await seedUser()
+
+    const result = await loginUser({ email: user.email, password })
+
+    expect(result.user).not.toHaveProperty('password')
   })
 })
