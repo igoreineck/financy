@@ -75,22 +75,22 @@ Ver [02 — Escopo por usuário](./02-escopo-por-usuario.md). Pontos críticos:
 ## Testing
 
 - `src/app/transactions/create-transaction.spec.ts`
-  - [ ] cria transação com input válido e categoria do próprio usuário.
-  - [ ] `amount` é armazenado como inteiro em centavos.
-  - [ ] `categoryId` de outro usuário lança `Categoria não encontrada` (mesma mensagem que id inexistente).
-  - [ ] `categoryId` inexistente lança `Categoria não encontrada`.
+  - [x] cria transação com input válido e categoria do próprio usuário.
+  - [x] `amount` é armazenado como inteiro em centavos.
+  - [x] `categoryId` de outro usuário lança `Categoria não encontrada` (mesma mensagem que id inexistente).
+  - [x] `categoryId` inexistente lança `Categoria não encontrada`.
 - `src/graphql/resolvers/transaction.resolver.spec.ts` (integration)
-  - [ ] mutation `createTransaction` com token válido cria e retorna o objeto.
-  - [ ] sem token → erro de autenticação.
-  - [ ] `type` aceita apenas `INCOME`/`EXPENSE` (erro de schema para outros valores).
+  - [x] mutation `createTransaction` com token válido cria e retorna o objeto.
+  - [x] sem token → erro de autenticação.
+  - [x] `type` aceita apenas `INCOME`/`EXPENSE` (erro de schema para outros valores).
 - Atualizar `src/test/setup.ts` para `await prisma.transaction.deleteMany()` antes de `prisma.category.deleteMany()` (ordem importa pelo FK).
 
 ## Acceptance criteria
 
-- [ ] Criar transação válida retorna o objeto com `id`, `category` (resolvido via FieldResolver futuro), `user`.
-- [ ] Sem JWT → `Usuário não autenticado!`.
-- [ ] `categoryId` alheio → `Categoria não encontrada`.
-- [ ] `pnpm check` + `npx tsc --noEmit` + `pnpm test` verdes.
+- [x] Criar transação válida retorna o objeto com `id`, `category` (resolvido via FieldResolver futuro), `user`.
+- [x] Sem JWT → `Usuário não autenticado!`.
+- [x] `categoryId` alheio → `Categoria não encontrada`.
+- [x] `pnpm check` + `npx tsc --noEmit` + `pnpm test` verdes.
 
 ## Depends on
 
