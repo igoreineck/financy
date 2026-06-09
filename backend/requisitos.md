@@ -65,3 +65,9 @@ Caso adicione variáveis adicionais, lembre-se de incluí-las no `.env.example`.
 - [x] Deve ser possível deletar uma categoria
 - [x] Deve ser possível editar uma categoria
 - [x] Deve ser possível listar todas as categorias
+
+## Nice to have (futuro)
+
+Itens fora do escopo obrigatório do desafio, mantidos como ideias pra evoluir o projeto depois.
+
+- [ ] [Fortalecer autenticação (rotação, revogação e refresh tokens)](./docs/nice-to-have-fortalecer-autenticacao.md)
