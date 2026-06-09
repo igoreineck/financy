@@ -46,10 +46,10 @@ Esta tarefa **não tem testes próprios**. Cada tarefa 03–10 ship o teste de I
 
 Validado nas tarefas 03–10. A matriz:
 
-- [ ] Usuário A não vê transações/categorias do B em nenhum list/query.
-- [ ] Usuário A não consegue atualizar/excluir transação ou categoria do B (mesmo com o id correto) — erro "não encontrado", **mesma mensagem** que id inexistente.
-- [ ] Usuário A não consegue criar transação referenciando `categoryId` do B.
-- [ ] Resolver protegido sem token / com token inválido → `Usuário não autenticado!`.
+- [x] Usuário A não vê transações/categorias do B em nenhum list/query.
+- [x] Usuário A não consegue atualizar/excluir transação ou categoria do B (mesmo com o id correto) — erro "não encontrado", **mesma mensagem** que id inexistente.
+- [x] Usuário A não consegue criar transação referenciando `categoryId` do B.
+- [x] Resolver protegido sem token / com token inválido → `Usuário não autenticado!`.
 
 ## Depends on
 

@@ -119,6 +119,28 @@ const UPDATE_TRANSACTION = /* GraphQL */ `
   }
 `
 
+const DELETE_TRANSACTION = /* GraphQL */ `
+  mutation DeleteTransaction($id: ID!) {
+    deleteTransaction(id: $id)
+  }
+`
+
+const GET_TRANSACTION = /* GraphQL */ `
+  query GetTransaction($id: ID!) {
+    transaction(id: $id) {
+      id
+      description
+      amount
+      type
+      occurredAt
+      category {
+        id
+        name
+      }
+    }
+  }
+`
+
 describe('TransactionResolver', () => {
   it('createTransaction with token creates and returns the object', async () => {
     const user = await makeUser()
@@ -314,6 +336,142 @@ describe('TransactionResolver', () => {
 
     expect(result.data).toBeNull()
     expect(result.errors?.[0]?.message).toBe('Transação não encontrada')
+  })
+
+  it('deleteTransaction returns true and the transaction disappears from listTransactions', async () => {
+    const user = await makeUser()
+    const category = await makeCategory(user.id)
+
+    const created = await execute(
+      CREATE_TRANSACTION,
+      {
+        data: {
+          description: 'A excluir',
+          amount: 1234,
+          type: 'EXPENSE',
+          occurredAt: '2026-06-08T12:00:00.000Z',
+          categoryId: category.id,
+        },
+      },
+      user.id,
+    )
+    const id = (created.data?.createTransaction as { id: string }).id
+
+    const result = await execute(DELETE_TRANSACTION, { id }, user.id)
+
+    expect(result.errors).toBeUndefined()
+    expect(result.data?.deleteTransaction).toBe(true)
+
+    const list = await execute(LIST_TRANSACTIONS, {}, user.id)
+    const ids = (list.data?.listTransactions as Array<{ id: string }>).map(
+      t => t.id,
+    )
+    expect(ids).not.toContain(id)
+  })
+
+  it('deleteTransaction rejects deleting another user transaction', async () => {
+    const owner = await makeUser()
+    const attacker = await makeUser()
+    const category = await makeCategory(owner.id)
+
+    const created = await execute(
+      CREATE_TRANSACTION,
+      {
+        data: {
+          description: 'Privada',
+          amount: 1234,
+          type: 'EXPENSE',
+          occurredAt: '2026-06-08T12:00:00.000Z',
+          categoryId: category.id,
+        },
+      },
+      owner.id,
+    )
+    const id = (created.data?.createTransaction as { id: string }).id
+
+    const result = await execute(DELETE_TRANSACTION, { id }, attacker.id)
+
+    expect(result.data).toBeNull()
+    expect(result.errors?.[0]?.message).toBe('Transação não encontrada')
+  })
+
+  it('deleteTransaction without token rejects with auth error', async () => {
+    const result = await execute(DELETE_TRANSACTION, {
+      id: faker.string.uuid(),
+    })
+
+    expect(result.data).toBeNull()
+    expect(result.errors?.[0]?.message).toBe('Usuário não autenticado!')
+  })
+
+  it('transaction returns the transaction owned by the user with its category', async () => {
+    const user = await makeUser()
+    const category = await makeCategory(user.id)
+
+    const created = await execute(
+      CREATE_TRANSACTION,
+      {
+        data: {
+          description: 'Almoço',
+          amount: 1234,
+          type: 'EXPENSE',
+          occurredAt: '2026-06-08T12:00:00.000Z',
+          categoryId: category.id,
+        },
+      },
+      user.id,
+    )
+    const id = (created.data?.createTransaction as { id: string }).id
+
+    const result = await execute(GET_TRANSACTION, { id }, user.id)
+
+    expect(result.errors).toBeUndefined()
+    const fetched = result.data?.transaction as {
+      id: string
+      description: string
+      amount: number
+      category: { id: string; name: string }
+    }
+    expect(fetched.id).toBe(id)
+    expect(fetched.description).toBe('Almoço')
+    expect(fetched.amount).toBe(1234)
+    expect(fetched.category).toMatchObject({
+      id: category.id,
+      name: category.name,
+    })
+  })
+
+  it('transaction rejects fetching another user transaction', async () => {
+    const owner = await makeUser()
+    const attacker = await makeUser()
+    const category = await makeCategory(owner.id)
+
+    const created = await execute(
+      CREATE_TRANSACTION,
+      {
+        data: {
+          description: 'Privada',
+          amount: 1234,
+          type: 'EXPENSE',
+          occurredAt: '2026-06-08T12:00:00.000Z',
+          categoryId: category.id,
+        },
+      },
+      owner.id,
+    )
+    const id = (created.data?.createTransaction as { id: string }).id
+
+    const result = await execute(GET_TRANSACTION, { id }, attacker.id)
+
+    expect(result.data).toBeNull()
+    expect(result.errors?.[0]?.message).toBe('Transação não encontrada')
+  })
+
+  it('transaction without token rejects with auth error', async () => {
+    const result = await execute(GET_TRANSACTION, { id: faker.string.uuid() })
+
+    expect(result.data).toBeNull()
+    expect(result.errors?.[0]?.message).toBe('Usuário não autenticado!')
   })
 
   it('createTransaction rejects invalid type values at the schema level', async () => {

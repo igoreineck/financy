@@ -11,6 +11,8 @@ import {
 } from 'type-graphql'
 
 import { createTransaction } from '@/app/transactions/create-transaction'
+import { deleteTransaction } from '@/app/transactions/delete-transaction'
+import { getTransaction } from '@/app/transactions/get-transaction'
 import { listTransactions } from '@/app/transactions/list-transactions'
 import { updateTransaction } from '@/app/transactions/update-transaction'
 import { GqlUser } from '@/graphql/decorators/gql-user.decorator'
@@ -39,6 +41,14 @@ export class TransactionResolver {
     return listTransactions(user.id)
   }
 
+  @Query(() => TransactionModel)
+  async transaction(
+    @Arg('id', () => ID) id: string,
+    @GqlUser() user: User,
+  ): Promise<Transaction> {
+    return getTransaction(id, user.id)
+  }
+
   @Mutation(() => TransactionModel)
   async updateTransaction(
     @Arg('id', () => ID) id: string,
@@ -46,6 +56,14 @@ export class TransactionResolver {
     @GqlUser() user: User,
   ): Promise<Transaction> {
     return updateTransaction(id, data, user.id)
+  }
+
+  @Mutation(() => Boolean)
+  async deleteTransaction(
+    @Arg('id', () => ID) id: string,
+    @GqlUser() user: User,
+  ): Promise<boolean> {
+    return deleteTransaction(id, user.id)
   }
 
   @FieldResolver(() => CategoryModel)
