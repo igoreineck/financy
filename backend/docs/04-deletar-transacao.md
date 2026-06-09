@@ -35,20 +35,20 @@ Ver [02 — Escopo por usuário](./02-escopo-por-usuario.md). Caso crítico para
 ## Testing
 
 - `src/app/transactions/delete-transaction.spec.ts`
-  - [ ] delete do próprio: a transação some no `prisma.transaction.findMany`.
-  - [ ] id inexistente → `Transação não encontrada`.
-  - [ ] id de outro usuário → `Transação não encontrada` (mesma mensagem).
+  - [x] delete do próprio: a transação some no `prisma.transaction.findMany`.
+  - [x] id inexistente → `Transação não encontrada`.
+  - [x] id de outro usuário → `Transação não encontrada` (mesma mensagem).
 - `src/graphql/resolvers/transaction.resolver.spec.ts`
-  - [ ] mutation retorna `true` em sucesso.
-  - [ ] usuário A não consegue deletar transação de B.
+  - [x] mutation retorna `true` em sucesso.
+  - [x] usuário A não consegue deletar transação de B.
 
 ## Acceptance criteria
 
-- [ ] Delete válido retorna `true` e some no `listTransactions`.
-- [ ] Id inexistente → `Transação não encontrada`.
-- [ ] Id de outro usuário → `Transação não encontrada` (não vazar existência).
-- [ ] Sem JWT → `Usuário não autenticado!`.
-- [ ] Suite verde.
+- [x] Delete válido retorna `true` e some no `listTransactions`.
+- [x] Id inexistente → `Transação não encontrada`.
+- [x] Id de outro usuário → `Transação não encontrada` (não vazar existência).
+- [x] Sem JWT → `Usuário não autenticado!`.
+- [x] Suite verde.
 
 ## Depends on
 
