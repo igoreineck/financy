@@ -2,6 +2,7 @@ import type { Category, Transaction, User } from '@prisma/client'
 import {
   Arg,
   FieldResolver,
+  ID,
   Mutation,
   Query,
   Resolver,
@@ -11,8 +12,12 @@ import {
 
 import { createTransaction } from '@/app/transactions/create-transaction'
 import { listTransactions } from '@/app/transactions/list-transactions'
+import { updateTransaction } from '@/app/transactions/update-transaction'
 import { GqlUser } from '@/graphql/decorators/gql-user.decorator'
-import { CreateTransactionInput } from '@/graphql/inputs/transaction.input'
+import {
+  CreateTransactionInput,
+  UpdateTransactionInput,
+} from '@/graphql/inputs/transaction.input'
 import { IsAuth } from '@/graphql/middlewares/is-auth.middleware'
 import { CategoryModel } from '@/graphql/models/category.model'
 import { TransactionModel } from '@/graphql/models/transaction.model'
@@ -32,6 +37,15 @@ export class TransactionResolver {
   @Query(() => [TransactionModel])
   async listTransactions(@GqlUser() user: User): Promise<Transaction[]> {
     return listTransactions(user.id)
+  }
+
+  @Mutation(() => TransactionModel)
+  async updateTransaction(
+    @Arg('id', () => ID) id: string,
+    @Arg('data', () => UpdateTransactionInput) data: UpdateTransactionInput,
+    @GqlUser() user: User,
+  ): Promise<Transaction> {
+    return updateTransaction(id, data, user.id)
   }
 
   @FieldResolver(() => CategoryModel)
