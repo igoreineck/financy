@@ -1,7 +1,6 @@
-import type { Transaction } from '@prisma/client'
-
 import { prisma } from '@/infra/db/prisma'
-import type { TransactionType } from './create-transaction'
+import type { TransactionWithCategory } from './create-transaction'
+import type { TransactionType } from './transaction-type'
 
 type UpdateTransactionInput = {
   description?: string | null
@@ -15,7 +14,17 @@ export async function updateTransaction(
   id: string,
   data: UpdateTransactionInput,
   userId: string,
-): Promise<Transaction> {
+): Promise<TransactionWithCategory> {
+  if (
+    data.description === null ||
+    data.amount === null ||
+    data.type === null ||
+    data.occurredAt === null ||
+    data.categoryId === null
+  ) {
+    throw new Error('Campos obrigatórios não podem ser nulos')
+  }
+
   const existing = await prisma.transaction.findFirst({
     where: { id, userId },
   })
@@ -37,5 +46,6 @@ export async function updateTransaction(
       occurredAt: data.occurredAt ?? undefined,
       categoryId: data.categoryId ?? undefined,
     },
+    include: { category: true },
   })
 }

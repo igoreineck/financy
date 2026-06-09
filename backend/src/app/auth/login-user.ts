@@ -1,8 +1,7 @@
-import type { User } from '@prisma/client'
-
 import { prisma } from '@/infra/db/prisma'
 import { comparePassword } from '@/shared/hash'
 import { signJwt } from '@/shared/jwt'
+import type { SafeUser } from './register-user'
 
 type LoginUserInput = {
   email: string
@@ -11,24 +10,29 @@ type LoginUserInput = {
 
 type LoginUserOutput = {
   token: string
-  user: User
+  user: SafeUser
 }
 
 export async function loginUser({
   email,
   password,
 }: LoginUserInput): Promise<LoginUserOutput> {
-  const user = await prisma.user.findUnique({ where: { email } })
+  const normalizedEmail = email.trim().toLowerCase()
+
+  const user = await prisma.user.findUnique({
+    where: { email: normalizedEmail },
+  })
   if (!user) {
-    throw new Error('Usuário não cadastrado!')
+    throw new Error('Credenciais inválidas!')
   }
 
   const ok = await comparePassword(password, user.password)
   if (!ok) {
-    throw new Error('Senha inválida!')
+    throw new Error('Credenciais inválidas!')
   }
 
   const token = signJwt({ id: user.id, email: user.email })
+  const { password: _, ...safeUser } = user
 
-  return { token, user }
+  return { token, user: safeUser }
 }

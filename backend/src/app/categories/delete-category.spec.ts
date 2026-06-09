@@ -2,6 +2,7 @@ import { faker } from '@faker-js/faker'
 import { describe, expect, it } from 'vitest'
 
 import { registerUser } from '@/app/auth/register-user'
+import { createTransaction } from '@/app/transactions/create-transaction'
 import { prisma } from '@/infra/db/prisma'
 import { createCategory } from './create-category'
 import { deleteCategory } from './delete-category'
@@ -54,6 +55,33 @@ describe('deleteCategory', () => {
 
     const stillThere = await prisma.category.findUnique({
       where: { id: fromA.id },
+    })
+    expect(stillThere).not.toBeNull()
+  })
+
+  it('refuses to delete a category that has linked transactions', async () => {
+    const user = await makeUser()
+    const category = await createCategory(
+      { name: 'Alimentação', color: '#FF5733', icon: 'utensils' },
+      user.id,
+    )
+    await createTransaction(
+      {
+        description: 'Almoço',
+        amount: 1234,
+        type: 'EXPENSE',
+        occurredAt: new Date('2026-06-01T12:00:00.000Z'),
+        categoryId: category.id,
+      },
+      user.id,
+    )
+
+    await expect(deleteCategory(category.id, user.id)).rejects.toThrow(
+      'Categoria possui transações associadas e não pode ser excluída',
+    )
+
+    const stillThere = await prisma.category.findUnique({
+      where: { id: category.id },
     })
     expect(stillThere).not.toBeNull()
   })

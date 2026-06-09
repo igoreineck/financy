@@ -10,9 +10,11 @@ type RegisterUserInput = {
   password: string
 }
 
+export type SafeUser = Omit<User, 'password'>
+
 type RegisterUserOutput = {
   token: string
-  user: User
+  user: SafeUser
 }
 
 export async function registerUser({
@@ -20,15 +22,19 @@ export async function registerUser({
   email,
   password,
 }: RegisterUserInput): Promise<RegisterUserOutput> {
-  const existing = await prisma.user.findUnique({ where: { email } })
+  const normalizedEmail = email.trim().toLowerCase()
+
+  const existing = await prisma.user.findUnique({
+    where: { email: normalizedEmail },
+  })
   if (existing) {
     throw new Error('E-mail já cadastrado!')
   }
 
   const hashed = await hashPassword(password)
 
-  const user = await prisma.user.create({
-    data: { name, email, password: hashed },
+  const { password: _, ...user } = await prisma.user.create({
+    data: { name, email: normalizedEmail, password: hashed },
   })
 
   const token = signJwt({ id: user.id, email: user.email })

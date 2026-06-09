@@ -2,6 +2,7 @@ import { faker } from '@faker-js/faker'
 import { describe, expect, it } from 'vitest'
 
 import { registerUser } from '@/app/auth/register-user'
+import { prisma } from '@/infra/db/prisma'
 import { createCategory } from './create-category'
 import { updateCategory } from './update-category'
 
@@ -71,6 +72,23 @@ describe('updateCategory', () => {
     await expect(
       updateCategory(fromA.id, { name: 'Hackeada' }, userB.id),
     ).rejects.toThrow('Categoria não encontrada')
+  })
+
+  it('rejects an explicit null for a non-nullable field instead of silently no-opping', async () => {
+    const user = await makeUser()
+    const original = await createCategory(
+      { name: 'Original', color: '#111', icon: 'home' },
+      user.id,
+    )
+
+    await expect(
+      updateCategory(original.id, { name: null }, user.id),
+    ).rejects.toThrow('Nome, cor e ícone não podem ser nulos')
+
+    const stored = await prisma.category.findUniqueOrThrow({
+      where: { id: original.id },
+    })
+    expect(stored.name).toBe('Original')
   })
 
   it('bumps updatedAt on change', async () => {

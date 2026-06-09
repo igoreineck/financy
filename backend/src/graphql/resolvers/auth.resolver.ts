@@ -1,8 +1,7 @@
-import type { User } from '@prisma/client'
 import { Arg, Mutation, Query, Resolver, UseMiddleware } from 'type-graphql'
 
 import { loginUser } from '@/app/auth/login-user'
-import { registerUser } from '@/app/auth/register-user'
+import { type SafeUser, registerUser } from '@/app/auth/register-user'
 import { GqlUser } from '@/graphql/decorators/gql-user.decorator'
 import { LoginInput, RegisterInput } from '@/graphql/inputs/auth.input'
 import { IsAuth } from '@/graphql/middlewares/is-auth.middleware'
@@ -27,7 +26,7 @@ export class AuthResolver {
 
   @Query(() => UserModel)
   @UseMiddleware(IsAuth)
-  async me(@GqlUser() user: User): Promise<User> {
+  async me(@GqlUser() user: SafeUser): Promise<SafeUser> {
     return user
   }
 }

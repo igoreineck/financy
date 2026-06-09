@@ -55,6 +55,7 @@ Apollo Sandbox is served at the same URL — paste the operations below into it.
 | `pnpm check` | Biome lint **and** format with autofix — run before every commit |
 | `pnpm migrate` | `prisma migrate dev` (pass `--name <slug>` for new migrations) |
 | `pnpm generate` | Regenerate the Prisma client without migrating |
+| `pnpm export-schema` | Build the GraphQL schema and write `./schema.graphql` for the frontend |
 
 ## Project layout
 
@@ -91,7 +92,7 @@ backend/
 
 ### Scalar / enum types
 
-- `DateTime` — ISO-8601 string.
+- `DateTimeISO` — ISO-8601 string (TypeGraphQL's built-in scalar for `Date`).
 - `TransactionType` — `INCOME | EXPENSE`.
 - `amount` is **integer cents** (`100` = R$ 1,00). Never a float; SQLite floats round badly.
 
@@ -102,8 +103,8 @@ type UserModel {
   id: ID!
   name: String!
   email: String!
-  createdAt: DateTime!
-  updatedAt: DateTime!
+  createdAt: DateTimeISO!
+  updatedAt: DateTimeISO!
 }
 
 type AuthOutput {
@@ -117,8 +118,8 @@ type CategoryModel {
   color: String!
   icon: String!
   description: String       # nullable
-  createdAt: DateTime!
-  updatedAt: DateTime!
+  createdAt: DateTimeISO!
+  updatedAt: DateTimeISO!
 }
 
 type TransactionModel {
@@ -126,11 +127,11 @@ type TransactionModel {
   description: String!
   amount: Int!              # cents
   type: TransactionType!
-  occurredAt: DateTime!
+  occurredAt: DateTimeISO!
   categoryId: ID!
-  category: CategoryModel!  # resolved via FieldResolver
-  createdAt: DateTime!
-  updatedAt: DateTime!
+  category: CategoryModel!  # eagerly loaded via Prisma include
+  createdAt: DateTimeISO!
+  updatedAt: DateTimeISO!
 }
 ```
 
@@ -157,14 +158,14 @@ input CreateTransactionInput {
   description: String!
   amount: Int!
   type: TransactionType!
-  occurredAt: DateTime!
+  occurredAt: DateTimeISO!
   categoryId: ID!
 }
 input UpdateTransactionInput {    # all nullable
   description: String
   amount: Int
   type: TransactionType
-  occurredAt: DateTime
+  occurredAt: DateTimeISO
   categoryId: ID
 }
 ```
@@ -183,13 +184,13 @@ input UpdateTransactionInput {    # all nullable
 
 | Operation | Auth | Returns | Notes |
 |---|---|---|---|
-| `register(data: RegisterInput!)` | public | `AuthOutput!` | Hashes password, issues 1-day JWT |
-| `login(data: LoginInput!)` | public | `AuthOutput!` | Throws `Usuário não cadastrado!` if the email is unknown or `Senha inválida!` on a bad password |
+| `register(data: RegisterInput!)` | public | `AuthOutput!` | Hashes password, normalizes email (trim + lowercase), issues 1-day JWT |
+| `login(data: LoginInput!)` | public | `AuthOutput!` | Normalizes email casing; both unknown email and bad password throw `Credenciais inválidas!` |
 | `createCategory(data: CreateCategoryInput!)` | required | `CategoryModel!` | |
-| `updateCategory(id: ID!, data: UpdateCategoryInput!)` | required | `CategoryModel!` | Partial; `description: null` clears |
+| `updateCategory(id: ID!, data: UpdateCategoryInput!)` | required | `CategoryModel!` | Partial; `description: null` clears the field; passing `null` on `name`/`color`/`icon` throws `Nome, cor e ícone não podem ser nulos` |
 | `deleteCategory(id: ID!)` | required | `Boolean!` | Blocks with `Categoria possui transações associadas e não pode ser excluída` if linked transactions exist (FK is `onDelete: Restrict`) |
 | `createTransaction(data: CreateTransactionInput!)` | required | `TransactionModel!` | Rejects with `Categoria não encontrada` if `categoryId` belongs to another user |
-| `updateTransaction(id: ID!, data: UpdateTransactionInput!)` | required | `TransactionModel!` | Partial; cross-user `categoryId` → `Categoria não encontrada` |
+| `updateTransaction(id: ID!, data: UpdateTransactionInput!)` | required | `TransactionModel!` | Partial; cross-user `categoryId` → `Categoria não encontrada`; explicit `null` on any field → `Campos obrigatórios não podem ser nulos` |
 | `deleteTransaction(id: ID!)` | required | `Boolean!` | |
 
 ### Example operations
@@ -246,6 +247,8 @@ curl -s -X POST http://localhost:4000/graphql \
 ## Authorization model
 
 Every resolver that reads or writes `Category` or `Transaction` is decorated with `@UseMiddleware(IsAuth)` and every Prisma call is scoped to the caller's `userId`. Cross-user access returns the same "não encontrado" message used for genuinely missing rows — the API never confirms whether another user's resource exists. See `docs/02-escopo-por-usuario.md` for the full invariant and the IDOR cases the tests cover.
+
+The JWT context distinguishes three states: no token (or a token whose user no longer exists) → `Usuário não autenticado!`; expired token → `Sessão expirada!`; malformed/forged token → `Token inválido!`. The FE can branch on these to decide whether to refresh, redirect to login, or surface a generic auth failure.
 
 User-facing error messages are in Portuguese (the assignment is a Brazilian course); everything else — code, tests, comments, commits — is English.
 

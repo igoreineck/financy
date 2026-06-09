@@ -1,13 +1,13 @@
-import type { Transaction } from '@prisma/client'
-
 import { prisma } from '@/infra/db/prisma'
+import type { TransactionWithCategory } from './create-transaction'
 
 export async function getTransaction(
   id: string,
   userId: string,
-): Promise<Transaction> {
+): Promise<TransactionWithCategory> {
   const transaction = await prisma.transaction.findFirst({
     where: { id, userId },
+    include: { category: true },
   })
   if (!transaction) throw new Error('Transação não encontrada')
   return transaction
