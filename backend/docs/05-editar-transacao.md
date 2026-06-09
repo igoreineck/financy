@@ -44,22 +44,22 @@ Ver [02 — Escopo por usuário](./02-escopo-por-usuario.md). Dois pontos:
 ## Testing
 
 - `src/app/transactions/update-transaction.spec.ts`
-  - [ ] update parcial (só `description`) altera só o campo enviado.
-  - [ ] `amount: 0` é aceito (distinguir de "não enviado").
-  - [ ] update com `id` de outro usuário → `Transação não encontrada`.
-  - [ ] update com `categoryId` de outro usuário → `Categoria não encontrada`.
-  - [ ] `updatedAt` é atualizado.
+  - [x] update parcial (só `description`) altera só o campo enviado.
+  - [x] `amount: 0` é aceito (distinguir de "não enviado").
+  - [x] update com `id` de outro usuário → `Transação não encontrada`.
+  - [x] update com `categoryId` de outro usuário → `Categoria não encontrada`.
+  - [x] `updatedAt` é atualizado.
 - `src/graphql/resolvers/transaction.resolver.spec.ts`
-  - [ ] mutation retorna o objeto atualizado.
-  - [ ] usuário A não consegue editar transação de B.
+  - [x] mutation retorna o objeto atualizado.
+  - [x] usuário A não consegue editar transação de B.
 
 ## Acceptance criteria
 
-- [ ] Update parcial preserva campos não enviados.
-- [ ] `amount: 0` aceito.
-- [ ] Update cross-user → `Transação não encontrada`.
-- [ ] Mudança de `categoryId` para categoria alheia → `Categoria não encontrada`.
-- [ ] Suite verde.
+- [x] Update parcial preserva campos não enviados.
+- [x] `amount: 0` aceito.
+- [x] Update cross-user → `Transação não encontrada`.
+- [x] Mudança de `categoryId` para categoria alheia → `Categoria não encontrada`.
+- [x] Suite verde.
 
 ## Depends on
 

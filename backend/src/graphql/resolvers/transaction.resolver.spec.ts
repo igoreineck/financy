@@ -106,6 +106,19 @@ const LIST_TRANSACTIONS = /* GraphQL */ `
   }
 `
 
+const UPDATE_TRANSACTION = /* GraphQL */ `
+  mutation UpdateTransaction($id: ID!, $data: UpdateTransactionInput!) {
+    updateTransaction(id: $id, data: $data) {
+      id
+      description
+      amount
+      type
+      occurredAt
+      categoryId
+    }
+  }
+`
+
 describe('TransactionResolver', () => {
   it('createTransaction with token creates and returns the object', async () => {
     const user = await makeUser()
@@ -233,6 +246,74 @@ describe('TransactionResolver', () => {
 
     expect(result.data).toBeNull()
     expect(result.errors?.[0]?.message).toBe('Usuário não autenticado!')
+  })
+
+  it('updateTransaction returns the updated object', async () => {
+    const user = await makeUser()
+    const category = await makeCategory(user.id)
+
+    const created = await execute(
+      CREATE_TRANSACTION,
+      {
+        data: {
+          description: 'Almoço',
+          amount: 1234,
+          type: 'EXPENSE',
+          occurredAt: '2026-06-08T12:00:00.000Z',
+          categoryId: category.id,
+        },
+      },
+      user.id,
+    )
+    const id = (created.data?.createTransaction as { id: string }).id
+
+    const result = await execute(
+      UPDATE_TRANSACTION,
+      { id, data: { description: 'Janta', amount: 2000 } },
+      user.id,
+    )
+
+    expect(result.errors).toBeUndefined()
+    const updated = result.data?.updateTransaction as {
+      id: string
+      description: string
+      amount: number
+      type: string
+    }
+    expect(updated.id).toBe(id)
+    expect(updated.description).toBe('Janta')
+    expect(updated.amount).toBe(2000)
+    expect(updated.type).toBe('EXPENSE')
+  })
+
+  it('updateTransaction rejects editing another user transaction', async () => {
+    const owner = await makeUser()
+    const attacker = await makeUser()
+    const category = await makeCategory(owner.id)
+
+    const created = await execute(
+      CREATE_TRANSACTION,
+      {
+        data: {
+          description: 'Privada',
+          amount: 1234,
+          type: 'EXPENSE',
+          occurredAt: '2026-06-08T12:00:00.000Z',
+          categoryId: category.id,
+        },
+      },
+      owner.id,
+    )
+    const id = (created.data?.createTransaction as { id: string }).id
+
+    const result = await execute(
+      UPDATE_TRANSACTION,
+      { id, data: { description: 'Hackeada' } },
+      attacker.id,
+    )
+
+    expect(result.data).toBeNull()
+    expect(result.errors?.[0]?.message).toBe('Transação não encontrada')
   })
 
   it('createTransaction rejects invalid type values at the schema level', async () => {
