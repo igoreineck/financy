@@ -175,7 +175,9 @@ input UpdateTransactionInput {    # all nullable
 |---|---|---|---|
 | `me` | required | `UserModel!` | The authenticated user row |
 | `listCategories` | required | `[CategoryModel!]!` | Only the caller's categories |
+| `category(id: ID!)` | required | `CategoryModel!` | Cross-user or missing id → `Categoria não encontrada` |
 | `listTransactions` | required | `[TransactionModel!]!` | Only the caller's transactions, ordered by `occurredAt DESC` |
+| `transaction(id: ID!)` | required | `TransactionModel!` | Cross-user or missing id → `Transação não encontrada` |
 
 ### Mutations
 

@@ -104,6 +104,18 @@ const DELETE_CATEGORY = /* GraphQL */ `
   }
 `
 
+const GET_CATEGORY = /* GraphQL */ `
+  query GetCategory($id: ID!) {
+    category(id: $id) {
+      id
+      name
+      color
+      icon
+      description
+    }
+  }
+`
+
 describe('CategoryResolver', () => {
   it('createCategory with token creates a category', async () => {
     const user = await makeUser()
@@ -307,6 +319,47 @@ describe('CategoryResolver', () => {
 
   it('deleteCategory without token rejects with auth error', async () => {
     const result = await execute(DELETE_CATEGORY, { id: 'whatever' })
+
+    expect(result.data).toBeNull()
+    expect(result.errors?.[0]?.message).toBe('Usuário não autenticado!')
+  })
+
+  it('category returns the category owned by the user', async () => {
+    const user = await makeUser()
+    const created = await execute(
+      CREATE_CATEGORY,
+      { data: { name: 'Lazer', color: '#22BB55', icon: 'gamepad' } },
+      user.id,
+    )
+    const id = (created.data?.createCategory as { id: string }).id
+
+    const result = await execute(GET_CATEGORY, { id }, user.id)
+
+    expect(result.errors).toBeUndefined()
+    const fetched = result.data?.category as { id: string; name: string }
+    expect(fetched.id).toBe(id)
+    expect(fetched.name).toBe('Lazer')
+  })
+
+  it('category rejects fetching another user category', async () => {
+    const owner = await makeUser()
+    const attacker = await makeUser()
+
+    const created = await execute(
+      CREATE_CATEGORY,
+      { data: { name: 'Privada', color: '#000', icon: 'lock' } },
+      owner.id,
+    )
+    const id = (created.data?.createCategory as { id: string }).id
+
+    const result = await execute(GET_CATEGORY, { id }, attacker.id)
+
+    expect(result.data).toBeNull()
+    expect(result.errors?.[0]?.message).toBe('Categoria não encontrada')
+  })
+
+  it('category without token rejects with auth error', async () => {
+    const result = await execute(GET_CATEGORY, { id: faker.string.uuid() })
 
     expect(result.data).toBeNull()
     expect(result.errors?.[0]?.message).toBe('Usuário não autenticado!')
