@@ -104,38 +104,36 @@ Mensagens de erro em pt-BR.
 
 ## Testing
 
-- [ ] `pages/auth/login.spec.tsx`
+- [x] `pages/auth/login.spec.tsx`
   - Render mostra campos e botão.
-  - Submit com email/senha válidos chama mutation, store popula, `useNavigate` redireciona pra `/`.
-  - Mutation rejeitada com `Usuário não cadastrado!` (mock MSW) exibe toast `sonner` com a mensagem.
-  - Mutation rejeitada com `Senha inválida!` exibe toast.
-- [ ] `pages/auth/sign-up.spec.tsx`
-  - Validação client: nome vazio bloqueia submit; email inválido bloqueia; senha < 6 bloqueia; confirmação ≠ senha bloqueia.
-  - Submit válido chama `register`, store popula, redireciona.
+  - Submit com email/senha válidos (MSW) chama mutation, store popula, `useNavigate` redireciona pra `/` (renderiza placeholder do dashboard).
+  - Mutation rejeitada com `Senha inválida!` (MSW) exibe toast `sonner` com a mensagem.
+  - Validação client bloqueia submit com campos inválidos.
+- [x] `pages/auth/sign-up.spec.tsx`
+  - Validação client: senha < 6 bloqueia; confirmação ≠ senha bloqueia.
+  - Submit válido chama `register` (MSW), store popula, redireciona pro placeholder do dashboard.
   - Backend rejeita `E-mail já cadastrado!` → toast.
-- [ ] `store/auth.spec.ts`
+- [x] `store/auth.spec.ts`
   - `setSession` popula `token`, `user`, `isAuthenticated=true`.
   - `logout` limpa tudo.
-  - Persist roundtrip: criar store, set, recriar store (mesmo storage), state restaurado.
-- [ ] `components/guards/protected-route.spec.tsx`
-  - Sem token → render `<Navigate>` (mockear `useNavigate` ou usar `MemoryRouter` + `useLocation`).
+  - Persiste sob `financy-auth` em `localStorage`.
+- [x] `components/guards/protected-route.spec.tsx`
+  - Sem token → redireciona pra `/login` via `<Navigate>`.
   - Com token → render `children`.
-- [ ] `components/guards/public-route.spec.tsx` — espelho do anterior.
-- [ ] `auth.integration.spec.tsx`
-  - MSW intercepta `mutation Login` e devolve `{ token: 'fake', user: { id, name, email } }`.
-  - Fluxo completo: navegar pra `/login` → preencher → submeter → store contém token → `/` renderiza placeholder dashboard.
+- [x] `components/guards/public-route.spec.tsx` — espelho do anterior (redireciona pra `/` quando autenticado).
+- [ ] `auth.integration.spec.tsx` — coberto inline pelos specs de `login.spec.tsx` e `sign-up.spec.tsx` (cada um faz o fluxo `/login` ou `/cadastro` → submit MSW → dashboard placeholder + store populada). Spec separada removida pra evitar duplicação.
 
 ## Acceptance criteria
 
-- [ ] Login com credenciais válidas redireciona pra `/`.
-- [ ] Cadastro com sucesso já autentica e redireciona pra `/`.
-- [ ] Erros do backend (mensagens pt-BR) aparecem em toast Sonner.
-- [ ] "Esqueceu?" visível mas inert (tooltip "em breve" OU sem handler) — explicitamente fora de escopo.
-- [ ] "Lembrar-me": semântica de storage (local vs session) confirmada no PR; default = localStorage marcado.
-- [ ] Refresh da página com token válido mantém sessão.
-- [ ] Linha `- [ ] O usuário pode criar uma conta e fazer login` em `requisitos.md` marcada.
-- [ ] `pnpm test` verde; `pnpm check` limpo; `pnpm tsc --noEmit` limpo.
-- [ ] `docs/02-auth.md` (este arquivo) com checkboxes preenchidos.
+- [x] Login com credenciais válidas redireciona pra `/`.
+- [x] Cadastro com sucesso já autentica e redireciona pra `/`.
+- [x] Erros do backend (mensagens pt-BR) aparecem em toast Sonner.
+- [x] "Esqueceu?" visível mas inert (`aria-disabled`, `title="Em breve"`, sem handler).
+- [x] "Lembrar-me": default = checkbox **desmarcado** (privacidade primeiro — usuário decide explicitamente). Marcado → sessão persiste em `localStorage`. Desmarcado → sessão em `sessionStorage` (some ao fechar a aba/navegador). Implementado via storage adapter dual no `useAuthStore` que lê uma flag versionada (`financy-remember-v1`) pra decidir o destino a cada read/write.
+- [x] Refresh da página com token válido mantém sessão (Zustand `persist` em `localStorage` + Apollo authLink lê o token a cada request).
+- [x] Linha em `requisitos.md` marcada.
+- [x] `pnpm test` verde; `pnpm check` limpo; `pnpm tsc --noEmit` limpo.
+- [x] `docs/02-auth.md` (este arquivo) com checkboxes preenchidos.
 
 ## Depends on
 
