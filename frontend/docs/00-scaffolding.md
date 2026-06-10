@@ -88,21 +88,21 @@ N/A — sem dados protegidos nesta tarefa.
 
 ## Testing
 
-- [ ] `src/App.spec.tsx` renderiza `<App />` sem erros e confere texto placeholder.
-- [ ] `pnpm test` roda e passa.
+- [x] `src/App.spec.tsx` renderiza `<App />` sem erros e confere texto placeholder.
+- [x] `pnpm test` roda e passa.
 
 ## Acceptance criteria
 
-- [ ] `pnpm install` sem warnings críticos de peer dep.
-- [ ] `pnpm dev` boota Vite em `http://localhost:5173` e renderiza "Financy" sem erros no console.
-- [ ] `pnpm build` compila sem erros.
-- [ ] `pnpm codegen` lê `../backend/schema.graphql` e gera `src/gql/` sem erros.
-- [ ] `pnpm test` verde (pelo menos o smoke test).
-- [ ] `pnpm check` (Biome) limpo.
-- [ ] `pnpm tsc --noEmit` limpo.
-- [ ] `.env.example` com `VITE_API_URL=http://localhost:4000/graphql`.
-- [ ] `.gitignore` exclui `node_modules`, `dist`, `.env`, `src/gql`.
-- [ ] `docs/README.md` (índice) e `docs/00-scaffolding.md` (este arquivo) com checkboxes preenchidos.
+- [x] `pnpm install` sem warnings críticos de peer dep.
+- [x] `pnpm dev` boota Vite em `http://localhost:5173` e renderiza "Financy" sem erros no console.
+- [x] `pnpm build` compila sem erros.
+- [x] `pnpm codegen` lê `../backend/schema.graphql` e gera `src/gql/` sem erros.
+- [x] `pnpm test` verde (pelo menos o smoke test).
+- [x] `pnpm check` (Biome) limpo.
+- [x] `pnpm tsc --noEmit` limpo.
+- [x] `.env.example` com `VITE_API_URL=http://localhost:4000/graphql`.
+- [x] `.gitignore` exclui `node_modules`, `dist`, `.env`, `src/gql`.
+- [x] `docs/README.md` (índice) e `docs/00-scaffolding.md` (este arquivo) com checkboxes preenchidos.
 
 ## Depends on
 
