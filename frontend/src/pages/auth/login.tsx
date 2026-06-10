@@ -59,8 +59,8 @@ export function Login() {
 
   return (
     <AuthCard
-      title="Entrar na conta"
-      subtitle="Acesse sua conta para gerenciar suas transações."
+      title="Fazer login"
+      subtitle="Entre na sua conta para continuar"
       footer={
         <span>
           Não tem conta? <Link to="/cadastro">Cadastre-se</Link>
@@ -75,7 +75,7 @@ export function Login() {
           <Input
             id="email"
             type="email"
-            placeholder="seu@email.com"
+            placeholder="mail@exemplo.com"
             icon={<Mail />}
             error={Boolean(errors.email)}
             autoComplete="email"
@@ -96,7 +96,7 @@ export function Login() {
           <Input
             id="password"
             type="password"
-            placeholder="••••••••"
+            placeholder="Digite sua senha"
             icon={<Lock />}
             error={Boolean(errors.password)}
             autoComplete="current-password"
