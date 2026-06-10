@@ -1,0 +1,42 @@
+query ListCategories {
+  listCategories {
+    id
+    name
+    description
+    icon
+    color
+    createdAt
+  }
+}
+
+query ListTransactionsForStats {
+  listTransactions {
+    id
+    categoryId
+  }
+}
+
+mutation CreateCategory($data: CreateCategoryInput!) {
+  createCategory(data: $data) {
+    id
+    name
+    description
+    icon
+    color
+    createdAt
+  }
+}
+
+mutation UpdateCategory($id: ID!, $data: UpdateCategoryInput!) {
+  updateCategory(id: $id, data: $data) {
+    id
+    name
+    description
+    icon
+    color
+  }
+}
+
+mutation DeleteCategory($id: ID!) {
+  deleteCategory(id: $id)
+}
