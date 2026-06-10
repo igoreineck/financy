@@ -79,25 +79,25 @@ Documentos em `src/pages/categories/queries.graphql`.
 
 ## Testing
 
-- [ ] `pages/categories/categories-page.spec.tsx`
+- [x] `pages/categories/categories-page.spec.tsx`
   - Renderiza grid com mock de 3 categorias.
   - Empty state aparece quando `listCategories` retorna `[]`.
   - Click em "Nova categoria" abre o dialog em modo `create`.
   - Stats cards mostram contagens corretas.
-- [ ] `pages/categories/components/category-dialog.spec.tsx`
+- [x] `pages/categories/components/category-dialog.spec.tsx`
   - Modo `create`: submit sem nome bloqueia; sem ícone bloqueia; sem cor bloqueia.
   - Modo `edit`: campos pre-populados com `initialValues`.
   - Submit válido chama mutation com input correto.
   - Cancel fecha sem chamar mutation.
-- [ ] `pages/categories/components/icon-picker.spec.tsx` — click marca selecionado (aria-pressed); apenas um selecionado por vez.
-- [ ] `pages/categories/components/color-picker.spec.tsx` — espelho.
-- [ ] `pages/categories/components/category-delete-confirm.spec.tsx`
+- [x] `pages/categories/components/icon-picker.spec.tsx` — click marca selecionado (aria-pressed); apenas um selecionado por vez.
+- [x] `pages/categories/components/color-picker.spec.tsx` — espelho.
+- [x] `pages/categories/components/category-delete-confirm.spec.tsx`
   - Confirmar chama mutation; cancelar fecha sem chamar.
   - Backend retorna erro de FK (`onDelete: Restrict`) → toast com mensagem.
-- [ ] `pages/categories/hooks/use-category-stats.spec.ts`
+- [x] `pages/categories/hooks/use-category-stats.spec.ts`
   - Inputs vazios → tudo zero.
   - Categorias com transações → contagem certa; `mostUsed` é a com mais transactions.
-- [ ] `categories.integration.spec.tsx` (MSW)
+- [x] `categories.integration.spec.tsx` (MSW)
   - Carrega `ListCategories` → grid renderiza.
   - Cria categoria → grid inclui o novo card.
   - Edita categoria → card atualiza in-place.
@@ -105,15 +105,15 @@ Documentos em `src/pages/categories/queries.graphql`.
 
 ## Acceptance criteria
 
-- [ ] Listagem renderiza cards com ícone (com cor do tag aplicada), nome, descrição, "X itens" (de transações).
-- [ ] "Nova categoria" abre dialog limpo; "Editar" abre dialog pré-preenchido.
-- [ ] Deletar pede confirmação; após confirmar, card desaparece sem refetch visível.
-- [ ] Backend rejeita delete de categoria com transações → toast com mensagem do backend, card permanece.
-- [ ] 3 stat cards no topo (total categorias, total transações, mais usada) refletem o dataset.
-- [ ] Empty state quando zero categorias.
-- [ ] Linhas em `requisitos.md`: criar/deletar/editar/listar categoria marcadas.
-- [ ] `pnpm test` verde; `pnpm check` limpo; `pnpm tsc --noEmit` limpo.
-- [ ] `docs/03-categorias-crud.md` (este arquivo) com checkboxes preenchidos.
+- [x] Listagem renderiza cards com ícone (com cor do tag aplicada), nome, descrição, "X itens" (de transações).
+- [x] "Nova categoria" abre dialog limpo; "Editar" abre dialog pré-preenchido.
+- [x] Deletar pede confirmação; após confirmar, card desaparece sem refetch visível.
+- [x] Backend rejeita delete de categoria com transações → toast com mensagem do backend, card permanece.
+- [x] 3 stat cards no topo (total categorias, total transações, mais usada) refletem o dataset.
+- [x] Empty state quando zero categorias.
+- [x] Linhas em `requisitos.md`: criar/deletar/editar/listar categoria marcadas.
+- [x] `pnpm test` verde; `pnpm check` limpo; `pnpm tsc --noEmit` limpo.
+- [x] `docs/03-categorias-crud.md` (este arquivo) com checkboxes preenchidos.
 
 ## Depends on
 
