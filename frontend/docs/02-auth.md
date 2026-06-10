@@ -129,7 +129,7 @@ Mensagens de erro em pt-BR.
 - [x] Cadastro com sucesso já autentica e redireciona pra `/`.
 - [x] Erros do backend (mensagens pt-BR) aparecem em toast Sonner.
 - [x] "Esqueceu?" visível mas inert (`aria-disabled`, `title="Em breve"`, sem handler).
-- [x] "Lembrar-me": default = checkbox marcado → sessão persiste em `localStorage`. Desmarcado → sessão em `sessionStorage` (some ao fechar a aba/navegador). Implementado via storage adapter dual no `useAuthStore` que lê uma flag versionada (`financy-remember-v1`) pra decidir o destino a cada read/write.
+- [x] "Lembrar-me": default = checkbox **desmarcado** (privacidade primeiro — usuário decide explicitamente). Marcado → sessão persiste em `localStorage`. Desmarcado → sessão em `sessionStorage` (some ao fechar a aba/navegador). Implementado via storage adapter dual no `useAuthStore` que lê uma flag versionada (`financy-remember-v1`) pra decidir o destino a cada read/write.
 - [x] Refresh da página com token válido mantém sessão (Zustand `persist` em `localStorage` + Apollo authLink lê o token a cada request).
 - [x] Linha em `requisitos.md` marcada.
 - [x] `pnpm test` verde; `pnpm check` limpo; `pnpm tsc --noEmit` limpo.

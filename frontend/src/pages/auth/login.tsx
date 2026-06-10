@@ -30,7 +30,7 @@ export function Login() {
     setError,
     formState: { errors },
   } = useForm<LoginForm>({
-    defaultValues: { email: '', password: '', remember: true },
+    defaultValues: { email: '', password: '', remember: false },
   })
 
   const onSubmit = handleSubmit(async raw => {
