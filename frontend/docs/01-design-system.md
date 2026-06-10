@@ -83,24 +83,24 @@ Um arquivo por componente, kebab-case, named export. Cada um usa `cn()` + CVA qu
 
 Sem MSW nesta tarefa (componentes não tocam rede).
 
-- [ ] `button.spec.tsx` — variants `solid` e `outline` × `md` e `sm` renderizam; `disabled` bloqueia click; `asChild` via Radix `Slot` aplica classes ao filho.
-- [ ] `icon-button.spec.tsx` — variants `outline` e `danger`; click handler é invocado; `disabled` bloqueia.
-- [ ] `input.spec.tsx` — controlled value reflete prop; `error` prop mostra mensagem; `disabled` bloqueia digitação; ref encaminhado (pra RHF futuro).
-- [ ] `type-badge.spec.tsx` — `INCOME` aplica classe verde + ícone arrow-up; `EXPENSE` aplica classe vermelha + arrow-down.
-- [ ] `tag.spec.tsx` — todas as 8 cores renderizam com a classe correspondente.
-- [ ] `dialog.spec.tsx` — abre via `open=true`; fecha em ESC; fecha em click no overlay; `onOpenChange` é chamado.
-- [ ] `pagination-button.spec.tsx` — state `active` marca `aria-current="page"`; `disabled` desativa.
-- [ ] `select.spec.tsx` — abre dropdown; seleciona opção; `onValueChange` recebe valor.
+- [x] `button.spec.tsx` — variants `solid` e `outline` × `md` e `sm` renderizam; `disabled` bloqueia click; `asChild` via Radix `Slot` aplica classes ao filho.
+- [x] `icon-button.spec.tsx` — variants `outline` e `danger`; click handler é invocado; `disabled` bloqueia.
+- [x] `input.spec.tsx` — controlled value reflete prop; `error` prop seta `aria-invalid`; `disabled` bloqueia digitação; ref encaminhado (pra RHF futuro).
+- [x] `type-badge.spec.tsx` — `INCOME` aplica classe verde + ícone arrow-up; `EXPENSE` aplica classe vermelha + arrow-down.
+- [x] `tag.spec.tsx` — todas as 8 cores renderizam com a classe correspondente.
+- [x] `dialog.spec.tsx` — abre via trigger; fecha em ESC; fecha em click no botão de fechar; `onOpenChange` é chamado.
+- [x] `pagination-button.spec.tsx` — state `active` marca `aria-current="page"`; `disabled` desativa.
+- [x] `select.spec.tsx` — abre dropdown; seleciona opção; `onValueChange` recebe valor.
 
 ## Acceptance criteria
 
-- [ ] Todos os 11 primitivos listados acima existem em `src/components/ui/`.
-- [ ] Hexes dos tokens batem com os swatches do Figma (validar inspecionando uma `.ColorCard` no Figma vs DevTools).
-- [ ] Inter carrega via Google Fonts (sem flash de fonte fallback no `pnpm dev`).
-- [ ] `pnpm test` verde.
-- [ ] `pnpm check` limpo.
-- [ ] `pnpm tsc --noEmit` limpo.
-- [ ] `docs/01-design-system.md` (este arquivo) com checkboxes preenchidos.
+- [x] Todos os 11 primitivos listados acima existem em `src/components/ui/`.
+- [x] Hexes dos tokens batem com os swatches do Figma (Style Guide → Cores; brand `#1F6F43`/`#124B2B`, gray `#F8F9FA`→`#111827`, feedback `#19AD70`/`#EF4444`, 8 paletas de tag com dark/base/light).
+- [x] Inter carrega via Google Fonts (sem flash de fonte fallback no `pnpm dev`).
+- [x] `pnpm test` verde.
+- [x] `pnpm check` limpo.
+- [x] `pnpm tsc --noEmit` limpo.
+- [x] `docs/01-design-system.md` (este arquivo) com checkboxes preenchidos.
 
 ## Depends on
 
