@@ -57,14 +57,16 @@ pnpm check                                       # Biome lint + format autofix
 pnpm tsc --noEmit                                # type check
 pnpm test                                        # all vitest specs pass
 
-# 5. Commit and push (terse subject — no `feat:` prefix, no tarefa number, no Claude attribution)
+# 5. Commit and push (terse subject in English — no `feat:` prefix, no tarefa number, no Claude attribution)
 git add .
-git commit -m "<short summary>"
+git commit -m "<short English summary>"
 git push -u origin feat/NN-slug
 
-# 6. Open a draft PR — always use the gh CLI, never the GitHub web UI
+# 6. Open a draft PR — always use the gh CLI, never the GitHub web UI.
+#    PR title and body are written in English. User-facing strings inside the
+#    code diff stay in Portuguese, but the PR copy itself is always English.
 gh pr create --draft \
-  --title "<curto>" \
+  --title "<short English title>" \
   --body "$(cat <<'EOF'
 Closes the scope in `docs/NN-<slug>.md`.
 
@@ -72,8 +74,8 @@ Closes the scope in `docs/NN-<slug>.md`.
 - <bullet>
 
 ## Test plan
-- [ ] manual: <como exercitar a feature no browser>
-- [ ] automated: `pnpm test` (ver novos `*.spec.tsx`)
+- [ ] manual: <how to exercise the feature in the browser>
+- [ ] automated: `pnpm test` (covers the new `*.spec.tsx`)
 EOF
 )"
 ```
