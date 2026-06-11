@@ -29,6 +29,23 @@ const periodOptions = [
   { value: 'custom' as const, label: 'Personalizado' },
 ]
 
+const monthFormatter = new Intl.DateTimeFormat('pt-BR', { month: 'long' })
+
+function capitalize(value: string) {
+  return value.charAt(0).toUpperCase() + value.slice(1)
+}
+
+function periodTriggerLabel(kind: PeriodFilter['kind']) {
+  if (kind === 'all') return 'Todo o período'
+  if (kind === 'custom') return 'Personalizado'
+  const now = new Date()
+  const ref =
+    kind === 'last-month'
+      ? new Date(now.getFullYear(), now.getMonth() - 1, 1)
+      : now
+  return `${capitalize(monthFormatter.format(ref))} / ${ref.getFullYear()}`
+}
+
 export function TransactionFilters({
   filters,
   onFiltersChange,
@@ -59,7 +76,7 @@ export function TransactionFilters({
   return (
     <div className="flex flex-col gap-4 rounded-xl border border-gray-200 bg-white p-4">
       <div className="grid grid-cols-1 gap-3 md:grid-cols-4">
-        <div className="flex flex-col gap-1.5 md:col-span-2">
+        <div className="flex flex-col gap-1.5">
           <Label htmlFor="filter-search">Buscar</Label>
           <Input
             id="filter-search"
@@ -106,9 +123,7 @@ export function TransactionFilters({
             </SelectContent>
           </Select>
         </div>
-      </div>
 
-      <div className="grid grid-cols-1 gap-3 md:grid-cols-4">
         <div className="flex flex-col gap-1.5">
           <Label htmlFor="filter-period">Período</Label>
           <Select
@@ -118,7 +133,9 @@ export function TransactionFilters({
             }
           >
             <SelectTrigger id="filter-period" aria-label="Período">
-              <SelectValue />
+              <SelectValue>
+                {periodTriggerLabel(filters.period.kind)}
+              </SelectValue>
             </SelectTrigger>
             <SelectContent>
               {periodOptions.map(option => (
@@ -129,30 +146,30 @@ export function TransactionFilters({
             </SelectContent>
           </Select>
         </div>
-
-        {filters.period.kind === 'custom' ? (
-          <>
-            <div className="flex flex-col gap-1.5">
-              <Label htmlFor="filter-from">De</Label>
-              <Input
-                id="filter-from"
-                type="date"
-                value={filters.period.from ?? ''}
-                onChange={event => setCustomFrom(event.target.value)}
-              />
-            </div>
-            <div className="flex flex-col gap-1.5">
-              <Label htmlFor="filter-to">Até</Label>
-              <Input
-                id="filter-to"
-                type="date"
-                value={filters.period.to ?? ''}
-                onChange={event => setCustomTo(event.target.value)}
-              />
-            </div>
-          </>
-        ) : null}
       </div>
+
+      {filters.period.kind === 'custom' ? (
+        <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
+          <div className="flex flex-col gap-1.5">
+            <Label htmlFor="filter-from">De</Label>
+            <Input
+              id="filter-from"
+              type="date"
+              value={filters.period.from ?? ''}
+              onChange={event => setCustomFrom(event.target.value)}
+            />
+          </div>
+          <div className="flex flex-col gap-1.5">
+            <Label htmlFor="filter-to">Até</Label>
+            <Input
+              id="filter-to"
+              type="date"
+              value={filters.period.to ?? ''}
+              onChange={event => setCustomTo(event.target.value)}
+            />
+          </div>
+        </div>
+      ) : null}
     </div>
   )
 }

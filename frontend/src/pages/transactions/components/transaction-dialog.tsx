@@ -25,6 +25,7 @@ import {
 import { toIsoDate } from '@/lib/format'
 import { cn } from '@/lib/utils'
 import { useMutation, useQuery } from '@apollo/client/react'
+import { CircleArrowDown, CircleArrowUp } from 'lucide-react'
 import { Controller, useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 import { z } from 'zod'
@@ -86,13 +87,10 @@ export function TransactionDialog({
     handleSubmit,
     reset,
     setError,
-    watch,
     formState: { errors },
   } = useForm<TransactionForm>({
     defaultValues: buildDefaults(initialValues),
   })
-
-  const currentType = watch('type')
 
   const onSubmit = handleSubmit(async raw => {
     const parsed = transactionSchema.safeParse({
@@ -142,14 +140,10 @@ export function TransactionDialog({
     <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle
-            className={cn(
-              currentType === 'INCOME' ? 'text-success' : 'text-danger',
-            )}
-          >
+          <DialogTitle>
             {mode === 'create' ? 'Nova transação' : 'Editar transação'}
           </DialogTitle>
-          <DialogDescription>Registre suas entradas e saídas</DialogDescription>
+          <DialogDescription>Registre sua despesa ou receita</DialogDescription>
         </DialogHeader>
 
         <form className="flex flex-col gap-5" onSubmit={onSubmit} noValidate>
@@ -159,11 +153,12 @@ export function TransactionDialog({
             render={({ field }) => (
               <div
                 aria-label="Tipo da transação"
-                className="grid grid-cols-2 gap-2 rounded-lg bg-gray-100 p-1"
+                className="grid grid-cols-2 gap-3"
               >
                 <TypeToggleButton
                   active={field.value === 'EXPENSE'}
                   tone="danger"
+                  icon={<CircleArrowDown className="size-5" />}
                   onClick={() => field.onChange('EXPENSE')}
                 >
                   Despesa
@@ -171,6 +166,7 @@ export function TransactionDialog({
                 <TypeToggleButton
                   active={field.value === 'INCOME'}
                   tone="success"
+                  icon={<CircleArrowUp className="size-5" />}
                   onClick={() => field.onChange('INCOME')}
                 >
                   Receita
@@ -188,7 +184,7 @@ export function TransactionDialog({
             </Label>
             <Input
               id="description"
-              placeholder="Ex. Mercado"
+              placeholder="Ex. Almoço no restaurante"
               error={Boolean(errors.description)}
               {...register('description')}
             />
@@ -199,47 +195,52 @@ export function TransactionDialog({
             ) : null}
           </div>
 
-          <div className="flex flex-col gap-1.5">
-            <Label htmlFor="amount" state={errors.amount ? 'error' : 'default'}>
-              Valor
-            </Label>
-            <Controller
-              control={control}
-              name="amount"
-              render={({ field }) => (
-                <CurrencyInput
-                  id="amount"
-                  value={Number(field.value) || 0}
-                  onChange={field.onChange}
-                  error={Boolean(errors.amount)}
-                />
-              )}
-            />
-            {errors.amount ? (
-              <span className="text-xs text-danger">
-                {errors.amount.message}
-              </span>
-            ) : null}
-          </div>
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+            <div className="flex flex-col gap-1.5">
+              <Label
+                htmlFor="occurredAt"
+                state={errors.occurredAt ? 'error' : 'default'}
+              >
+                Data
+              </Label>
+              <Input
+                id="occurredAt"
+                type="date"
+                error={Boolean(errors.occurredAt)}
+                {...register('occurredAt')}
+              />
+              {errors.occurredAt ? (
+                <span className="text-xs text-danger">
+                  {errors.occurredAt.message}
+                </span>
+              ) : null}
+            </div>
 
-          <div className="flex flex-col gap-1.5">
-            <Label
-              htmlFor="occurredAt"
-              state={errors.occurredAt ? 'error' : 'default'}
-            >
-              Data
-            </Label>
-            <Input
-              id="occurredAt"
-              type="date"
-              error={Boolean(errors.occurredAt)}
-              {...register('occurredAt')}
-            />
-            {errors.occurredAt ? (
-              <span className="text-xs text-danger">
-                {errors.occurredAt.message}
-              </span>
-            ) : null}
+            <div className="flex flex-col gap-1.5">
+              <Label
+                htmlFor="amount"
+                state={errors.amount ? 'error' : 'default'}
+              >
+                Valor
+              </Label>
+              <Controller
+                control={control}
+                name="amount"
+                render={({ field }) => (
+                  <CurrencyInput
+                    id="amount"
+                    value={Number(field.value) || 0}
+                    onChange={field.onChange}
+                    error={Boolean(errors.amount)}
+                  />
+                )}
+              />
+              {errors.amount ? (
+                <span className="text-xs text-danger">
+                  {errors.amount.message}
+                </span>
+              ) : null}
+            </div>
           </div>
 
           <div className="flex flex-col gap-1.5">
@@ -295,6 +296,7 @@ export function TransactionDialog({
 type TypeToggleButtonProps = {
   active: boolean
   tone: 'success' | 'danger'
+  icon: React.ReactNode
   onClick: () => void
   children: React.ReactNode
 }
@@ -302,6 +304,7 @@ type TypeToggleButtonProps = {
 function TypeToggleButton({
   active,
   tone,
+  icon,
   onClick,
   children,
 }: TypeToggleButtonProps) {
@@ -311,14 +314,15 @@ function TypeToggleButton({
       aria-pressed={active}
       onClick={onClick}
       className={cn(
-        'flex h-10 items-center justify-center rounded-md text-sm font-medium transition-colors',
+        'flex h-12 items-center justify-center gap-2 rounded-lg border bg-white text-sm font-medium transition-colors',
         active
           ? tone === 'success'
-            ? 'bg-white text-success shadow-sm'
-            : 'bg-white text-danger shadow-sm'
-          : 'text-gray-500 hover:text-gray-700',
+            ? 'border-success text-success'
+            : 'border-danger text-danger'
+          : 'border-gray-300 text-gray-500 hover:text-gray-700',
       )}
     >
+      <span aria-hidden="true">{icon}</span>
       {children}
     </button>
   )

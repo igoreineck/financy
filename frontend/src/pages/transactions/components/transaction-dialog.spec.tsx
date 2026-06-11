@@ -73,19 +73,22 @@ afterEach(async () => {
 })
 
 describe('<TransactionDialog />', () => {
-  it('toggles between Despesa and Receita and changes the header color', async () => {
+  it('toggles between Despesa and Receita marking the active option', async () => {
     seedCategories()
     const user = userEvent.setup()
     renderDialog()
 
-    const heading = screen.getByRole('heading', { name: 'Nova transação' })
-    expect(heading).toHaveClass('text-danger')
+    const despesa = screen.getByRole('button', { name: /Despesa/i })
+    const receita = screen.getByRole('button', { name: /Receita/i })
 
-    await user.click(screen.getByRole('button', { name: 'Receita' }))
-    expect(heading).toHaveClass('text-success')
+    expect(despesa).toHaveAttribute('aria-pressed', 'true')
+    expect(despesa).toHaveClass('border-danger')
+    expect(receita).toHaveAttribute('aria-pressed', 'false')
 
-    await user.click(screen.getByRole('button', { name: 'Despesa' }))
-    expect(heading).toHaveClass('text-danger')
+    await user.click(receita)
+    expect(receita).toHaveAttribute('aria-pressed', 'true')
+    expect(receita).toHaveClass('border-success')
+    expect(despesa).toHaveAttribute('aria-pressed', 'false')
   })
 
   it('emits the typed amount as cents through the CurrencyInput', async () => {

@@ -3,7 +3,8 @@ import { Tag, type TagColor } from '@/components/ui/tag'
 import { TypeBadge } from '@/components/ui/type-badge'
 import { formatCurrencyCents, formatDate } from '@/lib/format'
 import { cn } from '@/lib/utils'
-import { isCategoryColor } from '@/pages/categories/color-map'
+import { iconBgClassFor, isCategoryColor } from '@/pages/categories/color-map'
+import { iconMap, isCategoryIcon } from '@/pages/categories/icon-map'
 import { Pencil, Trash2 } from 'lucide-react'
 
 export type TransactionRowData = {
@@ -34,12 +35,26 @@ export function TransactionRow({
   const color: TagColor = isCategoryColor(transaction.category.color)
     ? transaction.category.color
     : 'gray'
+  const Icon = isCategoryIcon(transaction.category.icon)
+    ? iconMap[transaction.category.icon]
+    : null
   const sign = transaction.type === 'INCOME' ? '+' : '-'
 
   return (
     <tr className="border-b border-gray-200 last:border-b-0">
       <td className="px-4 py-4 text-sm font-medium text-gray-800">
-        {transaction.description}
+        <div className="flex items-center gap-3">
+          <span
+            aria-hidden="true"
+            className={cn(
+              'flex size-10 shrink-0 items-center justify-center rounded-lg',
+              iconBgClassFor(color),
+            )}
+          >
+            {Icon ? <Icon className="size-5" /> : null}
+          </span>
+          {transaction.description}
+        </div>
       </td>
       <td className="px-4 py-4 text-sm text-gray-600">
         {formatDate(transaction.occurredAt)}
@@ -56,8 +71,7 @@ export function TransactionRow({
           transaction.type === 'INCOME' ? 'text-success' : 'text-danger',
         )}
       >
-        {sign}
-        {formatCurrencyCents(transaction.amount)}
+        {sign} {formatCurrencyCents(transaction.amount)}
       </td>
       <td className="px-4 py-4">
         <div className="flex items-center justify-end gap-2">

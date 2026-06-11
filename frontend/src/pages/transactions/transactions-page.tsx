@@ -52,7 +52,7 @@ export function TransactionsPage() {
         <div>
           <h1 className="text-2xl font-bold text-gray-800">Transações</h1>
           <p className="text-sm text-gray-500">
-            Gerencie suas entradas e saídas
+            Gerencie todas as suas transações financeiras
           </p>
         </div>
         <Button onClick={() => setDialogState({ mode: 'create' })}>
@@ -128,9 +128,16 @@ export function TransactionsPage() {
               >
                 <ChevronLeft className="size-4" />
               </PaginationButton>
-              <span className="text-xs text-gray-500">
-                Página {page} de {totalPages}
-              </span>
+              {Array.from({ length: totalPages }, (_, i) => i + 1).map(p => (
+                <PaginationButton
+                  key={p}
+                  aria-label={`Página ${p}`}
+                  active={p === page}
+                  onClick={() => setPage(p)}
+                >
+                  {p}
+                </PaginationButton>
+              ))}
               <PaginationButton
                 aria-label="Próxima página"
                 onClick={() => setPage(page + 1)}
