@@ -83,27 +83,27 @@ Documentos em `src/pages/transactions/queries.graphql`.
 
 ## Testing
 
-- [ ] `pages/transactions/transactions-page.spec.tsx`
+- [x] `pages/transactions/transactions-page.spec.tsx`
   - Renderiza 10 linhas + indicador `1 a 10 | 27 resultados`.
   - Click em "Próxima página" mostra restantes.
   - Empty state quando filtro retorna vazio.
-- [ ] `pages/transactions/components/transaction-filters.spec.tsx`
+- [x] `pages/transactions/components/transaction-filters.spec.tsx`
   - Search filtra por descrição (case-insensitive, substring).
   - Tipo filtra apenas INCOME / EXPENSE.
   - Categoria filtra; "Todas" desliga o filtro.
   - Período "Este mês" mostra só as do mês corrente; "Personalizado" filtra range custom.
   - Filtros combinam (AND).
-- [ ] `pages/transactions/components/transaction-dialog.spec.tsx`
+- [x] `pages/transactions/components/transaction-dialog.spec.tsx`
   - Toggle Despesa/Receita altera classe visível.
   - `<CurrencyInput>` digitando "12,34" emite `1234`.
   - Submit valida obrigatórios; submit válido chama mutation com input certo.
   - Modo edit pre-popula tudo (incluindo categoria selecionada).
-- [ ] `pages/transactions/components/transaction-delete-confirm.spec.tsx` — confirmar chama mutation; cancelar fecha.
-- [ ] `pages/transactions/hooks/use-filtered-transactions.spec.ts`
+- [x] `pages/transactions/components/transaction-delete-confirm.spec.tsx` — confirmar chama mutation; cancelar fecha.
+- [x] `pages/transactions/hooks/use-filtered-transactions.spec.ts`
   - Total recalcula com filtros aplicados.
   - Paginação respeita filtros.
   - Trocar filtro reseta pra página 1.
-- [ ] `lib/format.spec.ts`
+- [x] `lib/format.spec.ts`
   - `formatCurrencyCents(1234) === 'R$ 12,34'`.
   - `formatCurrencyCents(0) === 'R$ 0,00'`.
   - `formatCurrencyCents(1234567) === 'R$ 12.345,67'`.
@@ -111,20 +111,20 @@ Documentos em `src/pages/transactions/queries.graphql`.
   - `parseCurrencyToCents('12,34') === 1234`.
   - `parseCurrencyToCents('R$ 12.345,67') === 1234567`.
   - `formatDate('2025-11-30T00:00:00Z') === '30/11/25'`.
-- [ ] `transactions.integration.spec.tsx` (MSW)
+- [x] `transactions.integration.spec.tsx` (MSW)
   - Lista carrega; create insere linha; update atualiza linha; delete remove linha.
 
 ## Acceptance criteria
 
-- [ ] Tabela com colunas: Descrição, Data, Categoria (Tag), Tipo (TypeBadge), Valor (formatado com sinal), Ações.
-- [ ] "Nova transação" abre dialog limpo; edit abre pré-preenchido (incluindo categoria).
-- [ ] Deletar pede confirmação; após confirmar, linha some.
-- [ ] Filtros combinam (AND); paginação recomputa total com filtros aplicados.
-- [ ] Valor enviado ao backend é Int em centavos.
-- [ ] Toasts em sucesso e erro de cada operação.
-- [ ] Linhas em `requisitos.md`: criar/deletar/editar/listar transação marcadas.
-- [ ] `pnpm test` verde; `pnpm check` limpo; `pnpm tsc --noEmit` limpo.
-- [ ] `docs/04-transacoes-crud.md` (este arquivo) com checkboxes preenchidos.
+- [x] Tabela com colunas: Descrição, Data, Categoria (Tag), Tipo (TypeBadge), Valor (formatado com sinal), Ações.
+- [x] "Nova transação" abre dialog limpo; edit abre pré-preenchido (incluindo categoria).
+- [x] Deletar pede confirmação; após confirmar, linha some.
+- [x] Filtros combinam (AND); paginação recomputa total com filtros aplicados.
+- [x] Valor enviado ao backend é Int em centavos.
+- [x] Toasts em sucesso e erro de cada operação.
+- [x] Linhas em `requisitos.md`: criar/deletar/editar/listar transação marcadas.
+- [x] `pnpm test` verde; `pnpm check` limpo; `pnpm tsc --noEmit` limpo.
+- [x] `docs/04-transacoes-crud.md` (este arquivo) com checkboxes preenchidos.
 
 ## Depends on
 
