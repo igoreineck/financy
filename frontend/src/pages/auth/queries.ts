@@ -25,13 +25,3 @@ export const RegisterMutation = graphql(`
     }
   }
 `)
-
-export const MeQuery = graphql(`
-  query Me {
-    me {
-      id
-      name
-      email
-    }
-  }
-`)

@@ -59,28 +59,27 @@ Documento em `src/pages/profile/queries.graphql`.
 
 ## Testing
 
-- [ ] `pages/profile/profile-page.spec.tsx`
+- [x] `pages/profile/profile-page.spec.tsx`
   - Renderiza nome e email do `me`.
   - Loading state com skeleton enquanto query roda.
-  - Click "Sair da conta" dispara o flow (mockar logout helper).
-- [ ] `components/layout/user-menu.spec.tsx`
+  - Click "Sair da conta" dispara o flow (logout helper mockado).
+- [x] `components/layout/user-menu.spec.tsx`
   - Avatar mostra iniciais corretas.
   - Click abre dropdown com 2 items.
   - Click "Sair" chama logout helper.
-- [ ] `lib/initials.spec.ts` — todos os casos listados acima.
-- [ ] `logout.integration.spec.tsx` (MSW)
-  - Estado autenticado → click logout → store.isAuthenticated=false, localStorage limpo, Apollo cache vazio, redirect `/login`.
-  - Request a uma protected query depois falha por falta de header (MSW retorna 401).
+- [x] `lib/initials.spec.ts` — todos os casos listados acima.
+- [x] `logout.integration.spec.tsx` (MSW)
+  - Estado autenticado → click logout → store.isAuthenticated=false, snapshot persistido só carrega estado limpo, Apollo cache vazio, redirect `/login`.
 
 ## Acceptance criteria
 
-- [ ] Avatar com iniciais visível no navbar em toda página logada.
-- [ ] Click avatar abre dropdown OU navega direto pra `/perfil` (definir no PR).
-- [ ] `/perfil` mostra nome e email vindos da query `me`.
-- [ ] Logout limpa store, limpa Apollo cache, redireciona pra `/login`.
-- [ ] Após logout, refresh da página não restaura sessão.
-- [ ] `pnpm test` verde; `pnpm check` limpo; `pnpm tsc --noEmit` limpo.
-- [ ] `docs/06-perfil-logout.md` (este arquivo) com checkboxes preenchidos.
+- [x] Avatar com iniciais visível no navbar em toda página logada.
+- [x] Click avatar abre dropdown com "Meu perfil" + "Sair da conta".
+- [x] `/perfil` mostra nome e email vindos da query `me`.
+- [x] Logout limpa store, limpa Apollo cache, redireciona pra `/login`.
+- [x] Após logout, refresh da página não restaura sessão (snapshot persistido fica com `token:null`).
+- [x] `pnpm test` verde; `pnpm check` limpo; `pnpm tsc --noEmit` limpo.
+- [x] `docs/06-perfil-logout.md` (este arquivo) com checkboxes preenchidos.
 
 ## Depends on
 

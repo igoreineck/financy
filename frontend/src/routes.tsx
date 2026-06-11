@@ -5,7 +5,8 @@ import { PublicLayout } from '@/components/layout/public-layout'
 import { Login } from '@/pages/auth/login'
 import { SignUp } from '@/pages/auth/sign-up'
 import { CategoriesPage } from '@/pages/categories/categories-page'
-import { Dashboard } from '@/pages/dashboard'
+import { DashboardPage } from '@/pages/dashboard/dashboard-page'
+import { ProfilePage } from '@/pages/profile/profile-page'
 import { TransactionsPage } from '@/pages/transactions/transactions-page'
 import { createBrowserRouter } from 'react-router'
 
@@ -38,9 +39,10 @@ export const router = createBrowserRouter([
       </ProtectedRoute>
     ),
     children: [
-      { path: '/', element: <Dashboard /> },
+      { path: '/', element: <DashboardPage /> },
       { path: '/transacoes', element: <TransactionsPage /> },
       { path: '/categorias', element: <CategoriesPage /> },
+      { path: '/perfil', element: <ProfilePage /> },
     ],
   },
 ])

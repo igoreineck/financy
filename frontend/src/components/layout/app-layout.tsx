@@ -1,6 +1,7 @@
 import { Logo } from '@/components/common/logo'
 import { cn } from '@/lib/utils'
 import { NavLink, Outlet } from 'react-router'
+import { UserMenu } from './user-menu'
 
 const navLinks = [
   { to: '/', label: 'Dashboard', end: true },
@@ -34,7 +35,9 @@ export function AppLayout() {
             </NavLink>
           ))}
         </nav>
-        <div aria-hidden="true" />
+        <div className="flex items-center justify-end">
+          <UserMenu />
+        </div>
       </header>
       <main className="flex-1 px-6 py-8">
         <Outlet />
