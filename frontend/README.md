@@ -33,17 +33,17 @@ você pode logar com:
 
 ## Comandos
 
-| Comando | O que faz |
-| --- | --- |
-| `pnpm dev` | Vite dev server em `:5173` (HMR) |
-| `pnpm build` | `tsc -b && vite build` |
-| `pnpm preview` | Serve `dist/` para smoke check |
-| `pnpm test` | Roda todos os `*.spec.tsx` |
-| `pnpm test:watch` | Vitest em watch mode |
-| `pnpm lint` / `pnpm format` | Biome sem / com autofix |
-| `pnpm check` | Biome lint + format autofix — antes de cada commit |
-| `pnpm codegen` | Regera `src/gql/` a partir do schema do backend |
-| `pnpm codegen:watch` | Mesmo, em watch mode |
+| Comando                     | O que faz                                          |
+| --------------------------- | -------------------------------------------------- |
+| `pnpm dev`                  | Vite dev server em `:5173` (HMR)                   |
+| `pnpm build`                | `tsc -b && vite build`                             |
+| `pnpm preview`              | Serve `dist/` para smoke check                     |
+| `pnpm test`                 | Roda todos os `*.spec.tsx`                         |
+| `pnpm test:watch`           | Vitest em watch mode                               |
+| `pnpm lint` / `pnpm format` | Biome sem / com autofix                            |
+| `pnpm check`                | Biome lint + format autofix — antes de cada commit |
+| `pnpm codegen`              | Regera `src/gql/` a partir do schema do backend    |
+| `pnpm codegen:watch`        | Mesmo, em watch mode                               |
 
 Não há script `type-check` separado — `pnpm build` roda `tsc -b`. Para checagem
 rápida, `pnpm tsc --noEmit`.
@@ -69,11 +69,5 @@ src/
     ├── categories/        # grid + CRUD + color/icon pickers
     └── profile/           # form (edita nome; e-mail bloqueado) + logout
 ```
-
-## Documentação por tarefa
-
-Plano de execução em [`docs/README.md`](./docs/README.md). Cada uma das 6
-tarefas tem seu `docs/NN-*.md` com escopo, critérios de aceite e checklist —
-todos já checados.
 
 Requisitos funcionais em [`requisitos.md`](./requisitos.md) (todos marcados).
