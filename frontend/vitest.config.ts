@@ -15,7 +15,7 @@ export default defineConfig({
     setupFiles: ['src/test/setup.ts'],
     css: true,
     env: {
-      VITE_API_URL: 'http://localhost:4000/graphql',
+      VITE_BACKEND_URL: 'http://localhost:4000/graphql',
     },
   },
 })

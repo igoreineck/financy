@@ -17,7 +17,7 @@ Boot do Vite + dependências + tooling + Apollo + codegen apontando pro `backend
 - `vitest.config.ts` — `jsdom`, setupFiles `src/test/setup.ts`, globals `true`.
 - `biome.json` — cópia da do backend (single quote, no semi, kebab-case, 2-space indent, 80 col).
 - `codegen.ts` — `schema: '../backend/schema.graphql'`, `documents: ['src/**/*.graphql', 'src/**/*.tsx']`, presets typed-document-node, output `src/gql/`.
-- `.env.example` — `VITE_API_URL=http://localhost:4000/graphql`
+- `.env.example` — `VITE_BACKEND_URL=http://localhost:4000/graphql`
 - `.gitignore` — `node_modules`, `dist`, `.env`, `.env.local`, `src/gql/` (gerado; decisão registrada aqui — gerado on-the-fly, sem commit).
 - `index.html` — title "Financy", `<link>` Inter Google Fonts.
 - `README.md` — comandos básicos, link pra `docs/README.md`.
@@ -67,10 +67,10 @@ Boot do Vite + dependências + tooling + Apollo + codegen apontando pro `backend
 - `src/main.tsx` — `createRoot`, monta `<App />`.
 - `src/App.tsx` — `<ApolloProvider>` + `<RouterProvider>` + `<Toaster>` (sonner virá depois). Por agora: provider Apollo + placeholder "Financy".
 - `src/routes.tsx` — `createBrowserRouter` com rota única `/` → placeholder.
-- `src/env.ts` — Zod schema validando `VITE_API_URL`. Exporta `env`.
+- `src/env.ts` — Zod schema validando `VITE_BACKEND_URL`. Exporta `env`.
 - `src/index.css` — Tailwind v4 base: `@import "tailwindcss";`. Sem tokens ainda (tarefa 01 preenche).
 - `src/vite-env.d.ts`.
-- `src/lib/apollo.ts` — `new ApolloClient({ link: HttpLink({ uri: env.VITE_API_URL }), cache: new InMemoryCache() })`. Auth link vazio por enquanto (placeholder de hook na tarefa 02).
+- `src/lib/apollo.ts` — `new ApolloClient({ link: HttpLink({ uri: env.VITE_BACKEND_URL }), cache: new InMemoryCache() })`. Auth link vazio por enquanto (placeholder de hook na tarefa 02).
 - `src/lib/utils.ts` — `cn()` (clsx + tailwind-merge).
 - `src/store/auth.ts` — Zustand store com shape final mas valores iniciais vazios: `{ token: null, user: null, isAuthenticated: false, setSession(){}, logout(){} }`. `persist` middleware com chave `'financy-auth'`.
 
@@ -100,7 +100,7 @@ N/A — sem dados protegidos nesta tarefa.
 - [x] `pnpm test` verde (pelo menos o smoke test).
 - [x] `pnpm check` (Biome) limpo.
 - [x] `pnpm tsc --noEmit` limpo.
-- [x] `.env.example` com `VITE_API_URL=http://localhost:4000/graphql`.
+- [x] `.env.example` com `VITE_BACKEND_URL=http://localhost:4000/graphql`.
 - [x] `.gitignore` exclui `node_modules`, `dist`, `.env`, `src/gql`.
 - [x] `docs/README.md` (índice) e `docs/00-scaffolding.md` (este arquivo) com checkboxes preenchidos.
 

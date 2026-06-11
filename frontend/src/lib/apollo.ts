@@ -14,6 +14,6 @@ const authLink = new SetContextLink(prevContext => {
 })
 
 export const apolloClient = new ApolloClient({
-  link: authLink.concat(new HttpLink({ uri: env.VITE_API_URL })),
+  link: authLink.concat(new HttpLink({ uri: env.VITE_BACKEND_URL })),
   cache: new InMemoryCache(),
 })

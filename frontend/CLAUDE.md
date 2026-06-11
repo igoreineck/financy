@@ -95,7 +95,7 @@ Use `gh` for all GitHub interactions — PRs, comments, checks, issues.
 
 ## Commands
 
-Package manager is **pnpm**. Local `.env` must exist (gitignored) — copy from `.env.example` and adjust `VITE_API_URL` if needed.
+Package manager is **pnpm**. Local `.env` must exist (gitignored) — copy from `.env.example` and adjust `VITE_BACKEND_URL` if needed.
 
 | Command | What it does |
 | ------- | ------------ |
@@ -130,7 +130,7 @@ for exercising the dashboard, filters, and pagination in `/transacoes`.
 
 - Stack: **TypeScript + React + Vite + GraphQL**. Apollo Client is fixed (mirrors the reference repo).
 - Layout must follow the Figma as closely as possible (file key `Ix1zaJNlMOhIRHUxaqhmo8`; Style Guide `node-id=3-377`, prototypes `node-id=3-376`).
-- `.env.example` documents every var. The assignment names the env var `VITE_BACKEND_URL` but the codebase already standardized on `VITE_API_URL` (consumed by `src/env.ts` + `src/lib/apollo.ts`) — keep using `VITE_API_URL`.
+- `.env.example` documents every var. The backend URL is `VITE_BACKEND_URL` (consumed by `src/env.ts` + `src/lib/apollo.ts`), matching the assignment's naming.
 - Users only see and manage their own data. The frontend trusts the backend to scope by user, but never sends another user's id and never caches across sessions; logout clears the persisted store.
 
 ## Code style (Biome-enforced)
@@ -221,7 +221,7 @@ frontend/
 
 Runner: **Vitest** with `jsdom`, globals enabled, setup at `src/test/setup.ts`. Provider wrapping comes from `renderWithProviders` in `src/test/render.tsx` (Apollo + MemoryRouter). MSW intercepts network calls — handlers live in `src/test/msw/handlers.ts` and tests can override per-spec via `server.use(...)`.
 
-`vitest.config.ts` injects `VITE_API_URL=http://localhost:4000/graphql` so the Zod env schema parses cleanly without a real `.env`.
+`vitest.config.ts` injects `VITE_BACKEND_URL=http://localhost:4000/graphql` so the Zod env schema parses cleanly without a real `.env`.
 
 The current suite has ~150 specs covering primitives, page flows, hooks, and
 integration tests (MSW + full pages). Run `pnpm test` from a fresh clone after

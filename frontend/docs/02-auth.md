@@ -56,7 +56,7 @@ mutation Register($data: RegisterInput!) {
     return { headers: { ...headers, authorization: token ? `Bearer ${token}` : '' } }
   })
   export const apolloClient = new ApolloClient({
-    link: from([authLink, new HttpLink({ uri: env.VITE_API_URL })]),
+    link: from([authLink, new HttpLink({ uri: env.VITE_BACKEND_URL })]),
     cache: new InMemoryCache(),
   })
   ```

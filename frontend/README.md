@@ -20,7 +20,7 @@ usuário.
 
 ```bash
 pnpm install
-cp .env.example .env                # ajuste VITE_API_URL se o backend não estiver em :4000
+cp .env.example .env                # ajuste VITE_BACKEND_URL se o backend não estiver em :4000
 pnpm codegen                        # gera src/gql/ a partir de ../backend/schema.graphql
 pnpm dev                            # http://localhost:5173
 ```

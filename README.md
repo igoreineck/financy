@@ -40,7 +40,7 @@ pnpm dev                            # http://localhost:4000/graphql
 # 2) frontend (em outro terminal)
 cd frontend
 pnpm install
-cp .env.example .env                # VITE_API_URL já aponta pra :4000
+cp .env.example .env                # VITE_BACKEND_URL já aponta pra :4000
 pnpm codegen                        # gera src/gql/ a partir de ../backend/schema.graphql
 pnpm dev                            # http://localhost:5173
 ```
