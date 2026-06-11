@@ -32,7 +32,7 @@ export function ColorPicker({
             aria-label={color}
             onClick={() => onChange(color)}
             className={cn(
-              'inline-flex h-6 w-full items-center justify-center rounded-md ring-2 ring-offset-4 transition-shadow',
+              'inline-flex h-6 w-full cursor-pointer items-center justify-center rounded-md ring-2 ring-offset-4 transition-shadow',
               'focus-visible:outline-none focus-visible:ring-brand-base/40',
               swatchClassFor(color),
               selected ? ringClassFor(color) : 'ring-gray-200',

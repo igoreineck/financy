@@ -6,6 +6,7 @@ import { Login } from '@/pages/auth/login'
 import { SignUp } from '@/pages/auth/sign-up'
 import { CategoriesPage } from '@/pages/categories/categories-page'
 import { Dashboard } from '@/pages/dashboard'
+import { TransactionsPage } from '@/pages/transactions/transactions-page'
 import { createBrowserRouter } from 'react-router'
 
 export const router = createBrowserRouter([
@@ -38,6 +39,7 @@ export const router = createBrowserRouter([
     ),
     children: [
       { path: '/', element: <Dashboard /> },
+      { path: '/transacoes', element: <TransactionsPage /> },
       { path: '/categorias', element: <CategoriesPage /> },
     ],
   },

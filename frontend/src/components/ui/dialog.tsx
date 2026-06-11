@@ -51,9 +51,9 @@ export function DialogContent({
         {hideCloseButton ? null : (
           <DialogPrimitive.Close
             aria-label="Fechar"
-            className="absolute right-4 top-4 rounded-md text-gray-500 transition-colors hover:text-gray-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-base/40"
+            className="absolute right-4 top-4 inline-flex size-8 cursor-pointer items-center justify-center rounded-lg border border-gray-300 bg-white text-gray-500 transition-colors hover:bg-gray-200 hover:text-gray-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-base/40"
           >
-            <X className="size-5" />
+            <X className="size-4" />
           </DialogPrimitive.Close>
         )}
       </DialogPrimitive.Content>

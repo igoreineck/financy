@@ -33,7 +33,7 @@ export function CategoryCard({
     : 'gray'
 
   return (
-    <article className="flex flex-col gap-4 rounded-xl border border-gray-200 bg-white p-5">
+    <article className="flex h-full flex-col gap-5 rounded-xl border border-gray-200 bg-white p-6">
       <div className="flex items-start justify-between gap-3">
         <div
           className={cn(
@@ -46,18 +46,23 @@ export function CategoryCard({
         <div className="flex items-center gap-2">
           <IconButton
             variant="danger"
+            size="sm"
             aria-label={`Excluir ${category.name}`}
             onClick={onDelete}
           >
             <Trash2 />
           </IconButton>
-          <IconButton aria-label={`Editar ${category.name}`} onClick={onEdit}>
+          <IconButton
+            size="sm"
+            aria-label={`Editar ${category.name}`}
+            onClick={onEdit}
+          >
             <Pencil />
           </IconButton>
         </div>
       </div>
 
-      <div className="flex flex-col gap-1">
+      <div className="flex flex-1 flex-col gap-1">
         <h3 className="text-base font-semibold text-gray-800">
           {category.name}
         </h3>

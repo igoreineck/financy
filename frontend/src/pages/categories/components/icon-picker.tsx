@@ -32,7 +32,7 @@ export function IconPicker({
             aria-label={name}
             onClick={() => onChange(name)}
             className={cn(
-              'inline-flex aspect-square w-full items-center justify-center rounded-lg border transition-colors',
+              'inline-flex aspect-square w-full cursor-pointer items-center justify-center rounded-lg border transition-colors',
               'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-base/40',
               selected
                 ? 'border-brand-base bg-brand-base/10 text-brand-base'

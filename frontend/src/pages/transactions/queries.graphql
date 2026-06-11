@@ -1,0 +1,54 @@
+query ListTransactions {
+  listTransactions {
+    id
+    description
+    amount
+    type
+    occurredAt
+    categoryId
+    category {
+      id
+      name
+      color
+      icon
+    }
+  }
+}
+
+mutation CreateTransaction($data: CreateTransactionInput!) {
+  createTransaction(data: $data) {
+    id
+    description
+    amount
+    type
+    occurredAt
+    categoryId
+    category {
+      id
+      name
+      color
+      icon
+    }
+  }
+}
+
+mutation UpdateTransaction($id: ID!, $data: UpdateTransactionInput!) {
+  updateTransaction(id: $id, data: $data) {
+    id
+    description
+    amount
+    type
+    occurredAt
+    categoryId
+    category {
+      id
+      name
+      color
+      icon
+    }
+  }
+}
+
+mutation DeleteTransaction($id: ID!) {
+  deleteTransaction(id: $id)
+}
