@@ -1,22 +1,79 @@
 # Financy — Frontend
 
-App React + Vite que consome a API GraphQL do `../backend`.
+SPA em React 19 + Vite que consome a API GraphQL do `../backend`. Cobre auth
+(login / cadastro), dashboard, CRUD de categorias e transações, e perfil do
+usuário.
 
-## Comandos
+## Stack
+
+- **React 19 + Vite 7** (sem framework).
+- **Apollo Client 4** com `graphql-codegen` gerando tipos em `src/gql/`.
+- **Tailwind CSS v4** com tokens em `@theme` (`src/index.css`).
+- **Radix UI** para primitivos (Dialog, DropdownMenu, Select).
+- **Zustand** com `persist` para a sessão (dual storage: local/session).
+- **React Hook Form + Zod** para forms; parse on submit, sem `zodResolver`.
+- **React Router 7** (`createBrowserRouter` + guards).
+- **Vitest + MSW + Testing Library** para a bateria de testes.
+- **Biome** para lint + format.
+
+## Setup
 
 ```bash
 pnpm install
-cp .env.example .env       # configure VITE_API_URL se necessário
-pnpm codegen               # gera src/gql/ a partir de ../backend/schema.graphql
-pnpm dev                   # http://localhost:5173
-pnpm build
-pnpm test
-pnpm check                 # Biome lint + format
+cp .env.example .env                # ajuste VITE_API_URL se o backend não estiver em :4000
+pnpm codegen                        # gera src/gql/ a partir de ../backend/schema.graphql
+pnpm dev                            # http://localhost:5173
 ```
 
-## Documentação
+Se o backend estiver rodando com o seed aplicado (`cd ../backend && pnpm seed`),
+você pode logar com:
 
-Plano de execução completo em [`docs/README.md`](./docs/README.md). Cada tarefa
-tem seu próprio `docs/NN-*.md` com escopo, critérios de aceite e checklist.
+- **e-mail**: `conta@teste.com`
+- **senha**: `senha123`
 
-Requisitos funcionais em [`requisitos.md`](./requisitos.md).
+## Comandos
+
+| Comando | O que faz |
+| --- | --- |
+| `pnpm dev` | Vite dev server em `:5173` (HMR) |
+| `pnpm build` | `tsc -b && vite build` |
+| `pnpm preview` | Serve `dist/` para smoke check |
+| `pnpm test` | Roda todos os `*.spec.tsx` |
+| `pnpm test:watch` | Vitest em watch mode |
+| `pnpm lint` / `pnpm format` | Biome sem / com autofix |
+| `pnpm check` | Biome lint + format autofix — antes de cada commit |
+| `pnpm codegen` | Regera `src/gql/` a partir do schema do backend |
+| `pnpm codegen:watch` | Mesmo, em watch mode |
+
+Não há script `type-check` separado — `pnpm build` roda `tsc -b`. Para checagem
+rápida, `pnpm tsc --noEmit`.
+
+## Estrutura
+
+Detalhes completos (arquitetura, convenções, gotchas) em
+[`CLAUDE.md`](./CLAUDE.md). Resumo:
+
+```
+src/
+├── env.ts                 # env Zod-validado
+├── lib/                   # apollo, auth (useLogout), format, initials, utils
+├── store/                 # auth store (Zustand persist)
+├── components/
+│   ├── ui/                # primitivos shadcn-style (Radix + cva + cn)
+│   ├── layout/            # AppLayout (navbar + outlet), UserMenu
+│   └── guards/            # ProtectedRoute, PublicRoute
+└── pages/
+    ├── auth/              # login + sign-up
+    ├── dashboard/         # stats + recentes + categorias
+    ├── transactions/      # tabela + filtros + paginação + CRUD
+    ├── categories/        # grid + CRUD + color/icon pickers
+    └── profile/           # form (edita nome; e-mail bloqueado) + logout
+```
+
+## Documentação por tarefa
+
+Plano de execução em [`docs/README.md`](./docs/README.md). Cada uma das 6
+tarefas tem seu `docs/NN-*.md` com escopo, critérios de aceite e checklist —
+todos já checados.
+
+Requisitos funcionais em [`requisitos.md`](./requisitos.md) (todos marcados).

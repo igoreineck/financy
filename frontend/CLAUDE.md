@@ -17,19 +17,28 @@ The backend lives in `../backend/`. Its GraphQL schema (`../backend/schema.graph
 
 ## Current state
 
-Scaffolding is done (tarefa 00, merged). The app boots, renders a "Financy" placeholder, and has Apollo + Zustand + router + Vitest + MSW wired empty. Remaining work is tracked in [`docs/`](./docs) as 6 sequential tarefas (01 → 06), each its own branch + draft PR + review + merge cycle.
+All 6 tarefas are merged on `main`. The app boots into login, supports the full
+sign-up/login flow, gates protected routes via Zustand, and exposes:
 
-Build order:
+- **Dashboard** (`/`) — stat cards (saldo, receitas, despesas do mês), top-5
+  recent transactions and top-5 most-used categories of the current month,
+  empty state with an inline "+ Nova transação" dialog.
+- **Transações** (`/transacoes`) — table with type/category/description filters,
+  client-side pagination (10 per page), create/edit/delete via dialog.
+- **Categorias** (`/categorias`) — grid of cards with stats (total categorias,
+  total transações, mais usada), create/edit/delete via dialog, color + icon
+  pickers.
+- **Perfil** (`/perfil`) — form to edit `name`; e-mail is read-only. Avatar in
+  the navbar opens a dropdown with "Meu perfil" + "Sair da conta". Logout
+  clears Apollo cache + the persisted Zustand store and redirects to `/login`.
 
-```
-00 → 01 → 02 → 03 → 04 → 05 → 06
-```
-
-Each tarefa assumes everything before it is merged on `main`.
+Each tarefa lives as a scope doc in [`docs/`](./docs); checkboxes there reflect
+shipped state. Current work is polish (Figma-matching tweaks, copy fixes),
+not new modules.
 
 | # | Doc | Scope |
 | - | --- | ----- |
-| 00 | [`docs/00-scaffolding.md`](./docs/00-scaffolding.md) | Vite + deps + Apollo + tooling (done) |
+| 00 | [`docs/00-scaffolding.md`](./docs/00-scaffolding.md) | Vite + deps + Apollo + tooling |
 | 01 | [`docs/01-design-system.md`](./docs/01-design-system.md) | Tokens em `@theme` + primitivos em `src/components/ui/` |
 | 02 | [`docs/02-auth.md`](./docs/02-auth.md) | Login + cadastro + auth store + route guards |
 | 03 | [`docs/03-categorias-crud.md`](./docs/03-categorias-crud.md) | Categorias: list + CRUD |
@@ -108,10 +117,14 @@ End-to-end smoke (with backend running on `:4000`):
 ```bash
 # from ../backend
 pnpm dev                                          # boots Apollo + Express
+pnpm seed                                         # optional — creates conta@teste.com / senha123 with sample data
 # from here
 pnpm codegen                                      # generates src/gql/ from schema
 pnpm dev                                          # http://localhost:5173
 ```
+
+The seed populates 10 categorias and ~70 transações spread over 5 months — handy
+for exercising the dashboard, filters, and pagination in `/transacoes`.
 
 ## Mandatory constraints (from `requisitos.md`)
 
@@ -147,11 +160,11 @@ Conventions Biome can't enforce:
 - **Bundler**: Vite 7 (no framework). React plugin + `@tailwindcss/vite`. Alias `@` → `./src` in `vite.config.ts` and `vitest.config.ts`.
 - **UI**: React 19 + Tailwind CSS v4 (`@import "tailwindcss"` + `@theme` in `src/index.css`). Primitives in `src/components/ui/` are shadcn-style (Radix + `cn()` + `cva` when variants exist). Icons from `lucide-react`.
 - **Forms**: React Hook Form for state, Zod for the schema. Parse on submit (no `zodResolver`) — keeps the schema independent and testable.
-- **Routing**: React Router 7 via `createBrowserRouter` in `src/routes.tsx`. `<ProtectedRoute>` / `<PublicRoute>` wrappers gate by `useAuthStore.isAuthenticated` (added in tarefa 02).
+- **Routing**: React Router 7 via `createBrowserRouter` in `src/routes.tsx`. `<ProtectedRoute>` / `<PublicRoute>` wrappers gate by `useAuthStore.isAuthenticated`.
 - **GraphQL**: Apollo Client 4 (`src/lib/apollo.ts`). Queries/mutations live next to the components that use them (inline `gql\`\`` or `.graphql` files), and `graphql-codegen` generates typed documents into `src/gql/`. Always use the generated `TypedDocumentNode` — never call `useQuery<T>()` with a hand-typed generic.
-- **Auth state**: Zustand store at `src/store/auth.ts` with `persist` middleware (key `'financy-auth'`). Shape: `{ token, user, isAuthenticated, setSession, logout }`. The Apollo `authLink` reads `token` from the store on every request (wired in tarefa 02).
+- **Auth state**: Zustand store at `src/store/auth.ts` with `persist` middleware (key `'financy-auth'`). Shape: `{ token, user, isAuthenticated, setSession, logout }`. The Apollo `authLink` reads `token` from the store on every request. `useLogout()` in `src/lib/auth.ts` clears the Apollo cache, calls `logout()`, and navigates to `/login`.
 - **Env**: `src/env.ts` parses `import.meta.env` through a Zod schema at module load. Missing/invalid vars crash at boot.
-- **Toasts**: `sonner` (added in tarefa 01 with the `<Toaster>` primitive).
+- **Toasts**: `sonner` + the `<Toaster>` primitive in `src/components/ui/`.
 - **Module system**: `"type": "module"`, ESM. With `moduleResolution: bundler`, you do **not** need `.js` extensions on relative imports.
 
 ## Directory layout
@@ -167,25 +180,32 @@ frontend/
 │   ├── index.css                      # @import "tailwindcss" + @theme tokens
 │   ├── gql/                           # generated — DO NOT edit, DO NOT commit
 │   ├── lib/
-│   │   ├── apollo.ts                  # ApolloClient singleton (+ authLink in 02)
+│   │   ├── apollo.ts                  # ApolloClient singleton + authLink
+│   │   ├── auth.ts                    # useLogout() — clear cache + store + redirect
+│   │   ├── format.ts                  # formatCurrencyCents, formatDate, ...
+│   │   ├── initials.ts                # getInitials() for the navbar avatar
 │   │   └── utils.ts                   # cn() helper
 │   ├── store/
-│   │   └── auth.ts                    # Zustand auth store (persist)
+│   │   └── auth.ts                    # Zustand auth store (persist, dual storage)
 │   ├── components/
-│   │   ├── ui/                        # primitives — button, input, dialog, ... (tarefa 01)
-│   │   └── common/                    # logo, app-shell, ... (tarefa 01+)
-│   ├── pages/                         # route components (tarefa 02+)
-│   │   ├── auth/                      # sign-in.tsx, sign-up.tsx
-│   │   ├── dashboard/
-│   │   ├── categories/
-│   │   ├── transactions/
-│   │   └── profile/
+│   │   ├── ui/                        # primitives — button, input, dialog,
+│   │   │                              #   password-input (toggle), dropdown-menu,
+│   │   │                              #   select, tag, sonner, ...
+│   │   ├── common/                    # logo + brand icons
+│   │   ├── guards/                    # ProtectedRoute / PublicRoute
+│   │   └── layout/                    # AppLayout (navbar + outlet), PublicLayout, UserMenu
+│   ├── pages/
+│   │   ├── auth/                      # login.tsx, sign-up.tsx, components/auth-card.tsx
+│   │   ├── dashboard/                 # dashboard-page.tsx + hooks/ + components/
+│   │   ├── categories/                # categories-page.tsx + dialogs + color/icon maps
+│   │   ├── transactions/              # transactions-page.tsx + filters + dialogs
+│   │   └── profile/                   # profile-page.tsx (Me + UpdateProfile)
 │   └── test/
 │       ├── setup.ts                   # vitest global setup (jest-dom + MSW lifecycle)
 │       ├── render.tsx                 # renderWithProviders helper
 │       └── msw/
 │           ├── server.ts              # setupServer(...handlers)
-│           └── handlers.ts            # GraphQL handlers (extended per tarefa)
+│           └── handlers.ts            # GraphQL handlers (extended per spec via server.use)
 ├── biome.json
 ├── codegen.ts
 ├── vite.config.ts
@@ -203,13 +223,21 @@ Runner: **Vitest** with `jsdom`, globals enabled, setup at `src/test/setup.ts`. 
 
 `vitest.config.ts` injects `VITE_API_URL=http://localhost:4000/graphql` so the Zod env schema parses cleanly without a real `.env`.
 
+The current suite has ~150 specs covering primitives, page flows, hooks, and
+integration tests (MSW + full pages). Run `pnpm test` from a fresh clone after
+`pnpm install` + `pnpm codegen` to verify.
+
 **Every tarefa ships tests proportional to its scope.** Use this hierarchy:
 
 1. **Primitive / component tests** — render via `@testing-library/react`, interact via `@testing-library/user-event`, assert via `@testing-library/jest-dom` matchers. Cover variants, disabled state, keyboard/ARIA where it matters.
-2. **Page / flow tests** — `renderWithProviders` + MSW handler for the GraphQL operation. Cover the happy path, a validation error, and a backend-error toast. Use `screen.findBy*` for async UI.
-3. **Auth guard tests** — `<ProtectedRoute>` redirects when `isAuthenticated=false`; `<PublicRoute>` redirects to `/` when authenticated. Tarefa 02 introduces these.
+2. **Hook tests** — use `renderHook` from `@testing-library/react`. Cover the pure-logic hooks (`use-monthly-summary`, `use-category-aggregates`, `use-filtered-transactions`).
+3. **Page / flow tests** — `renderWithProviders` + MSW handler for the GraphQL operation. Cover the happy path, a validation error, and a backend-error toast. Use `screen.findBy*` for async UI.
+4. **Auth guard tests** — `<ProtectedRoute>` redirects when `isAuthenticated=false`; `<PublicRoute>` redirects to `/` when authenticated.
+5. **Integration specs** (e.g. `*.integration.spec.tsx`) — full page mounted with MSW driving the GraphQL surface; assert on user-visible behavior, not implementation details.
 
 **Choose tests by realism, not by checklist.** Add a case when a real user could plausibly hit it (submitting an empty form, the backend returning `Categoria já existe`, navigating away mid-mutation, logging out then back in). Skip contrived permutations unless the code actually branches on them. When a doc's listed cases feel thin, extend them — but only with cases that pull their weight.
+
+**Gotcha with `findBy*` + fake timers**: `findBy*` polls with `setTimeout`, which fake timers freeze. If a test needs `vi.setSystemTime`, either inject the reference date into the hook under test or use `vi.useFakeTimers({ shouldAdvanceTime: true })`. The dashboard integration spec opts for the inject path — it computes seed `occurredAt` relative to the real `new Date()` instead of mocking time.
 
 Run `pnpm test` before every commit.
 
@@ -254,7 +282,8 @@ Never edit `src/gql/`. Never commit it (it's in `.gitignore`). If a teammate's s
 - **Tailwind v4** uses `@theme` in CSS for tokens (not `tailwind.config.js`). Adding a new color/font/radius means editing `src/index.css`, not a config file.
 - **`@apollo/client/react`** is the React entry point in Apollo 4 (`ApolloProvider`, `useQuery`). The bare `@apollo/client` exports the client class. Don't mix them up.
 - **React Router 7** exports `RouterProvider` from `react-router/dom` (not `react-router-dom`). Imports look unusual but match the v7 API.
-- **`useAuthStore` is persisted.** When clearing for a logout test, prefer `useAuthStore.getState().logout()` over manipulating `localStorage` directly.
-- **Money is stored as integer cents** in the backend (`amount: Int!`). Format for display with `Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' })` — divide by 100 first. When sending, multiply by 100 and `Math.round` to integer.
+- **`useAuthStore` persists into `localStorage` OR `sessionStorage`** depending on the "remember me" flag at login. The persist middleware writes back on every `set(...)` — so after `logout()` the storage entry is rewritten with the cleared state, not deleted. Tests should assert on `useAuthStore.getState()` and on the persisted JSON containing `"token":null`, not on the storage key being absent.
+- **Money is stored as integer cents** in the backend (`amount: Int!`). Format for display with `formatCurrencyCents()` (`src/lib/format.ts`). When sending to a mutation, parse via `parseCurrencyToCents()` so user input "12,34" becomes `1234`.
 - **`onDelete: Restrict` on categories** — deleting a category that still has transactions throws on the backend. Surface the error as a toast; don't try to pre-check on the frontend.
 - **Refresh token rotation is not supported.** The token lives for 1 day; when it expires the user re-logs in. Don't build a refresh flow.
+- **Grid column widths must be explicit when alignment matters across rows.** The recent-transactions list uses `grid-cols-[auto_1fr_8rem_9rem]` so the tag and amount columns stay at the same X across rows. With `auto` on the amount column, narrower amounts (`R$ 230,35`) grew the description column and shifted the tag column — visually misaligned.
