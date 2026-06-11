@@ -6,3 +6,12 @@ query Me {
     createdAt
   }
 }
+
+mutation UpdateProfile($data: UpdateProfileInput!) {
+  updateProfile(data: $data) {
+    id
+    name
+    email
+    createdAt
+  }
+}

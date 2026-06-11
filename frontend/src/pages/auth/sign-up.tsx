@@ -1,12 +1,12 @@
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { Link } from '@/components/ui/link'
+import { PasswordInput } from '@/components/ui/password-input'
 import { useAuthStore } from '@/store/auth'
 import { useMutation } from '@apollo/client/react'
-import { Lock, Mail, User } from 'lucide-react'
+import { LogIn, Mail, User } from 'lucide-react'
 import { useForm } from 'react-hook-form'
-import { useNavigate } from 'react-router'
+import { Link, useNavigate } from 'react-router'
 import { toast } from 'sonner'
 import { z } from 'zod'
 import { AuthCard } from './components/auth-card'
@@ -16,7 +16,7 @@ const signUpSchema = z
   .object({
     name: z.string().min(1, 'Nome obrigatório'),
     email: z.string().email('Email inválido'),
-    password: z.string().min(6, 'Senha deve ter pelo menos 6 caracteres'),
+    password: z.string().min(8, 'A senha deve ter no mínimo 8 caracteres'),
     confirmPassword: z.string(),
   })
   .refine(data => data.password === data.confirmPassword, {
@@ -75,22 +75,33 @@ export function SignUp() {
   return (
     <AuthCard
       title="Criar conta"
-      subtitle="Comece a organizar suas finanças em minutos."
+      subtitle="Comece a controlar suas finanças ainda hoje"
+      align="center"
       footer={
-        <span>
-          Já tem conta? <Link to="/login">Fazer login</Link>
-        </span>
+        <div className="flex w-full flex-col gap-4">
+          <div className="flex items-center gap-3 text-xs text-gray-400">
+            <span className="h-px flex-1 bg-gray-200" />
+            ou
+            <span className="h-px flex-1 bg-gray-200" />
+          </div>
+          <p className="text-center text-sm text-gray-500">Já tem uma conta?</p>
+          <Button asChild variant="outline" className="w-full">
+            <Link to="/login">
+              <LogIn className="size-4" /> Fazer login
+            </Link>
+          </Button>
+        </div>
       }
     >
       <form className="flex flex-col gap-5" onSubmit={onSubmit} noValidate>
         <div className="flex flex-col gap-1.5">
           <Label htmlFor="name" state={errors.name ? 'error' : 'default'}>
-            Nome
+            Nome completo
           </Label>
           <Input
             id="name"
             type="text"
-            placeholder="Como podemos te chamar?"
+            placeholder="Seu nome completo"
             icon={<User />}
             error={Boolean(errors.name)}
             autoComplete="name"
@@ -108,7 +119,7 @@ export function SignUp() {
           <Input
             id="email"
             type="email"
-            placeholder="seu@email.com"
+            placeholder="mail@exemplo.com"
             icon={<Mail />}
             error={Boolean(errors.email)}
             autoComplete="email"
@@ -126,11 +137,9 @@ export function SignUp() {
           >
             Senha
           </Label>
-          <Input
+          <PasswordInput
             id="password"
-            type="password"
-            placeholder="Mínimo 6 caracteres"
-            icon={<Lock />}
+            placeholder="Digite sua senha"
             error={Boolean(errors.password)}
             autoComplete="new-password"
             {...register('password')}
@@ -139,7 +148,11 @@ export function SignUp() {
             <span className="text-xs text-danger">
               {errors.password.message}
             </span>
-          ) : null}
+          ) : (
+            <span className="text-xs text-gray-500">
+              A senha deve ter no mínimo 8 caracteres
+            </span>
+          )}
         </div>
 
         <div className="flex flex-col gap-1.5">
@@ -149,11 +162,9 @@ export function SignUp() {
           >
             Confirmar senha
           </Label>
-          <Input
+          <PasswordInput
             id="confirmPassword"
-            type="password"
             placeholder="Repita a senha"
-            icon={<Lock />}
             error={Boolean(errors.confirmPassword)}
             autoComplete="new-password"
             {...register('confirmPassword')}

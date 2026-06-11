@@ -4,29 +4,18 @@ import { type VariantProps, cva } from 'class-variance-authority'
 import type { LucideIcon } from 'lucide-react'
 
 const iconVariants = cva(
-  'flex size-10 shrink-0 items-center justify-center rounded-lg',
+  'flex size-9 shrink-0 items-center justify-center rounded-lg',
   {
     variants: {
       variant: {
         positive: 'bg-green-light text-green-base',
         negative: 'bg-red-light text-red-base',
-        neutral: 'bg-gray-200 text-gray-700',
+        neutral: 'bg-purple-light text-purple-base',
       },
     },
     defaultVariants: { variant: 'neutral' },
   },
 )
-
-const valueVariants = cva('text-3xl font-bold', {
-  variants: {
-    variant: {
-      positive: 'text-success',
-      negative: 'text-danger',
-      neutral: 'text-gray-800',
-    },
-  },
-  defaultVariants: { variant: 'neutral' },
-})
 
 export type StatCardVariant = NonNullable<
   VariantProps<typeof iconVariants>['variant']
@@ -58,7 +47,7 @@ export function StatCard({
           {label}
         </span>
       </div>
-      <span className={cn(valueVariants({ variant }))}>
+      <span className="text-3xl font-bold text-gray-800">
         {formatCurrencyCents(valueCents)}
       </span>
     </div>

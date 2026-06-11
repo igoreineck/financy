@@ -1,8 +1,9 @@
 import { Button } from '@/components/ui/button'
 import { ListCategoriesDocument, ListTransactionsDocument } from '@/gql/graphql'
-import { useAuthStore } from '@/store/auth'
+import { TransactionDialog } from '@/pages/transactions/components/transaction-dialog'
 import { useQuery } from '@apollo/client/react'
 import { ArrowDown, ArrowUp, Plus, Wallet } from 'lucide-react'
+import { useState } from 'react'
 import { Link } from 'react-router'
 import { CategorySummary } from './components/category-summary'
 import {
@@ -14,8 +15,6 @@ import { useCategoryAggregates } from './hooks/use-category-aggregates'
 import { useMonthlySummary } from './hooks/use-monthly-summary'
 
 export function DashboardPage() {
-  const userName = useAuthStore(s => s.user?.name ?? null)
-
   const { data: transactionsData, loading } = useQuery(ListTransactionsDocument)
   const { data: categoriesData } = useQuery(ListCategoriesDocument)
 
@@ -25,18 +24,10 @@ export function DashboardPage() {
   const summary = useMonthlySummary(transactions)
   const aggregates = useCategoryAggregates(transactions, categories)
 
-  const balanceVariant =
-    summary.saldo > 0 ? 'positive' : summary.saldo < 0 ? 'negative' : 'neutral'
+  const [dialogOpen, setDialogOpen] = useState(false)
 
   return (
-    <div className="mx-auto flex max-w-6xl flex-col gap-8">
-      <header className="flex flex-col gap-2">
-        <h1 className="text-2xl font-bold text-gray-800">
-          Olá{userName ? `, ${userName}` : ''} 👋
-        </h1>
-        <p className="text-sm text-gray-500">Aqui está um resumo do seu mês.</p>
-      </header>
-
+    <div className="mx-auto flex max-w-6xl flex-col gap-6">
       <section
         aria-label="Resumo do mês"
         className="grid grid-cols-1 gap-4 sm:grid-cols-3"
@@ -45,7 +36,7 @@ export function DashboardPage() {
           label="Saldo total"
           valueCents={summary.saldo}
           icon={Wallet}
-          variant={balanceVariant}
+          variant="neutral"
         />
         <StatCard
           label="Receitas do mês"
@@ -64,20 +55,27 @@ export function DashboardPage() {
       {loading ? (
         <p className="text-sm text-gray-500">Carregando dashboard...</p>
       ) : transactions.length === 0 ? (
-        <EmptyState />
+        <EmptyState onCreate={() => setDialogOpen(true)} />
       ) : (
-        <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
-          <RecentTransactions
-            transactions={transactions as RecentTransaction[]}
-          />
+        <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
+          <div className="lg:col-span-2">
+            <RecentTransactions
+              transactions={transactions as RecentTransaction[]}
+              onCreate={() => setDialogOpen(true)}
+            />
+          </div>
           <CategorySummary aggregates={aggregates} />
         </div>
       )}
+
+      {dialogOpen ? (
+        <TransactionDialog open onOpenChange={setDialogOpen} mode="create" />
+      ) : null}
     </div>
   )
 }
 
-function EmptyState() {
+function EmptyState({ onCreate }: { onCreate: () => void }) {
   return (
     <div className="flex flex-col items-center gap-4 rounded-xl border border-dashed border-gray-300 bg-white px-6 py-12 text-center">
       <div className="flex size-12 items-center justify-center rounded-full bg-brand-base/10 text-brand-base">
@@ -91,11 +89,14 @@ function EmptyState() {
           Comece criando sua primeira transação
         </p>
       </div>
-      <Button asChild size="sm">
-        <Link to="/transacoes">
+      <div className="flex items-center gap-2">
+        <Button size="sm" onClick={onCreate}>
           <Plus className="size-4" /> Nova transação
-        </Link>
-      </Button>
+        </Button>
+        <Button asChild size="sm" variant="outline">
+          <Link to="/transacoes">Ver transações</Link>
+        </Button>
+      </div>
     </div>
   )
 }

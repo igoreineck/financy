@@ -1,4 +1,5 @@
 import { render, screen, within } from '@testing-library/react'
+import { MemoryRouter } from 'react-router'
 import { describe, expect, it } from 'vitest'
 import type { CategoryAggregate } from '../hooks/use-category-aggregates'
 import { CategorySummary } from './category-summary'
@@ -16,9 +17,13 @@ function build(
   }
 }
 
+function renderSummary(ui: React.ReactElement) {
+  return render(<MemoryRouter>{ui}</MemoryRouter>)
+}
+
 describe('CategorySummary', () => {
   it('renders the empty state when there are no aggregates', () => {
-    render(<CategorySummary aggregates={[]} />)
+    renderSummary(<CategorySummary aggregates={[]} />)
     expect(
       screen.getByText('Sem categorias movimentadas neste mês.'),
     ).toBeInTheDocument()
@@ -28,7 +33,7 @@ describe('CategorySummary', () => {
     const aggregates = Array.from({ length: 7 }, (_, i) =>
       build(String(i), `Cat ${i}`, 1, 1_000 - i),
     )
-    render(<CategorySummary aggregates={aggregates} />)
+    renderSummary(<CategorySummary aggregates={aggregates} />)
     const items = screen.getAllByRole('listitem')
     expect(items).toHaveLength(5)
     expect(within(items[0]).getByText('Cat 0')).toBeInTheDocument()
@@ -36,7 +41,7 @@ describe('CategorySummary', () => {
   })
 
   it('formats count and total per row', () => {
-    render(
+    renderSummary(
       <CategorySummary
         aggregates={[
           build('c1', 'Alimentação', 1, 12_345),
@@ -48,5 +53,13 @@ describe('CategorySummary', () => {
     expect(screen.getByText('3 itens')).toBeInTheDocument()
     expect(screen.getByText('R$ 123,45')).toBeInTheDocument()
     expect(screen.getByText('R$ 99,00')).toBeInTheDocument()
+  })
+
+  it('exposes a "Gerenciar" link pointing to /categorias', () => {
+    renderSummary(<CategorySummary aggregates={[]} />)
+    expect(screen.getByRole('link', { name: /Gerenciar/i })).toHaveAttribute(
+      'href',
+      '/categorias',
+    )
   })
 })

@@ -1,12 +1,8 @@
-import type { TagColor } from '@/components/ui/tag'
+import { Tag, type TagColor } from '@/components/ui/tag'
 import { formatCurrencyCents } from '@/lib/format'
-import { cn } from '@/lib/utils'
-import {
-  iconBgClassFor,
-  isCategoryColor,
-  swatchClassFor,
-} from '@/pages/categories/color-map'
-import { iconMap, isCategoryIcon } from '@/pages/categories/icon-map'
+import { isCategoryColor } from '@/pages/categories/color-map'
+import { ChevronRight } from 'lucide-react'
+import { Link } from 'react-router'
 import type { CategoryAggregate } from '../hooks/use-category-aggregates'
 
 type CategorySummaryProps = {
@@ -23,58 +19,41 @@ export function CategorySummary({
   return (
     <section
       aria-label="Categorias mais usadas"
-      className="flex flex-col gap-4 rounded-xl border border-gray-200 bg-white p-5"
+      className="flex flex-col rounded-xl border border-gray-200 bg-white"
     >
-      <header className="flex items-center justify-between">
-        <h2 className="text-base font-semibold text-gray-800">
-          Categorias mais usadas
+      <header className="flex items-center justify-between px-5 py-4">
+        <h2 className="text-xs font-medium uppercase tracking-wide text-gray-500">
+          Categorias
         </h2>
+        <Link
+          to="/categorias"
+          className="inline-flex items-center gap-1 text-xs font-medium text-brand-base hover:text-brand-dark"
+        >
+          Gerenciar <ChevronRight className="size-3" />
+        </Link>
       </header>
 
       {top.length === 0 ? (
-        <p className="text-sm text-gray-500">
+        <p className="border-t border-gray-200 px-5 py-6 text-sm text-gray-500">
           Sem categorias movimentadas neste mês.
         </p>
       ) : (
-        <ul className="flex flex-col divide-y divide-gray-200">
+        <ul className="flex flex-col divide-y divide-gray-200 border-t border-gray-200">
           {top.map(({ category, count, total }) => {
             const color: TagColor = isCategoryColor(category.color)
               ? category.color
               : 'gray'
-            const Icon = isCategoryIcon(category.icon)
-              ? iconMap[category.icon]
-              : null
             return (
               <li
                 key={category.id}
-                className="flex items-center gap-3 py-3 first:pt-0 last:pb-0"
+                className="flex items-center gap-3 px-5 py-3"
               >
-                <span
-                  aria-hidden="true"
-                  className={cn(
-                    'flex size-10 shrink-0 items-center justify-center rounded-lg',
-                    iconBgClassFor(color),
-                  )}
-                >
-                  {Icon ? <Icon className="size-5" /> : null}
+                <Tag color={color} className="shrink-0">
+                  {category.name}
+                </Tag>
+                <span className="flex-1 text-xs text-gray-500">
+                  {count} {count === 1 ? 'item' : 'itens'}
                 </span>
-                <div className="flex min-w-0 flex-1 flex-col">
-                  <div className="flex items-center gap-2">
-                    <span
-                      aria-hidden="true"
-                      className={cn(
-                        'size-2 shrink-0 rounded-full',
-                        swatchClassFor(color),
-                      )}
-                    />
-                    <span className="truncate text-sm font-medium text-gray-800">
-                      {category.name}
-                    </span>
-                  </div>
-                  <span className="text-xs text-gray-500">
-                    {count} {count === 1 ? 'item' : 'itens'}
-                  </span>
-                </div>
                 <span className="shrink-0 text-sm font-semibold text-gray-800">
                   {formatCurrencyCents(total)}
                 </span>

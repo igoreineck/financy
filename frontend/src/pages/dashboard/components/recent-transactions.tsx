@@ -3,6 +3,13 @@ import { formatCurrencyCents, formatDate } from '@/lib/format'
 import { cn } from '@/lib/utils'
 import { iconBgClassFor, isCategoryColor } from '@/pages/categories/color-map'
 import { iconMap, isCategoryIcon } from '@/pages/categories/icon-map'
+import {
+  ChevronRight,
+  CircleArrowDown,
+  CircleArrowUp,
+  Plus,
+} from 'lucide-react'
+import { Link } from 'react-router'
 
 export type RecentTransaction = {
   id: string
@@ -21,11 +28,13 @@ export type RecentTransaction = {
 type RecentTransactionsProps = {
   transactions: RecentTransaction[]
   limit?: number
+  onCreate?: () => void
 }
 
 export function RecentTransactions({
   transactions,
   limit = 5,
+  onCreate,
 }: RecentTransactionsProps) {
   const sorted = [...transactions]
     .sort(
@@ -37,22 +46,30 @@ export function RecentTransactions({
   return (
     <section
       aria-label="Transações recentes"
-      className="flex flex-col gap-4 rounded-xl border border-gray-200 bg-white p-5"
+      className="flex flex-col rounded-xl border border-gray-200 bg-white"
     >
-      <header className="flex items-center justify-between">
-        <h2 className="text-base font-semibold text-gray-800">
+      <header className="flex items-center justify-between px-5 py-4">
+        <h2 className="text-xs font-medium uppercase tracking-wide text-gray-500">
           Transações recentes
         </h2>
+        <Link
+          to="/transacoes"
+          className="inline-flex items-center gap-1 text-xs font-medium text-brand-base hover:text-brand-dark"
+        >
+          Ver todas <ChevronRight className="size-3" />
+        </Link>
       </header>
 
       {sorted.length === 0 ? (
-        <p className="text-sm text-gray-500">Nenhuma transação por aqui.</p>
+        <p className="border-t border-gray-200 px-5 py-6 text-sm text-gray-500">
+          Nenhuma transação por aqui.
+        </p>
       ) : (
-        <ul className="flex flex-col divide-y divide-gray-200">
+        <ul className="flex flex-col divide-y divide-gray-200 border-t border-gray-200">
           {sorted.map(transaction => (
             <li
               key={transaction.id}
-              className="flex items-center gap-3 py-3 first:pt-0 last:pb-0"
+              className="flex items-center gap-3 px-5 py-3"
             >
               <CategoryIcon transaction={transaction} />
               <div className="flex min-w-0 flex-1 flex-col">
@@ -64,21 +81,19 @@ export function RecentTransactions({
                 </span>
               </div>
               <CategoryTag transaction={transaction} />
-              <span
-                className={cn(
-                  'shrink-0 text-sm font-semibold',
-                  transaction.type === 'INCOME'
-                    ? 'text-success'
-                    : 'text-danger',
-                )}
-              >
-                {transaction.type === 'INCOME' ? '+' : '-'}{' '}
-                {formatCurrencyCents(transaction.amount)}
-              </span>
+              <AmountWithArrow transaction={transaction} />
             </li>
           ))}
         </ul>
       )}
+
+      <button
+        type="button"
+        onClick={onCreate}
+        className="flex items-center justify-center gap-2 border-t border-gray-200 px-5 py-3 text-sm font-medium text-brand-base transition-colors hover:bg-gray-100"
+      >
+        <Plus className="size-4" /> Nova transação
+      </button>
     </section>
   )
 }
@@ -94,11 +109,11 @@ function CategoryIcon({ transaction }: { transaction: RecentTransaction }) {
     <span
       aria-hidden="true"
       className={cn(
-        'flex size-10 shrink-0 items-center justify-center rounded-lg',
+        'flex size-9 shrink-0 items-center justify-center rounded-lg',
         iconBgClassFor(color),
       )}
     >
-      {Icon ? <Icon className="size-5" /> : null}
+      {Icon ? <Icon className="size-4" /> : null}
     </span>
   )
 }
@@ -111,5 +126,21 @@ function CategoryTag({ transaction }: { transaction: RecentTransaction }) {
     <Tag color={color} className="hidden sm:inline-flex">
       {transaction.category.name}
     </Tag>
+  )
+}
+
+function AmountWithArrow({ transaction }: { transaction: RecentTransaction }) {
+  const isIncome = transaction.type === 'INCOME'
+  const Arrow = isIncome ? CircleArrowUp : CircleArrowDown
+  return (
+    <span
+      className={cn(
+        'inline-flex shrink-0 items-center gap-1 text-sm font-semibold',
+        isIncome ? 'text-success' : 'text-danger',
+      )}
+    >
+      {isIncome ? '+' : '-'} {formatCurrencyCents(transaction.amount)}
+      <Arrow className="size-4" aria-hidden="true" />
+    </span>
   )
 }

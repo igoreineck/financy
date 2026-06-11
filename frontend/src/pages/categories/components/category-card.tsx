@@ -37,11 +37,11 @@ export function CategoryCard({
       <div className="flex items-start justify-between gap-3">
         <div
           className={cn(
-            'flex size-12 items-center justify-center rounded-lg',
+            'flex size-10 items-center justify-center rounded-lg',
             iconBgClassFor(color),
           )}
         >
-          {Icon ? <Icon className="size-6" aria-hidden="true" /> : null}
+          {Icon ? <Icon className="size-5" aria-hidden="true" /> : null}
         </div>
         <div className="flex items-center gap-2">
           <IconButton

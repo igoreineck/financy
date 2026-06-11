@@ -12,8 +12,8 @@ describe('StatCard', () => {
     expect(screen.getByText('Receitas do mês')).toBeInTheDocument()
   })
 
-  it('applies the positive variant', () => {
-    const { container } = render(
+  it('keeps the value text neutral regardless of variant', () => {
+    render(
       <StatCard
         label="Saldo total"
         valueCents={5_000}
@@ -21,11 +21,10 @@ describe('StatCard', () => {
         variant="positive"
       />,
     )
-    expect(container.firstChild).toHaveAttribute('data-variant', 'positive')
-    expect(screen.getByText('R$ 50,00')).toHaveClass('text-success')
+    expect(screen.getByText('R$ 50,00')).toHaveClass('text-gray-800')
   })
 
-  it('applies the negative variant', () => {
+  it('marks the variant on the root element', () => {
     const { container } = render(
       <StatCard
         label="Despesas do mês"
@@ -35,7 +34,6 @@ describe('StatCard', () => {
       />,
     )
     expect(container.firstChild).toHaveAttribute('data-variant', 'negative')
-    expect(screen.getByText('R$ 99,00')).toHaveClass('text-danger')
   })
 
   it('defaults to the neutral variant', () => {

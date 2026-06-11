@@ -191,7 +191,10 @@ describe('Dashboard — integração', () => {
       await screen.findByText('Nenhuma transação ainda'),
     ).toBeInTheDocument()
     expect(
-      screen.getByRole('link', { name: /Nova transação/i }),
+      screen.getByRole('button', { name: /Nova transação/i }),
+    ).toBeInTheDocument()
+    expect(
+      screen.getByRole('link', { name: /Ver transações/i }),
     ).toHaveAttribute('href', '/transacoes')
   })
 })

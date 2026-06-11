@@ -89,6 +89,16 @@ const ME = /* GraphQL */ `
   }
 `
 
+const UPDATE_PROFILE = /* GraphQL */ `
+  mutation UpdateProfile($data: UpdateProfileInput!) {
+    updateProfile(data: $data) {
+      id
+      name
+      email
+    }
+  }
+`
+
 describe('AuthResolver', () => {
   it('register returns token + user via GraphQL', async () => {
     const data = {
@@ -223,5 +233,65 @@ describe('AuthResolver', () => {
     const me = result.data?.me as { id: string; email: string }
     expect(me.id).toBe(register.user.id)
     expect(me.email).toBe(data.email)
+  })
+
+  it('updateProfile changes the name for the authenticated user', async () => {
+    const data = {
+      name: faker.person.fullName(),
+      email: faker.internet.email().toLowerCase(),
+      password: faker.internet.password({ length: 12 }),
+    }
+    const registered = await execute(REGISTER, { data })
+    const register = registered.data?.register as {
+      token: string
+      user: { id: string }
+    }
+
+    const result = await execute(
+      UPDATE_PROFILE,
+      { data: { name: 'Outro Nome' } },
+      register.user.id,
+    )
+
+    expect(result.errors).toBeUndefined()
+    const updated = result.data?.updateProfile as {
+      id: string
+      name: string
+      email: string
+    }
+    expect(updated.id).toBe(register.user.id)
+    expect(updated.name).toBe('Outro Nome')
+    expect(updated.email).toBe(data.email)
+  })
+
+  it('updateProfile rejects unauthenticated requests', async () => {
+    const result = await execute(UPDATE_PROFILE, {
+      data: { name: 'Qualquer Nome' },
+    })
+
+    expect(result.data).toBeNull()
+    expect(result.errors?.[0]?.message).toBe('Usuário não autenticado!')
+  })
+
+  it('updateProfile rejects when the new name is blank', async () => {
+    const data = {
+      name: faker.person.fullName(),
+      email: faker.internet.email().toLowerCase(),
+      password: faker.internet.password({ length: 12 }),
+    }
+    const registered = await execute(REGISTER, { data })
+    const register = registered.data?.register as {
+      token: string
+      user: { id: string }
+    }
+
+    const result = await execute(
+      UPDATE_PROFILE,
+      { data: { name: '   ' } },
+      register.user.id,
+    )
+
+    expect(result.data).toBeNull()
+    expect(result.errors?.[0]?.message).toBe('Nome obrigatório!')
   })
 })

@@ -1,5 +1,7 @@
 import { render, screen, within } from '@testing-library/react'
-import { describe, expect, it } from 'vitest'
+import userEvent from '@testing-library/user-event'
+import { MemoryRouter } from 'react-router'
+import { describe, expect, it, vi } from 'vitest'
 import {
   type RecentTransaction,
   RecentTransactions,
@@ -23,9 +25,13 @@ function build(
   }
 }
 
+function renderList(ui: React.ReactElement) {
+  return render(<MemoryRouter>{ui}</MemoryRouter>)
+}
+
 describe('RecentTransactions', () => {
   it('shows an empty message when there are no transactions', () => {
-    render(<RecentTransactions transactions={[]} />)
+    renderList(<RecentTransactions transactions={[]} />)
     expect(screen.getByText('Nenhuma transação por aqui.')).toBeInTheDocument()
   })
 
@@ -37,12 +43,12 @@ describe('RecentTransactions', () => {
         occurredAt: `2025-11-0${(i % 9) + 1}T00:00:00Z`,
       }),
     )
-    render(<RecentTransactions transactions={txs} />)
+    renderList(<RecentTransactions transactions={txs} />)
     expect(screen.getAllByRole('listitem')).toHaveLength(5)
   })
 
   it('orders by occurredAt descending', () => {
-    render(
+    renderList(
       <RecentTransactions
         transactions={[
           build({
@@ -70,7 +76,7 @@ describe('RecentTransactions', () => {
   })
 
   it('renders amount with sign matching the type', () => {
-    render(
+    renderList(
       <RecentTransactions
         transactions={[
           build({ id: 'a', type: 'INCOME', amount: 12_345 }),
@@ -78,7 +84,23 @@ describe('RecentTransactions', () => {
         ]}
       />,
     )
-    expect(screen.getByText('+ R$ 123,45')).toHaveClass('text-success')
-    expect(screen.getByText('- R$ 67,00')).toHaveClass('text-danger')
+    expect(screen.getByText(/^\+ R\$ 123,45/)).toHaveClass('text-success')
+    expect(screen.getByText(/^- R\$ 67,00/)).toHaveClass('text-danger')
+  })
+
+  it('exposes a "Ver todas" link pointing to /transacoes', () => {
+    renderList(<RecentTransactions transactions={[]} />)
+    expect(screen.getByRole('link', { name: /Ver todas/i })).toHaveAttribute(
+      'href',
+      '/transacoes',
+    )
+  })
+
+  it('triggers onCreate when the "Nova transação" button is clicked', async () => {
+    const onCreate = vi.fn()
+    const user = userEvent.setup()
+    renderList(<RecentTransactions transactions={[]} onCreate={onCreate} />)
+    await user.click(screen.getByRole('button', { name: /Nova transação/i }))
+    expect(onCreate).toHaveBeenCalledTimes(1)
   })
 })

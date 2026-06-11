@@ -7,6 +7,7 @@ type AuthCardProps = {
   footer?: ReactNode
   children: ReactNode
   className?: string
+  align?: 'left' | 'center'
 }
 
 export function AuthCard({
@@ -15,6 +16,7 @@ export function AuthCard({
   footer,
   children,
   className,
+  align = 'left',
 }: AuthCardProps) {
   return (
     <div
@@ -23,15 +25,18 @@ export function AuthCard({
         className,
       )}
     >
-      <div className="mb-8 flex flex-col gap-1">
+      <div
+        className={cn(
+          'mb-8 flex flex-col gap-1',
+          align === 'center' && 'items-center text-center',
+        )}
+      >
         <h1 className="text-2xl font-bold text-gray-800">{title}</h1>
         {subtitle ? <p className="text-sm text-gray-500">{subtitle}</p> : null}
       </div>
       {children}
       {footer ? (
-        <div className="mt-6 flex justify-center text-sm text-gray-500">
-          {footer}
-        </div>
+        <div className="mt-6 text-sm text-gray-500">{footer}</div>
       ) : null}
     </div>
   )
