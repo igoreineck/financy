@@ -1,10 +1,16 @@
-type CategoryLike = { id: string; name: string }
+type CategoryLike = { id: string; name: string; icon: string; color: string }
 type TransactionLike = { categoryId: string }
+
+export type MostUsedCategory = {
+  name: string
+  icon: string
+  color: string
+}
 
 export type CategoryStats = {
   totalCategories: number
   totalTransactions: number
-  mostUsed: string | null
+  mostUsed: MostUsedCategory | null
 }
 
 export function useCategoryStats(
@@ -32,7 +38,10 @@ export function useCategoryStats(
     }
   }
 
-  const mostUsed = categories.find(c => c.id === topId)?.name ?? null
+  const top = categories.find(c => c.id === topId)
+  const mostUsed = top
+    ? { name: top.name, icon: top.icon, color: top.color }
+    : null
 
   return { totalCategories, totalTransactions, mostUsed }
 }

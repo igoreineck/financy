@@ -12,6 +12,7 @@ import {
   PawPrint,
   PiggyBank,
   ReceiptText,
+  ShoppingBasket,
   ShoppingCart,
   Tag,
   Ticket,
@@ -21,29 +22,49 @@ import {
 } from 'lucide-react'
 
 export const iconMap = {
-  'piggy-bank': PiggyBank,
   'briefcase-business': BriefcaseBusiness,
-  utensils: Utensils,
-  'shopping-cart': ShoppingCart,
   'car-front': CarFront,
   'heart-pulse': HeartPulse,
+  'piggy-bank': PiggyBank,
+  'shopping-cart': ShoppingCart,
   ticket: Ticket,
   'tool-case': ToolCase,
-  wallet: Wallet,
-  tag: Tag,
-  'book-open': BookOpen,
+  utensils: Utensils,
+  'paw-print': PawPrint,
+  house: House,
   gift: Gift,
   dumbbell: Dumbbell,
-  house: House,
-  'paw-print': PawPrint,
+  'book-open': BookOpen,
+  'shopping-basket': ShoppingBasket,
+  wallet: Wallet,
+  'receipt-text': ReceiptText,
   'baggage-claim': BaggageClaim,
   mailbox: Mailbox,
-  'receipt-text': ReceiptText,
+  tag: Tag,
 } as const satisfies Record<string, LucideIcon>
 
 export type CategoryIconName = keyof typeof iconMap
 
 export const ICON_NAMES = Object.keys(iconMap) as CategoryIconName[]
+
+export const PICKER_ICON_NAMES: CategoryIconName[] = [
+  'briefcase-business',
+  'car-front',
+  'heart-pulse',
+  'piggy-bank',
+  'shopping-cart',
+  'ticket',
+  'tool-case',
+  'utensils',
+  'paw-print',
+  'house',
+  'gift',
+  'dumbbell',
+  'book-open',
+  'shopping-basket',
+  'mailbox',
+  'receipt-text',
+]
 
 export function isCategoryIcon(value: string): value is CategoryIconName {
   return value in iconMap

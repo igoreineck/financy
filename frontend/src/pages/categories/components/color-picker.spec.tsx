@@ -3,7 +3,7 @@ import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { useState } from 'react'
 import { describe, expect, it } from 'vitest'
-import { COLOR_NAMES } from '../color-map'
+import { PICKER_COLOR_NAMES } from '../color-map'
 import { ColorPicker } from './color-picker'
 
 function Wrapper() {
@@ -12,9 +12,9 @@ function Wrapper() {
 }
 
 describe('<ColorPicker />', () => {
-  it('renders all 8 swatches', () => {
+  it('renders all 7 swatches from the picker set', () => {
     render(<Wrapper />)
-    for (const color of COLOR_NAMES) {
+    for (const color of PICKER_COLOR_NAMES) {
       expect(screen.getByRole('button', { name: color })).toBeInTheDocument()
     }
   })

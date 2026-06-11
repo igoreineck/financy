@@ -40,14 +40,14 @@ describe('<CategoryDialog />', () => {
     expect(
       screen.getByRole('heading', { name: 'Nova categoria' }),
     ).toBeInTheDocument()
-    expect(screen.getByLabelText('Nome')).toHaveValue('')
+    expect(screen.getByLabelText('Título')).toHaveValue('')
   })
 
   it('blocks submit when name, icon or color are missing', async () => {
     const user = userEvent.setup()
     renderDialog()
-    await user.click(screen.getByRole('button', { name: 'Criar categoria' }))
-    expect(await screen.findByText('Nome obrigatório')).toBeInTheDocument()
+    await user.click(screen.getByRole('button', { name: 'Salvar' }))
+    expect(await screen.findByText('Título obrigatório')).toBeInTheDocument()
     expect(screen.getByText('Selecione um ícone')).toBeInTheDocument()
     expect(screen.getByText('Selecione uma cor')).toBeInTheDocument()
   })
@@ -63,10 +63,8 @@ describe('<CategoryDialog />', () => {
         color: 'orange',
       },
     })
-    expect(screen.getByLabelText('Nome')).toHaveValue('Alimentação')
-    expect(screen.getByLabelText('Descrição (opcional)')).toHaveValue(
-      'Comida em geral',
-    )
+    expect(screen.getByLabelText('Título')).toHaveValue('Alimentação')
+    expect(screen.getByLabelText('Descrição')).toHaveValue('Comida em geral')
     expect(screen.getByRole('button', { name: 'utensils' })).toHaveAttribute(
       'aria-pressed',
       'true',
@@ -105,10 +103,10 @@ describe('<CategoryDialog />', () => {
     const user = userEvent.setup()
     renderDialog({ onOpenChange })
 
-    await user.type(screen.getByLabelText('Nome'), 'Lazer')
+    await user.type(screen.getByLabelText('Título'), 'Lazer')
     await user.click(screen.getByRole('button', { name: 'ticket' }))
     await user.click(screen.getByRole('button', { name: 'purple' }))
-    await user.click(screen.getByRole('button', { name: 'Criar categoria' }))
+    await user.click(screen.getByRole('button', { name: 'Salvar' }))
 
     await screen.findByText('Categoria criada')
     expect(onOpenChange).toHaveBeenCalledWith(false)
@@ -122,12 +120,12 @@ describe('<CategoryDialog />', () => {
     })
   })
 
-  it('cancel closes without calling any mutation', async () => {
+  it('closes via the X button without calling any mutation', async () => {
     const user = userEvent.setup()
     const onOpenChange = vi.fn()
     renderDialog({ onOpenChange })
 
-    await user.click(screen.getByRole('button', { name: 'Cancelar' }))
+    await user.click(screen.getByRole('button', { name: 'Fechar' }))
     expect(onOpenChange).toHaveBeenCalledWith(false)
   })
 })

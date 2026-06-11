@@ -1,6 +1,6 @@
 import type { TagColor } from '@/components/ui/tag'
 import { cn } from '@/lib/utils'
-import { COLOR_NAMES, swatchClassFor } from '../color-map'
+import { PICKER_COLOR_NAMES, ringClassFor, swatchClassFor } from '../color-map'
 
 type ColorPickerProps = {
   value: TagColor | null
@@ -18,11 +18,11 @@ export function ColorPicker({
       aria-label="Selecionar cor"
       aria-invalid={ariaInvalid || undefined}
       className={cn(
-        'flex items-center gap-2 rounded-lg border border-gray-200 bg-white p-3',
-        ariaInvalid && 'border-danger',
+        'grid w-full grid-cols-7 gap-6',
+        ariaInvalid && 'rounded-lg border border-danger p-1',
       )}
     >
-      {COLOR_NAMES.map(color => {
+      {PICKER_COLOR_NAMES.map(color => {
         const selected = value === color
         return (
           <button
@@ -32,16 +32,12 @@ export function ColorPicker({
             aria-label={color}
             onClick={() => onChange(color)}
             className={cn(
-              'inline-flex size-8 items-center justify-center rounded-full transition-transform',
-              'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-base/40',
-              selected && 'outline-2 outline-offset-2 outline-gray-800',
+              'inline-flex h-6 w-full items-center justify-center rounded-md ring-2 ring-offset-4 transition-shadow',
+              'focus-visible:outline-none focus-visible:ring-brand-base/40',
+              swatchClassFor(color),
+              selected ? ringClassFor(color) : 'ring-gray-200',
             )}
-          >
-            <span
-              className={cn('block size-6 rounded-full', swatchClassFor(color))}
-              aria-hidden="true"
-            />
-          </button>
+          />
         )
       })}
     </div>

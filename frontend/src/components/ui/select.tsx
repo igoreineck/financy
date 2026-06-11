@@ -27,10 +27,10 @@ export function SelectTrigger({
       className={cn(
         'group flex h-12 w-full items-center gap-3 rounded-lg border border-gray-300 bg-white px-4 text-left text-sm text-gray-800 transition-colors',
         'data-[state=open]:border-brand-base',
-        'data-[state-error]:border-danger',
+        'data-state-error:border-danger',
         'focus:outline-none focus-visible:border-brand-base',
         'disabled:cursor-not-allowed disabled:bg-gray-100',
-        'data-[placeholder]:text-gray-400',
+        'data-placeholder:text-gray-400',
         className,
       )}
       {...props}
@@ -41,7 +41,7 @@ export function SelectTrigger({
           className={cn(
             'flex size-5 items-center justify-center text-gray-400 transition-colors',
             'group-data-[state=open]:text-brand-base',
-            'group-data-[state-error]:text-danger',
+            'group-data-state-error:text-danger',
             '[&_svg]:size-5',
           )}
         >
@@ -67,7 +67,7 @@ export function SelectContent({
       <SelectPrimitive.Content
         position={position}
         className={cn(
-          'relative z-50 min-w-[var(--radix-select-trigger-width)] overflow-hidden rounded-lg border border-gray-200 bg-white shadow-md',
+          'relative z-50 min-w-(--radix-select-trigger-width) overflow-hidden rounded-lg border border-gray-200 bg-white shadow-md',
           'data-[state=open]:animate-in data-[state=open]:fade-in-0',
           'data-[state=closed]:animate-out data-[state=closed]:fade-out-0',
           position === 'popper' && 'translate-y-1',
@@ -92,8 +92,8 @@ export function SelectItem({
     <SelectPrimitive.Item
       className={cn(
         'relative flex w-full cursor-default select-none items-center rounded-md px-3 py-2 pr-8 text-sm text-gray-800 outline-none',
-        'data-[highlighted]:bg-gray-100',
-        'data-[disabled]:pointer-events-none data-[disabled]:opacity-50',
+        'data-highlighted:bg-gray-100',
+        'data-disabled:pointer-events-none data-disabled:opacity-50',
         className,
       )}
       {...props}

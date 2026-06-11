@@ -1,11 +1,14 @@
 import { Button } from '@/components/ui/button'
+import type { TagColor } from '@/components/ui/tag'
 import {
   ListCategoriesDocument,
   ListTransactionsForStatsDocument,
 } from '@/gql/graphql'
+import { cn } from '@/lib/utils'
 import { useQuery } from '@apollo/client/react'
-import { FolderOpen, Plus, Receipt, Star } from 'lucide-react'
+import { ArrowDownUp, FolderOpen, Plus, Tag } from 'lucide-react'
 import { useMemo, useState } from 'react'
+import { isCategoryColor, textClassFor } from './color-map'
 import { CategoryCard, type CategoryCardData } from './components/category-card'
 import { CategoryDeleteConfirm } from './components/category-delete-confirm'
 import {
@@ -13,6 +16,7 @@ import {
   type CategoryDialogValues,
 } from './components/category-dialog'
 import { useCategoryStats } from './hooks/use-category-stats'
+import { iconMap, isCategoryIcon } from './icon-map'
 
 export function CategoriesPage() {
   const { data: categoriesData, loading } = useQuery(ListCategoriesDocument)
@@ -39,6 +43,15 @@ export function CategoriesPage() {
     name: string
   } | null>(null)
 
+  const mostUsedIcon =
+    stats.mostUsed && isCategoryIcon(stats.mostUsed.icon)
+      ? iconMap[stats.mostUsed.icon]
+      : null
+  const mostUsedColor: TagColor =
+    stats.mostUsed && isCategoryColor(stats.mostUsed.color)
+      ? stats.mostUsed.color
+      : 'gray'
+
   return (
     <div className="mx-auto flex max-w-6xl flex-col gap-8">
       <header className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
@@ -60,17 +73,31 @@ export function CategoriesPage() {
         <StatCard
           label="Total de categorias"
           value={String(stats.totalCategories)}
-          icon={<FolderOpen className="size-5" />}
+          icon={<Tag className="size-8" />}
+          iconClassName="text-gray-800"
         />
         <StatCard
           label="Total de transações"
           value={String(stats.totalTransactions)}
-          icon={<Receipt className="size-5" />}
+          icon={<ArrowDownUp className="size-8" />}
+          iconClassName="text-purple-base"
         />
         <StatCard
-          label="Categoria mais usada"
-          value={stats.mostUsed ?? '—'}
-          icon={<Star className="size-5" />}
+          label="Categoria mais utilizada"
+          value={stats.mostUsed?.name ?? '—'}
+          icon={
+            mostUsedIcon ? (
+              (() => {
+                const Icon = mostUsedIcon
+                return <Icon className="size-8" />
+              })()
+            ) : (
+              <FolderOpen className="size-8" />
+            )
+          }
+          iconClassName={
+            stats.mostUsed ? textClassFor(mostUsedColor) : 'text-gray-500'
+          }
         />
       </section>
 
@@ -136,19 +163,18 @@ type StatCardProps = {
   label: string
   value: string
   icon: React.ReactNode
+  iconClassName: string
 }
 
-function StatCard({ label, value, icon }: StatCardProps) {
+function StatCard({ label, value, icon, iconClassName }: StatCardProps) {
   return (
     <div className="flex items-center gap-4 rounded-xl border border-gray-200 bg-white p-5">
-      <div className="flex size-10 items-center justify-center rounded-lg bg-brand-base/10 text-brand-base">
-        {icon}
-      </div>
+      <span className={cn('shrink-0', iconClassName)}>{icon}</span>
       <div className="flex flex-col">
+        <span className="text-3xl font-bold text-gray-800">{value}</span>
         <span className="text-xs font-medium uppercase tracking-wide text-gray-500">
           {label}
         </span>
-        <span className="text-lg font-semibold text-gray-800">{value}</span>
       </div>
     </div>
   )

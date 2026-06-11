@@ -129,7 +129,7 @@ describe('<CategoriesPage />', () => {
     expect(
       await screen.findByRole('heading', { name: 'Nova categoria' }),
     ).toBeInTheDocument()
-    expect(screen.getByLabelText('Nome')).toHaveValue('')
+    expect(screen.getByLabelText('Título')).toHaveValue('')
   })
 
   it('shows the correct stat counts', async () => {
@@ -144,7 +144,7 @@ describe('<CategoriesPage />', () => {
     expect(stats).toHaveTextContent('Total de categorias')
     expect(stats).toHaveTextContent('3')
     expect(stats).toHaveTextContent('Total de transações')
-    expect(stats).toHaveTextContent('Categoria mais usada')
+    expect(stats).toHaveTextContent('Categoria mais utilizada')
     expect(stats).toHaveTextContent('Alimentação')
   })
 })
