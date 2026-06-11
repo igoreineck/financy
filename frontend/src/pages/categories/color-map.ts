@@ -11,6 +11,16 @@ export const COLOR_NAMES: TagColor[] = [
   'green',
 ]
 
+export const PICKER_COLOR_NAMES: TagColor[] = [
+  'green',
+  'blue',
+  'purple',
+  'pink',
+  'red',
+  'orange',
+  'yellow',
+]
+
 export function isCategoryColor(value: string): value is TagColor {
   return (COLOR_NAMES as string[]).includes(value)
 }
@@ -37,10 +47,40 @@ const iconBgClass: Record<TagColor, string> = {
   green: 'bg-green-light text-green-base',
 }
 
+const ringClass: Record<TagColor, string> = {
+  gray: 'ring-gray-500',
+  blue: 'ring-blue-base',
+  purple: 'ring-purple-base',
+  pink: 'ring-pink-base',
+  red: 'ring-red-base',
+  orange: 'ring-orange-base',
+  yellow: 'ring-yellow-base',
+  green: 'ring-green-base',
+}
+
+const textClass: Record<TagColor, string> = {
+  gray: 'text-gray-700',
+  blue: 'text-blue-base',
+  purple: 'text-purple-base',
+  pink: 'text-pink-base',
+  red: 'text-red-base',
+  orange: 'text-orange-base',
+  yellow: 'text-yellow-dark',
+  green: 'text-green-base',
+}
+
 export function swatchClassFor(color: TagColor): string {
   return swatchClass[color]
 }
 
 export function iconBgClassFor(color: TagColor): string {
   return iconBgClass[color]
+}
+
+export function ringClassFor(color: TagColor): string {
+  return ringClass[color]
+}
+
+export function textClassFor(color: TagColor): string {
+  return textClass[color]
 }

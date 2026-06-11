@@ -114,20 +114,20 @@ describe('Categorias — fluxo completo', () => {
     ).toBeInTheDocument()
 
     await user.click(screen.getByRole('button', { name: /Nova categoria/i }))
-    await user.type(screen.getByLabelText('Nome'), 'Transporte')
-    await user.click(screen.getByRole('button', { name: 'car-front' }))
+    await user.type(screen.getByLabelText('Título'), 'Transporte')
+    await user.click(screen.getByRole('button', { name: 'house' }))
     await user.click(screen.getByRole('button', { name: 'blue' }))
-    await user.click(screen.getByRole('button', { name: 'Criar categoria' }))
+    await user.click(screen.getByRole('button', { name: 'Salvar' }))
 
     expect(
       await screen.findByRole('heading', { name: 'Transporte' }),
     ).toBeInTheDocument()
 
     await user.click(screen.getByRole('button', { name: 'Editar Transporte' }))
-    const nameInput = screen.getByLabelText('Nome')
+    const nameInput = screen.getByLabelText('Título')
     await user.clear(nameInput)
     await user.type(nameInput, 'Mobilidade')
-    await user.click(screen.getByRole('button', { name: 'Salvar alterações' }))
+    await user.click(screen.getByRole('button', { name: 'Salvar' }))
 
     expect(
       await screen.findByRole('heading', { name: 'Mobilidade' }),

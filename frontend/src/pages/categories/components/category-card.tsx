@@ -1,4 +1,5 @@
 import { IconButton } from '@/components/ui/icon-button'
+import { Tag } from '@/components/ui/tag'
 import type { TagColor } from '@/components/ui/tag'
 import { cn } from '@/lib/utils'
 import { Pencil, Trash2 } from 'lucide-react'
@@ -43,15 +44,15 @@ export function CategoryCard({
           {Icon ? <Icon className="size-6" aria-hidden="true" /> : null}
         </div>
         <div className="flex items-center gap-2">
-          <IconButton aria-label={`Editar ${category.name}`} onClick={onEdit}>
-            <Pencil />
-          </IconButton>
           <IconButton
             variant="danger"
             aria-label={`Excluir ${category.name}`}
             onClick={onDelete}
           >
             <Trash2 />
+          </IconButton>
+          <IconButton aria-label={`Editar ${category.name}`} onClick={onEdit}>
+            <Pencil />
           </IconButton>
         </div>
       </div>
@@ -65,9 +66,12 @@ export function CategoryCard({
         ) : null}
       </div>
 
-      <span className="text-xs font-medium text-gray-500">
-        {transactionCount} {transactionCount === 1 ? 'item' : 'itens'}
-      </span>
+      <div className="flex items-center justify-between gap-2">
+        <Tag color={color}>{category.name}</Tag>
+        <span className="text-xs font-medium text-gray-500">
+          {transactionCount} {transactionCount === 1 ? 'item' : 'itens'}
+        </span>
+      </div>
     </article>
   )
 }

@@ -2,9 +2,9 @@ import { describe, expect, it } from 'vitest'
 import { useCategoryStats } from './use-category-stats'
 
 const categories = [
-  { id: 'c1', name: 'Alimentação' },
-  { id: 'c2', name: 'Transporte' },
-  { id: 'c3', name: 'Lazer' },
+  { id: 'c1', name: 'Alimentação', icon: 'utensils', color: 'orange' },
+  { id: 'c2', name: 'Transporte', icon: 'car-front', color: 'blue' },
+  { id: 'c3', name: 'Lazer', icon: 'ticket', color: 'purple' },
 ]
 
 describe('useCategoryStats', () => {
@@ -35,7 +35,7 @@ describe('useCategoryStats', () => {
     expect(useCategoryStats(categories, transactions)).toEqual({
       totalCategories: 3,
       totalTransactions: 5,
-      mostUsed: 'Alimentação',
+      mostUsed: { name: 'Alimentação', icon: 'utensils', color: 'orange' },
     })
   })
 

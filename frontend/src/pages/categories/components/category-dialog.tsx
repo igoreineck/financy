@@ -3,7 +3,6 @@ import {
   Dialog,
   DialogContent,
   DialogDescription,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog'
@@ -25,7 +24,7 @@ import { ColorPicker } from './color-picker'
 import { IconPicker } from './icon-picker'
 
 const categorySchema = z.object({
-  name: z.string().trim().min(1, 'Nome obrigatório'),
+  name: z.string().trim().min(1, 'Título obrigatório'),
   description: z.string().trim().optional(),
   icon: z.string().refine(isCategoryIcon, 'Selecione um ícone'),
   color: z.string().refine(isCategoryColor, 'Selecione uma cor'),
@@ -131,18 +130,18 @@ export function CategoryDialog({
             {mode === 'create' ? 'Nova categoria' : 'Editar categoria'}
           </DialogTitle>
           <DialogDescription>
-            Organize suas transações em grupos personalizados.
+            Organize suas transações com categorias
           </DialogDescription>
         </DialogHeader>
 
         <form className="flex flex-col gap-5" onSubmit={onSubmit} noValidate>
           <div className="flex flex-col gap-1.5">
             <Label htmlFor="name" state={errors.name ? 'error' : 'default'}>
-              Nome
+              Título
             </Label>
             <Input
               id="name"
-              placeholder="Ex: Alimentação"
+              placeholder="Ex. Alimentação"
               error={Boolean(errors.name)}
               {...register('name')}
             />
@@ -152,15 +151,16 @@ export function CategoryDialog({
           </div>
 
           <div className="flex flex-col gap-1.5">
-            <Label htmlFor="description">Descrição (opcional)</Label>
+            <Label htmlFor="description">Descrição</Label>
             <Input
               id="description"
-              placeholder="Ex: Restaurantes e mercado"
+              placeholder="Descrição da categoria"
               {...register('description')}
             />
+            <span className="text-xs text-gray-500">Opcional</span>
           </div>
 
-          <div className="flex flex-col gap-1.5">
+          <div className="flex flex-col gap-3">
             <Label state={errors.icon ? 'error' : 'default'}>Ícone</Label>
             <Controller
               control={control}
@@ -178,7 +178,7 @@ export function CategoryDialog({
             ) : null}
           </div>
 
-          <div className="flex flex-col gap-1.5">
+          <div className="flex flex-col gap-3">
             <Label state={errors.color ? 'error' : 'default'}>Cor</Label>
             <Controller
               control={control}
@@ -198,22 +198,9 @@ export function CategoryDialog({
             ) : null}
           </div>
 
-          <DialogFooter>
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => handleOpenChange(false)}
-            >
-              Cancelar
-            </Button>
-            <Button type="submit" disabled={loading}>
-              {loading
-                ? 'Salvando...'
-                : mode === 'create'
-                  ? 'Criar categoria'
-                  : 'Salvar alterações'}
-            </Button>
-          </DialogFooter>
+          <Button type="submit" className="w-full" disabled={loading}>
+            {loading ? 'Salvando...' : 'Salvar'}
+          </Button>
         </form>
       </DialogContent>
     </Dialog>
