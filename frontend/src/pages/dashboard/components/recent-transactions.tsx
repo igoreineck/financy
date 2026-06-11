@@ -69,10 +69,10 @@ export function RecentTransactions({
           {sorted.map(transaction => (
             <li
               key={transaction.id}
-              className="flex items-center gap-3 px-5 py-3"
+              className="grid grid-cols-[auto_1fr_auto] items-center gap-4 px-5 py-4 sm:grid-cols-[auto_1fr_8rem_9rem]"
             >
               <CategoryIcon transaction={transaction} />
-              <div className="flex min-w-0 flex-1 flex-col">
+              <div className="flex min-w-0 flex-col gap-1">
                 <span className="truncate text-sm font-medium text-gray-800">
                   {transaction.description}
                 </span>
@@ -80,8 +80,12 @@ export function RecentTransactions({
                   {formatDate(transaction.occurredAt)}
                 </span>
               </div>
-              <CategoryTag transaction={transaction} />
-              <AmountWithArrow transaction={transaction} />
+              <div className="hidden justify-self-center sm:block">
+                <CategoryTag transaction={transaction} />
+              </div>
+              <div className="justify-self-end">
+                <AmountWithArrow transaction={transaction} />
+              </div>
             </li>
           ))}
         </ul>
@@ -122,25 +126,19 @@ function CategoryTag({ transaction }: { transaction: RecentTransaction }) {
   const color: TagColor = isCategoryColor(transaction.category.color)
     ? transaction.category.color
     : 'gray'
-  return (
-    <Tag color={color} className="hidden sm:inline-flex">
-      {transaction.category.name}
-    </Tag>
-  )
+  return <Tag color={color}>{transaction.category.name}</Tag>
 }
 
 function AmountWithArrow({ transaction }: { transaction: RecentTransaction }) {
   const isIncome = transaction.type === 'INCOME'
   const Arrow = isIncome ? CircleArrowUp : CircleArrowDown
   return (
-    <span
-      className={cn(
-        'inline-flex shrink-0 items-center gap-1 text-sm font-semibold',
-        isIncome ? 'text-success' : 'text-danger',
-      )}
-    >
+    <span className="inline-flex shrink-0 items-center gap-3 text-sm font-semibold text-gray-800">
       {isIncome ? '+' : '-'} {formatCurrencyCents(transaction.amount)}
-      <Arrow className="size-4" aria-hidden="true" />
+      <Arrow
+        className={cn('size-4', isIncome ? 'text-success' : 'text-danger')}
+        aria-hidden="true"
+      />
     </span>
   )
 }

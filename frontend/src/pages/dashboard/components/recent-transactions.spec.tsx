@@ -75,7 +75,7 @@ describe('RecentTransactions', () => {
     expect(within(items[2]).getByText('Oldest')).toBeInTheDocument()
   })
 
-  it('renders amount with sign matching the type', () => {
+  it('renders amount with sign matching the type, keeping the text neutral', () => {
     renderList(
       <RecentTransactions
         transactions={[
@@ -84,8 +84,12 @@ describe('RecentTransactions', () => {
         ]}
       />,
     )
-    expect(screen.getByText(/^\+ R\$ 123,45/)).toHaveClass('text-success')
-    expect(screen.getByText(/^- R\$ 67,00/)).toHaveClass('text-danger')
+    const income = screen.getByText(/^\+ R\$ 123,45/)
+    const expense = screen.getByText(/^- R\$ 67,00/)
+    expect(income).toHaveClass('text-gray-800')
+    expect(expense).toHaveClass('text-gray-800')
+    expect(income).not.toHaveClass('text-success')
+    expect(expense).not.toHaveClass('text-danger')
   })
 
   it('exposes a "Ver todas" link pointing to /transacoes', () => {

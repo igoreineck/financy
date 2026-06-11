@@ -2,7 +2,7 @@ import { Button } from '@/components/ui/button'
 import { ListCategoriesDocument, ListTransactionsDocument } from '@/gql/graphql'
 import { TransactionDialog } from '@/pages/transactions/components/transaction-dialog'
 import { useQuery } from '@apollo/client/react'
-import { ArrowDown, ArrowUp, Plus, Wallet } from 'lucide-react'
+import { CircleArrowDown, CircleArrowUp, Plus, Wallet } from 'lucide-react'
 import { useState } from 'react'
 import { Link } from 'react-router'
 import { CategorySummary } from './components/category-summary'
@@ -41,13 +41,13 @@ export function DashboardPage() {
         <StatCard
           label="Receitas do mês"
           valueCents={summary.receitas}
-          icon={ArrowUp}
+          icon={CircleArrowUp}
           variant="positive"
         />
         <StatCard
           label="Despesas do mês"
           valueCents={summary.despesas}
-          icon={ArrowDown}
+          icon={CircleArrowDown}
           variant="negative"
         />
       </section>

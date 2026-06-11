@@ -62,13 +62,6 @@ export function ProfilePage() {
 
   return (
     <div className="mx-auto flex max-w-xl flex-col gap-6">
-      <header className="flex flex-col gap-2">
-        <h1 className="text-2xl font-bold text-gray-800">Meu perfil</h1>
-        <p className="text-sm text-gray-500">
-          Veja e gerencie a conta conectada.
-        </p>
-      </header>
-
       <section
         aria-label="Dados do usuário"
         className="flex flex-col gap-6 rounded-xl border border-gray-200 bg-white p-8"

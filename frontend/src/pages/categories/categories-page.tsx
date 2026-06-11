@@ -56,7 +56,7 @@ export function CategoriesPage() {
     <div className="mx-auto flex max-w-6xl flex-col gap-8">
       <header className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex flex-col gap-2">
-          <h1 className="text-2xl font-bold text-gray-800">Categorias</h1>
+          <h1 className="text-2xl font-semibold text-gray-800">Categorias</h1>
           <p className="text-sm text-gray-500">
             Organize suas transações por categorias
           </p>
@@ -171,7 +171,7 @@ function StatCard({ label, value, icon, iconClassName }: StatCardProps) {
     <div className="flex flex-col gap-1 rounded-xl border border-gray-200 bg-white p-5">
       <div className="flex items-center gap-3">
         <span className={cn('shrink-0', iconClassName)}>{icon}</span>
-        <span className="text-3xl font-bold text-gray-800">{value}</span>
+        <span className="text-3xl font-semibold text-gray-800">{value}</span>
       </div>
       <span className="pl-9 text-xs font-medium uppercase tracking-wide text-gray-500">
         {label}

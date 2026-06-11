@@ -21,7 +21,7 @@ export function CategorySummary({
       aria-label="Categorias mais usadas"
       className="flex flex-col rounded-xl border border-gray-200 bg-white"
     >
-      <header className="flex items-center justify-between px-5 py-4">
+      <header className="flex items-center justify-between border-b border-gray-200 px-5 py-4">
         <h2 className="text-xs font-medium uppercase tracking-wide text-gray-500">
           Categorias
         </h2>
@@ -34,24 +34,21 @@ export function CategorySummary({
       </header>
 
       {top.length === 0 ? (
-        <p className="border-t border-gray-200 px-5 py-6 text-sm text-gray-500">
+        <p className="px-5 py-5 text-sm text-gray-500">
           Sem categorias movimentadas neste mês.
         </p>
       ) : (
-        <ul className="flex flex-col divide-y divide-gray-200 border-t border-gray-200">
+        <ul className="flex flex-col gap-4 px-5 py-5">
           {top.map(({ category, count, total }) => {
             const color: TagColor = isCategoryColor(category.color)
               ? category.color
               : 'gray'
             return (
-              <li
-                key={category.id}
-                className="flex items-center gap-3 px-5 py-3"
-              >
+              <li key={category.id} className="flex items-center gap-4">
                 <Tag color={color} className="shrink-0">
                   {category.name}
                 </Tag>
-                <span className="flex-1 text-xs text-gray-500">
+                <span className="ml-auto w-16 shrink-0 text-right text-xs text-gray-500">
                   {count} {count === 1 ? 'item' : 'itens'}
                 </span>
                 <span className="shrink-0 text-sm font-semibold text-gray-800">
