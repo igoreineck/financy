@@ -4,7 +4,7 @@ import { type VariantProps, cva } from 'class-variance-authority'
 import type { ComponentProps } from 'react'
 
 const buttonVariants = cva(
-  'inline-flex items-center justify-center gap-2 rounded-lg font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-base/40 disabled:cursor-not-allowed',
+  'inline-flex cursor-pointer items-center justify-center gap-2 rounded-lg font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-base/40 disabled:cursor-not-allowed',
   {
     variants: {
       variant: {

@@ -5,7 +5,7 @@ import { formatCurrencyCents, formatDate } from '@/lib/format'
 import { cn } from '@/lib/utils'
 import { iconBgClassFor, isCategoryColor } from '@/pages/categories/color-map'
 import { iconMap, isCategoryIcon } from '@/pages/categories/icon-map'
-import { Pencil, Trash2 } from 'lucide-react'
+import { SquarePen, Trash } from 'lucide-react'
 
 export type TransactionRowData = {
   id: string
@@ -65,12 +65,7 @@ export function TransactionRow({
       <td className="px-4 py-4">
         <TypeBadge type={transaction.type} />
       </td>
-      <td
-        className={cn(
-          'px-4 py-4 text-right text-sm font-semibold',
-          transaction.type === 'INCOME' ? 'text-success' : 'text-danger',
-        )}
-      >
+      <td className="px-4 py-4 text-right text-sm font-semibold text-gray-800">
         {sign} {formatCurrencyCents(transaction.amount)}
       </td>
       <td className="px-4 py-4">
@@ -80,13 +75,13 @@ export function TransactionRow({
             aria-label={`Excluir ${transaction.description}`}
             onClick={onDelete}
           >
-            <Trash2 />
+            <Trash />
           </IconButton>
           <IconButton
             aria-label={`Editar ${transaction.description}`}
             onClick={onEdit}
           >
-            <Pencil />
+            <SquarePen />
           </IconButton>
         </div>
       </td>

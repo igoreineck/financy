@@ -55,13 +55,13 @@ export function CategoriesPage() {
   return (
     <div className="mx-auto flex max-w-6xl flex-col gap-8">
       <header className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-        <div>
+        <div className="flex flex-col gap-2">
           <h1 className="text-2xl font-bold text-gray-800">Categorias</h1>
           <p className="text-sm text-gray-500">
             Organize suas transações por categorias
           </p>
         </div>
-        <Button onClick={() => setDialogState({ mode: 'create' })}>
+        <Button size="sm" onClick={() => setDialogState({ mode: 'create' })}>
           <Plus className="size-4" /> Nova categoria
         </Button>
       </header>
@@ -73,13 +73,13 @@ export function CategoriesPage() {
         <StatCard
           label="Total de categorias"
           value={String(stats.totalCategories)}
-          icon={<Tag className="size-8" />}
+          icon={<Tag className="size-6" />}
           iconClassName="text-gray-800"
         />
         <StatCard
           label="Total de transações"
           value={String(stats.totalTransactions)}
-          icon={<ArrowDownUp className="size-8" />}
+          icon={<ArrowDownUp className="size-6" />}
           iconClassName="text-purple-base"
         />
         <StatCard
@@ -89,10 +89,10 @@ export function CategoriesPage() {
             mostUsedIcon ? (
               (() => {
                 const Icon = mostUsedIcon
-                return <Icon className="size-8" />
+                return <Icon className="size-6" />
               })()
             ) : (
-              <FolderOpen className="size-8" />
+              <FolderOpen className="size-6" />
             )
           }
           iconClassName={
@@ -168,14 +168,14 @@ type StatCardProps = {
 
 function StatCard({ label, value, icon, iconClassName }: StatCardProps) {
   return (
-    <div className="flex items-center gap-4 rounded-xl border border-gray-200 bg-white p-5">
-      <span className={cn('shrink-0', iconClassName)}>{icon}</span>
-      <div className="flex flex-col">
+    <div className="flex flex-col gap-1 rounded-xl border border-gray-200 bg-white p-5">
+      <div className="flex items-center gap-3">
+        <span className={cn('shrink-0', iconClassName)}>{icon}</span>
         <span className="text-3xl font-bold text-gray-800">{value}</span>
-        <span className="text-xs font-medium uppercase tracking-wide text-gray-500">
-          {label}
-        </span>
       </div>
+      <span className="pl-9 text-xs font-medium uppercase tracking-wide text-gray-500">
+        {label}
+      </span>
     </div>
   )
 }

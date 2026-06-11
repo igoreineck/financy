@@ -49,13 +49,13 @@ export function TransactionsPage() {
   return (
     <div className="mx-auto flex max-w-6xl flex-col gap-6">
       <header className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-        <div>
+        <div className="flex flex-col gap-2">
           <h1 className="text-2xl font-bold text-gray-800">Transações</h1>
           <p className="text-sm text-gray-500">
             Gerencie todas as suas transações financeiras
           </p>
         </div>
-        <Button onClick={() => setDialogState({ mode: 'create' })}>
+        <Button size="sm" onClick={() => setDialogState({ mode: 'create' })}>
           <Plus className="size-4" /> Nova transação
         </Button>
       </header>
@@ -69,7 +69,7 @@ export function TransactionsPage() {
       {loading ? (
         <p className="text-sm text-gray-500">Carregando transações...</p>
       ) : transactions.length === 0 ? (
-        <EmptyState onCreate={() => setDialogState({ mode: 'create' })} />
+        <EmptyState />
       ) : rows.length === 0 ? (
         <FilterEmptyState />
       ) : (
@@ -77,13 +77,13 @@ export function TransactionsPage() {
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead>
-                <tr className="border-b border-gray-200 text-left text-xs font-medium uppercase tracking-wide text-gray-500">
-                  <th className="px-4 py-3">Descrição</th>
-                  <th className="px-4 py-3">Data</th>
-                  <th className="px-4 py-3">Categoria</th>
-                  <th className="px-4 py-3">Tipo</th>
-                  <th className="px-4 py-3 text-right">Valor</th>
-                  <th className="px-4 py-3 text-right">Ações</th>
+                <tr className="border-b border-gray-200 text-left text-xs uppercase tracking-wide text-gray-500">
+                  <th className="px-4 py-3 font-normal">Descrição</th>
+                  <th className="px-4 py-3 font-normal">Data</th>
+                  <th className="px-4 py-3 font-normal">Categoria</th>
+                  <th className="px-4 py-3 font-normal">Tipo</th>
+                  <th className="px-4 py-3 text-right font-normal">Valor</th>
+                  <th className="px-4 py-3 text-right font-normal">Ações</th>
                 </tr>
               </thead>
               <tbody>
@@ -174,7 +174,7 @@ export function TransactionsPage() {
   )
 }
 
-function EmptyState({ onCreate }: { onCreate: () => void }) {
+function EmptyState() {
   return (
     <div className="flex flex-col items-center gap-4 rounded-xl border border-dashed border-gray-300 bg-white px-6 py-12 text-center">
       <div className="flex size-12 items-center justify-center rounded-full bg-brand-base/10 text-brand-base">
@@ -188,9 +188,6 @@ function EmptyState({ onCreate }: { onCreate: () => void }) {
           Registre sua primeira transação para começar
         </p>
       </div>
-      <Button onClick={onCreate}>
-        <Plus className="size-4" /> Nova transação
-      </Button>
     </div>
   )
 }

@@ -314,7 +314,7 @@ function TypeToggleButton({
       aria-pressed={active}
       onClick={onClick}
       className={cn(
-        'flex h-12 items-center justify-center gap-2 rounded-lg border bg-white text-sm font-medium transition-colors',
+        'flex h-12 cursor-pointer items-center justify-center gap-2 rounded-lg border bg-white text-sm font-medium transition-colors',
         active
           ? tone === 'success'
             ? 'border-success text-success'

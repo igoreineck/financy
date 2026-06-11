@@ -16,7 +16,7 @@ export function PaginationButton({
       type={type}
       aria-current={active ? 'page' : undefined}
       className={cn(
-        'inline-flex h-9 w-9 items-center justify-center rounded-md border text-sm font-medium transition-colors',
+        'inline-flex h-9 w-9 cursor-pointer items-center justify-center rounded-md border text-sm font-medium transition-colors',
         'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-base/40',
         'disabled:cursor-not-allowed disabled:opacity-50',
         active
