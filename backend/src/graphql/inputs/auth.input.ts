@@ -20,3 +20,9 @@ export class LoginInput {
   @Field(() => String)
   password!: string
 }
+
+@InputType()
+export class UpdateProfileInput {
+  @Field(() => String)
+  name!: string
+}

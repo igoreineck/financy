@@ -4,11 +4,12 @@ import { forwardRef } from 'react'
 
 type InputProps = ComponentProps<'input'> & {
   icon?: ReactNode
+  suffix?: ReactNode
   error?: boolean
 }
 
 export const Input = forwardRef<HTMLInputElement, InputProps>(
-  ({ className, icon, error, disabled, ...props }, ref) => {
+  ({ className, icon, suffix, error, disabled, ...props }, ref) => {
     return (
       <div
         data-state={error ? 'error' : disabled ? 'disabled' : undefined}
@@ -45,6 +46,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
           )}
           {...props}
         />
+        {suffix}
       </div>
     )
   },

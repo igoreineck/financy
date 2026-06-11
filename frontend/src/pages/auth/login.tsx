@@ -1,12 +1,12 @@
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { Link } from '@/components/ui/link'
+import { PasswordInput } from '@/components/ui/password-input'
 import { useAuthStore } from '@/store/auth'
 import { useMutation } from '@apollo/client/react'
-import { Lock, Mail } from 'lucide-react'
+import { Mail, UserPlus } from 'lucide-react'
 import { useForm } from 'react-hook-form'
-import { useNavigate } from 'react-router'
+import { Link, useNavigate } from 'react-router'
 import { toast } from 'sonner'
 import { z } from 'zod'
 import { AuthCard } from './components/auth-card'
@@ -61,10 +61,23 @@ export function Login() {
     <AuthCard
       title="Fazer login"
       subtitle="Entre na sua conta para continuar"
+      align="center"
       footer={
-        <span>
-          Não tem conta? <Link to="/cadastro">Cadastre-se</Link>
-        </span>
+        <div className="flex w-full flex-col gap-4">
+          <div className="flex items-center gap-3 text-xs text-gray-400">
+            <span className="h-px flex-1 bg-gray-200" />
+            ou
+            <span className="h-px flex-1 bg-gray-200" />
+          </div>
+          <p className="text-center text-sm text-gray-500">
+            Ainda não tem uma conta?
+          </p>
+          <Button asChild variant="outline" className="w-full">
+            <Link to="/cadastro">
+              <UserPlus className="size-4" /> Criar conta
+            </Link>
+          </Button>
+        </div>
       }
     >
       <form className="flex flex-col gap-5" onSubmit={onSubmit} noValidate>
@@ -93,11 +106,9 @@ export function Login() {
           >
             Senha
           </Label>
-          <Input
+          <PasswordInput
             id="password"
-            type="password"
             placeholder="Digite sua senha"
-            icon={<Lock />}
             error={Boolean(errors.password)}
             autoComplete="current-password"
             {...register('password')}
@@ -121,9 +132,9 @@ export function Login() {
           <span
             aria-disabled="true"
             title="Em breve"
-            className="cursor-not-allowed text-gray-400"
+            className="cursor-not-allowed text-brand-base/50"
           >
-            Esqueceu a senha?
+            Recuperar senha
           </span>
         </div>
 

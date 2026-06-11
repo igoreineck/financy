@@ -45,31 +45,31 @@ Página `/` (logada) com 3 stat cards do mês corrente + lista de transações r
 
 ## Testing
 
-- [ ] `pages/dashboard/hooks/use-monthly-summary.spec.ts`
+- [x] `pages/dashboard/hooks/use-monthly-summary.spec.ts`
   - Lista vazia → `{ saldo: 0, receitas: 0, despesas: 0 }`.
   - Mix INCOME/EXPENSE no mês corrente → soma correta; saldo = receitas - despesas.
   - Transações de mês passado → ignoradas.
   - Inteiros (centavos) preservam precisão exata.
-- [ ] `pages/dashboard/hooks/use-category-aggregates.spec.ts`
+- [x] `pages/dashboard/hooks/use-category-aggregates.spec.ts`
   - Agrupa por `categoryId`, calcula `count` e `total`.
   - Ordena por `total` desc.
-  - Categoria sem transações → não aparece (ou aparece com count=0 se decidirmos; confirmar).
-- [ ] `pages/dashboard/components/stat-card.spec.tsx` — variants aplicam classes corretas; valor formatado.
-- [ ] `pages/dashboard/components/recent-transactions.spec.tsx` — limita a 5; ordem desc; empty state.
-- [ ] `pages/dashboard/components/category-summary.spec.tsx` — render top 5.
-- [ ] `dashboard.integration.spec.tsx` (MSW)
-  - Mock retorna 20 transações em meses variados → stats só consideram corrente.
-  - Renderiza 3 stat cards + 5 recentes + top 5 categorias.
+  - Categoria sem transações no mês → omitida do retorno.
+- [x] `pages/dashboard/components/stat-card.spec.tsx` — variants aplicam classes corretas; valor formatado.
+- [x] `pages/dashboard/components/recent-transactions.spec.tsx` — limita a 5; ordem desc; empty state.
+- [x] `pages/dashboard/components/category-summary.spec.tsx` — render top 5.
+- [x] `dashboard.integration.spec.tsx` (MSW)
+  - Mock devolve transações em meses variados → stats só consideram o mês corrente.
+  - Renderiza 3 stat cards + recentes + top categorias.
 
 ## Acceptance criteria
 
-- [ ] 3 stat cards com valores do mês corrente.
-- [ ] 5 transações mais recentes (ordenadas por `occurredAt`).
-- [ ] Sumário de até 5 categorias com contagem + total.
-- [ ] Empty state quando zero transações.
-- [ ] Valores em pt-BR (`R$ 1.234,56`) e datas (`30/11/25`).
-- [ ] `pnpm test` verde; `pnpm check` limpo; `pnpm tsc --noEmit` limpo.
-- [ ] `docs/05-dashboard.md` (este arquivo) com checkboxes preenchidos.
+- [x] 3 stat cards com valores do mês corrente.
+- [x] 5 transações mais recentes (ordenadas por `occurredAt`).
+- [x] Sumário de até 5 categorias com contagem + total.
+- [x] Empty state quando zero transações.
+- [x] Valores em pt-BR (`R$ 1.234,56`) e datas (`30/11/25`).
+- [x] `pnpm test` verde; `pnpm check` limpo; `pnpm tsc --noEmit` limpo.
+- [x] `docs/05-dashboard.md` (este arquivo) com checkboxes preenchidos.
 
 ## Depends on
 

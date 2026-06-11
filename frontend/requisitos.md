@@ -71,7 +71,7 @@ VITE_BACKEND_URL=
 ## Tarefas
 
 - [x] O usuário pode criar uma conta e fazer login
-- [ ] O usuário pode ver e gerenciar apenas as transações e categorias criadas por ele
+- [x] O usuário pode ver e gerenciar apenas as transações e categorias criadas por ele
 - [x] Deve ser possível criar uma transação
 - [x] Deve ser possível deletar uma transação
 - [x] Deve ser possível editar uma transação

@@ -25,10 +25,22 @@ GraphQL API for a personal-finance app: email/password auth plus user-scoped CRU
 pnpm install
 cp .env.example .env          # then set JWT_SECRET
 pnpm migrate                  # apply schema to ./dev.db
+pnpm seed                     # OPTIONAL — populates a demo user with sample data
 pnpm dev                      # http://localhost:4000/graphql
 ```
 
 Apollo Sandbox is served at the same URL — paste the operations below into it. After `login`/`register`, set the HTTP header `Authorization: Bearer <token>` to call the protected resolvers.
+
+`pnpm seed` is idempotent: it `upsert`s the demo user, wipes that user's
+categorias + transações, and re-creates them.
+
+Demo credentials seeded:
+
+- **e-mail**: `conta@teste.com`
+- **senha**: `senha123`
+- 10 categorias (Alimentação, Transporte, Lazer, Saúde, Moradia, ...)
+- ~70 transações across 5 months, biased toward the current month so the
+  frontend's dashboard, filters, and pagination all have data to chew on.
 
 ### Environment variables
 
@@ -55,6 +67,7 @@ Apollo Sandbox is served at the same URL — paste the operations below into it.
 | `pnpm check` | Biome lint **and** format with autofix — run before every commit |
 | `pnpm migrate` | `prisma migrate dev` (pass `--name <slug>` for new migrations) |
 | `pnpm generate` | Regenerate the Prisma client without migrating |
+| `pnpm seed` | `tsx --env-file=.env prisma/seed.ts` — wipes the demo user's data and re-creates 10 categorias + ~70 transações |
 | `pnpm export-schema` | Build the GraphQL schema and write `./schema.graphql` for the frontend |
 
 ## Project layout
@@ -138,8 +151,9 @@ type TransactionModel {
 ### Input types
 
 ```graphql
-input RegisterInput { name: String!, email: String!, password: String! }
-input LoginInput    { email: String!, password: String! }
+input RegisterInput     { name: String!, email: String!, password: String! }
+input LoginInput        { email: String!, password: String! }
+input UpdateProfileInput { name: String! }    # only the authenticated user's name; e-mail/password aren't editable here
 
 input CreateCategoryInput {
   name: String!
@@ -186,6 +200,7 @@ input UpdateTransactionInput {    # all nullable
 |---|---|---|---|
 | `register(data: RegisterInput!)` | public | `AuthOutput!` | Hashes password, normalizes email (trim + lowercase), issues 1-day JWT |
 | `login(data: LoginInput!)` | public | `AuthOutput!` | Normalizes email casing; both unknown email and bad password throw `Credenciais inválidas!` |
+| `updateProfile(data: UpdateProfileInput!)` | required | `UserModel!` | Trims the new name; blank name throws `Nome obrigatório!`. E-mail / password are never editable through this mutation |
 | `createCategory(data: CreateCategoryInput!)` | required | `CategoryModel!` | |
 | `updateCategory(id: ID!, data: UpdateCategoryInput!)` | required | `CategoryModel!` | Partial; `description: null` clears the field; passing `null` on `name`/`color`/`icon` throws `Nome, cor e ícone não podem ser nulos` |
 | `deleteCategory(id: ID!)` | required | `Boolean!` | Blocks with `Categoria possui transações associadas e não pode ser excluída` if linked transactions exist (FK is `onDelete: Restrict`) |

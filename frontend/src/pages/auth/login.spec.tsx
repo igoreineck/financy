@@ -36,6 +36,28 @@ describe('<Login />', () => {
     expect(screen.getByRole('button', { name: 'Entrar' })).toBeInTheDocument()
   })
 
+  it('exposes a Criar conta CTA in the footer that links to /cadastro', () => {
+    renderLogin()
+    expect(screen.getByRole('link', { name: /Criar conta/i })).toHaveAttribute(
+      'href',
+      '/cadastro',
+    )
+  })
+
+  it('toggles password visibility via the eye button', async () => {
+    const user = userEvent.setup()
+    renderLogin()
+
+    const passwordInput = screen.getByLabelText('Senha')
+    expect(passwordInput).toHaveAttribute('type', 'password')
+
+    await user.click(screen.getByRole('button', { name: /Mostrar senha/i }))
+    expect(passwordInput).toHaveAttribute('type', 'text')
+
+    await user.click(screen.getByRole('button', { name: /Ocultar senha/i }))
+    expect(passwordInput).toHaveAttribute('type', 'password')
+  })
+
   it('blocks submit when fields are invalid', async () => {
     const user = userEvent.setup()
     renderLogin()
