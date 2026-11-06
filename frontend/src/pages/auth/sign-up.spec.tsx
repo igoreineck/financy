@@ -13,9 +13,9 @@ import { SignUp } from './sign-up'
 function renderSignUp() {
   return render(
     <ApolloProvider client={apolloClient}>
-      <MemoryRouter initialEntries={['/cadastro']}>
+      <MemoryRouter initialEntries={['/signup']}>
         <Routes>
-          <Route path="/cadastro" element={<SignUp />} />
+          <Route path="/signup" element={<SignUp />} />
           <Route path="/" element={<div>dashboard placeholder</div>} />
         </Routes>
       </MemoryRouter>
@@ -32,13 +32,13 @@ describe('<SignUp />', () => {
   it('blocks submit when password is too short', async () => {
     const user = userEvent.setup()
     renderSignUp()
-    await user.type(screen.getByLabelText('Nome completo'), 'Igor')
-    await user.type(screen.getByLabelText('E-mail'), 'igor@example.com')
-    await user.type(screen.getByLabelText('Senha'), '1234567')
-    await user.type(screen.getByLabelText('Confirmar senha'), '1234567')
-    await user.click(screen.getByRole('button', { name: 'Cadastrar' }))
+    await user.type(screen.getByLabelText('Full name'), 'Igor')
+    await user.type(screen.getByLabelText('Email'), 'igor@example.com')
+    await user.type(screen.getByLabelText('Password'), '1234567')
+    await user.type(screen.getByLabelText('Confirm password'), '1234567')
+    await user.click(screen.getByRole('button', { name: 'Sign up' }))
     expect(
-      await screen.findByText('A senha deve ter no mínimo 8 caracteres'),
+      await screen.findByText('Password must be at least 8 characters'),
     ).toBeInTheDocument()
   })
 
@@ -46,15 +46,15 @@ describe('<SignUp />', () => {
     const user = userEvent.setup()
     renderSignUp()
 
-    const passwordInput = screen.getByLabelText('Senha')
+    const passwordInput = screen.getByLabelText('Password')
     expect(passwordInput).toHaveAttribute('type', 'password')
 
-    const toggle = screen.getAllByRole('button', { name: /Mostrar senha/i })[0]
+    const toggle = screen.getAllByRole('button', { name: /Show password/i })[0]
     await user.click(toggle)
     expect(passwordInput).toHaveAttribute('type', 'text')
 
     await user.click(
-      screen.getAllByRole('button', { name: /Ocultar senha/i })[0],
+      screen.getAllByRole('button', { name: /Hide password/i })[0],
     )
     expect(passwordInput).toHaveAttribute('type', 'password')
   })
@@ -62,13 +62,13 @@ describe('<SignUp />', () => {
   it('blocks submit when passwords do not match', async () => {
     const user = userEvent.setup()
     renderSignUp()
-    await user.type(screen.getByLabelText('Nome completo'), 'Igor')
-    await user.type(screen.getByLabelText('E-mail'), 'igor@example.com')
-    await user.type(screen.getByLabelText('Senha'), 'secret1234')
-    await user.type(screen.getByLabelText('Confirmar senha'), 'other12345')
-    await user.click(screen.getByRole('button', { name: 'Cadastrar' }))
+    await user.type(screen.getByLabelText('Full name'), 'Igor')
+    await user.type(screen.getByLabelText('Email'), 'igor@example.com')
+    await user.type(screen.getByLabelText('Password'), 'secret1234')
+    await user.type(screen.getByLabelText('Confirm password'), 'other12345')
+    await user.click(screen.getByRole('button', { name: 'Sign up' }))
     expect(
-      await screen.findByText('As senhas não conferem'),
+      await screen.findByText('Passwords do not match'),
     ).toBeInTheDocument()
   })
 
@@ -95,11 +95,11 @@ describe('<SignUp />', () => {
     const user = userEvent.setup()
     renderSignUp()
 
-    await user.type(screen.getByLabelText('Nome completo'), 'Igor')
-    await user.type(screen.getByLabelText('E-mail'), 'igor@example.com')
-    await user.type(screen.getByLabelText('Senha'), 'secret1234')
-    await user.type(screen.getByLabelText('Confirmar senha'), 'secret1234')
-    await user.click(screen.getByRole('button', { name: 'Cadastrar' }))
+    await user.type(screen.getByLabelText('Full name'), 'Igor')
+    await user.type(screen.getByLabelText('Email'), 'igor@example.com')
+    await user.type(screen.getByLabelText('Password'), 'secret1234')
+    await user.type(screen.getByLabelText('Confirm password'), 'secret1234')
+    await user.click(screen.getByRole('button', { name: 'Sign up' }))
 
     expect(await screen.findByText('dashboard placeholder')).toBeInTheDocument()
     expect(useAuthStore.getState().token).toBe('jwt-token')
@@ -109,7 +109,7 @@ describe('<SignUp />', () => {
     server.use(
       graphql.mutation('Register', () =>
         HttpResponse.json({
-          errors: [{ message: 'E-mail já cadastrado!' }],
+          errors: [{ message: 'Email already registered!' }],
         }),
       ),
     )
@@ -117,13 +117,15 @@ describe('<SignUp />', () => {
     const user = userEvent.setup()
     renderSignUp()
 
-    await user.type(screen.getByLabelText('Nome completo'), 'Igor')
-    await user.type(screen.getByLabelText('E-mail'), 'igor@example.com')
-    await user.type(screen.getByLabelText('Senha'), 'secret1234')
-    await user.type(screen.getByLabelText('Confirmar senha'), 'secret1234')
-    await user.click(screen.getByRole('button', { name: 'Cadastrar' }))
+    await user.type(screen.getByLabelText('Full name'), 'Igor')
+    await user.type(screen.getByLabelText('Email'), 'igor@example.com')
+    await user.type(screen.getByLabelText('Password'), 'secret1234')
+    await user.type(screen.getByLabelText('Confirm password'), 'secret1234')
+    await user.click(screen.getByRole('button', { name: 'Sign up' }))
 
-    expect(await screen.findByText('E-mail já cadastrado!')).toBeInTheDocument()
+    expect(
+      await screen.findByText('Email already registered!'),
+    ).toBeInTheDocument()
     expect(useAuthStore.getState().isAuthenticated).toBe(false)
   })
 })

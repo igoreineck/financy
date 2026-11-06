@@ -96,7 +96,7 @@ describe('<TransactionFilters />', () => {
     const user = userEvent.setup()
     render(<Harness />)
 
-    await user.type(screen.getByLabelText('Buscar'), 'merc')
+    await user.type(screen.getByLabelText('Search'), 'merc')
 
     expect(screen.getByTestId('total')).toHaveTextContent('2')
     const items = screen.getAllByRole('listitem').map(li => li.textContent)
@@ -107,47 +107,45 @@ describe('<TransactionFilters />', () => {
     const user = userEvent.setup()
     render(<Harness />)
 
-    await user.click(screen.getByRole('combobox', { name: 'Tipo' }))
-    await user.click(await screen.findByRole('option', { name: 'Receita' }))
+    await user.click(screen.getByRole('combobox', { name: 'Type' }))
+    await user.click(await screen.findByRole('option', { name: 'Income' }))
 
     const items = screen.getAllByRole('listitem').map(li => li.textContent)
     expect(items).toEqual(['Salário mensal'])
   })
 
-  it('filters by category and "Todas" disables the filter', async () => {
+  it('filters by category and "All" disables the filter', async () => {
     const user = userEvent.setup()
     render(<Harness />)
 
-    await user.click(screen.getByRole('combobox', { name: 'Categoria' }))
+    await user.click(screen.getByRole('combobox', { name: 'Category' }))
     await user.click(await screen.findByRole('option', { name: 'Transporte' }))
 
     let items = screen.getAllByRole('listitem').map(li => li.textContent)
     expect(items).toEqual(['Uber para casa'])
 
-    await user.click(screen.getByRole('combobox', { name: 'Categoria' }))
-    await user.click(await screen.findByRole('option', { name: 'Todas' }))
+    await user.click(screen.getByRole('combobox', { name: 'Category' }))
+    await user.click(await screen.findByRole('option', { name: 'All' }))
 
     items = screen.getAllByRole('listitem').map(li => li.textContent)
     expect(items).toHaveLength(4)
   })
 
-  it('"Este mês" filters to current month; "Personalizado" filters a custom range', async () => {
+  it('"This month" filters to current month; "Custom" filters a custom range', async () => {
     const user = userEvent.setup()
     render(<Harness />)
 
-    await user.click(screen.getByRole('combobox', { name: 'Período' }))
-    await user.click(await screen.findByRole('option', { name: 'Este mês' }))
+    await user.click(screen.getByRole('combobox', { name: 'Period' }))
+    await user.click(await screen.findByRole('option', { name: 'This month' }))
 
     let items = screen.getAllByRole('listitem').map(li => li.textContent)
     expect(items).toEqual(['Mercado', 'Salário mensal'])
 
-    await user.click(screen.getByRole('combobox', { name: 'Período' }))
-    await user.click(
-      await screen.findByRole('option', { name: 'Personalizado' }),
-    )
+    await user.click(screen.getByRole('combobox', { name: 'Period' }))
+    await user.click(await screen.findByRole('option', { name: 'Custom' }))
 
-    await user.type(screen.getByLabelText('De'), '2025-10-21')
-    await user.type(screen.getByLabelText('Até'), '2025-11-02')
+    await user.type(screen.getByLabelText('From'), '2025-10-21')
+    await user.type(screen.getByLabelText('To'), '2025-11-02')
 
     items = screen.getAllByRole('listitem').map(li => li.textContent)
     expect(items).toEqual(['Mercado', 'Mercado feira'])
@@ -157,11 +155,11 @@ describe('<TransactionFilters />', () => {
     const user = userEvent.setup()
     render(<Harness />)
 
-    await user.type(screen.getByLabelText('Buscar'), 'mercado')
-    await user.click(screen.getByRole('combobox', { name: 'Categoria' }))
+    await user.type(screen.getByLabelText('Search'), 'mercado')
+    await user.click(screen.getByRole('combobox', { name: 'Category' }))
     await user.click(await screen.findByRole('option', { name: 'Alimentação' }))
-    await user.click(screen.getByRole('combobox', { name: 'Período' }))
-    await user.click(await screen.findByRole('option', { name: 'Este mês' }))
+    await user.click(screen.getByRole('combobox', { name: 'Period' }))
+    await user.click(await screen.findByRole('option', { name: 'This month' }))
 
     const items = screen.getAllByRole('listitem').map(li => li.textContent)
     expect(items).toEqual(['Mercado'])

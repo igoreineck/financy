@@ -8,7 +8,7 @@ function Harness({ onChange }: { onChange?: (cents: number) => void }) {
   const [value, setValue] = useState(0)
   return (
     <CurrencyInput
-      aria-label="Valor"
+      aria-label="Amount"
       value={value}
       onChange={cents => {
         setValue(cents)
@@ -21,14 +21,14 @@ function Harness({ onChange }: { onChange?: (cents: number) => void }) {
 describe('<CurrencyInput />', () => {
   it('renders the formatted value', () => {
     render(
-      <CurrencyInput aria-label="Valor" value={1234} onChange={() => {}} />,
+      <CurrencyInput aria-label="Amount" value={1234} onChange={() => {}} />,
     )
-    expect(screen.getByLabelText('Valor')).toHaveValue('R$ 12,34')
+    expect(screen.getByLabelText('Amount')).toHaveValue('R$ 12,34')
   })
 
   it('shows zero formatted when no value is provided', () => {
-    render(<CurrencyInput aria-label="Valor" />)
-    expect(screen.getByLabelText('Valor')).toHaveValue('R$ 0,00')
+    render(<CurrencyInput aria-label="Amount" />)
+    expect(screen.getByLabelText('Amount')).toHaveValue('R$ 0,00')
   })
 
   it('emits cents as the user types digits', async () => {
@@ -36,7 +36,7 @@ describe('<CurrencyInput />', () => {
     const onChange = vi.fn()
     render(<Harness onChange={onChange} />)
 
-    const input = screen.getByLabelText('Valor')
+    const input = screen.getByLabelText('Amount')
     await user.type(input, '12,34')
 
     expect(input).toHaveValue('R$ 12,34')
@@ -48,7 +48,7 @@ describe('<CurrencyInput />', () => {
     const onChange = vi.fn()
     render(<Harness onChange={onChange} />)
 
-    const input = screen.getByLabelText('Valor')
+    const input = screen.getByLabelText('Amount')
     await user.type(input, 'abc99')
 
     expect(input).toHaveValue('R$ 0,99')

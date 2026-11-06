@@ -1,44 +1,44 @@
-# Frontend — Plano de execução
+# Frontend — Execution plan
 
-> Espelho do `backend/docs/` adaptado ao frontend. Cada tarefa abaixo é um branch isolado, um draft PR, review, merge — sequencial. O usuário revisa e faz o merge; nunca push direto em `main`.
+> Mirror of `backend/docs/` adapted to the frontend. Each tarefa below is an isolated branch, a draft PR, review, merge — sequentially. The user reviews and merges; never push directly to `main`.
 
-## Origem
+## Origin
 
-Requisitos funcionais em [`../requisitos.md`](../requisitos.md) (10 checkboxes). Decisões de stack, arquitetura, mapeamento Figma → código e o roadmap detalhado estão no plano salvo em `/Users/igoreineck/.claude/plans/vamos-estruturar-o-projeto-cached-cerf.md`.
+Functional requirements in [`../requisitos.md`](../requisitos.md) (10 checkboxes). Stack decisions, architecture, the Figma → code mapping, and the detailed roadmap live in the plan saved at `/Users/igoreineck/.claude/plans/vamos-estruturar-o-projeto-cached-cerf.md`.
 
-## Referências
+## References
 
 - **Stack** — [`rocketseat-education/ftr-pos-360-mindshare/frontend`](https://github.com/rocketseat-education/ftr-pos-360-mindshare/tree/main/frontend) (Apollo + Vite + shadcn + Zustand)
-- **Estilo de código** — [`igoreineck/brev.ly/web`](https://github.com/igoreineck/brev.ly/tree/main/web) (kebab-case, RHF + Zod, Tailwind v4 `@theme`, env Zod, `@/*` alias, Biome). **Quando conflitarem, brev.ly vence.**
-- **Figma** — `Ix1zaJNlMOhIRHUxaqhmo8`. Style Guide: `node-id=3-377`. Protótipos: `node-id=3-376`.
-- **Schema GraphQL** — `../../backend/schema.graphql` (consumido pelo `graphql-codegen`).
+- **Code style** — [`igoreineck/brev.ly/web`](https://github.com/igoreineck/brev.ly/tree/main/web) (kebab-case, RHF + Zod, Tailwind v4 `@theme`, Zod env, `@/*` alias, Biome). **When they conflict, brev.ly wins.**
+- **Figma** — `Ix1zaJNlMOhIRHUxaqhmo8`. Style Guide: `node-id=3-377`. Prototypes: `node-id=3-376`.
+- **GraphQL schema** — `../../backend/schema.graphql` (consumed by `graphql-codegen`).
 
 ## Stack
 
-- Vite 7, React 19, TypeScript estrito, ESM.
-- Tailwind CSS v4 (`@theme` em `src/index.css`), `clsx` + `tailwind-merge` via `cn()`.
-- shadcn primitives em `src/components/ui/`. Ícones via `lucide-react`.
-- React Hook Form + Zod (schema separado, parse no submit — sem resolver Zod).
+- Vite 7, React 19, strict TypeScript, ESM.
+- Tailwind CSS v4 (`@theme` in `src/index.css`), `clsx` + `tailwind-merge` via `cn()`.
+- shadcn primitives in `src/components/ui/`. Icons via `lucide-react`.
+- React Hook Form + Zod (separate schema, parse on submit — no Zod resolver).
 - React Router 7 (`createBrowserRouter`) + `<ProtectedRoute>` / `<PublicRoute>`.
 - Apollo Client 4 + `graphql-codegen` + `typed-document-node` → `src/gql/`.
-- Zustand + `persist` (chave `'financy-auth'`).
-- Sonner para toasts.
+- Zustand + `persist` (key `'financy-auth'`).
+- Sonner for toasts.
 - Vitest + `@testing-library/react` + `@testing-library/user-event` + MSW.
-- Biome (mesma config do backend: aspas simples, sem semi, `@/*` alias, kebab-case).
+- Biome (same config as the backend: single quotes, no semis, `@/*` alias, kebab-case).
 
 ## Tarefas
 
-| Ordem | Doc                                               | Resumo                                              | Requisitos cobertos        |
-| ----- | ------------------------------------------------- | --------------------------------------------------- | -------------------------- |
-| 00    | [`00-scaffolding.md`](./00-scaffolding.md)         | Vite + deps + Apollo + tooling vazios rodando       | (fundação — sem checkbox)  |
-| 01    | [`01-design-system.md`](./01-design-system.md)     | Tokens do Figma + primitivos em `components/ui/`    | (fundação — sem checkbox)  |
-| 02    | [`02-auth.md`](./02-auth.md)                       | Login + Cadastro + auth store + route guards        | criar conta e login        |
-| 03    | [`03-categorias-crud.md`](./03-categorias-crud.md) | Categorias: list + create + update + delete         | 4 checkboxes de categoria  |
-| 04    | [`04-transacoes-crud.md`](./04-transacoes-crud.md) | Transações: tabela + filtros + paginação + CRUD     | 4 checkboxes de transação  |
-| 05    | [`05-dashboard.md`](./05-dashboard.md)             | Dashboard: stats + recentes + sumário de categorias | (deriva das listas — implícito) |
-| 06    | [`06-perfil-logout.md`](./06-perfil-logout.md)     | Perfil + user-menu + logout                         | (encerra o fluxo)          |
+| Order | Doc                                                | Summary                                             | Requirements covered       |
+| ----- | -------------------------------------------------- | --------------------------------------------------- | -------------------------- |
+| 00    | [`00-scaffolding.md`](./00-scaffolding.md)         | Empty Vite + deps + Apollo + tooling running        | (foundation — no checkbox) |
+| 01    | [`01-design-system.md`](./01-design-system.md)     | Figma tokens + primitives in `components/ui/`       | (foundation — no checkbox) |
+| 02    | [`02-auth.md`](./02-auth.md)                       | Login + sign-up + auth store + route guards         | create account and log in  |
+| 03    | [`03-categorias-crud.md`](./03-categorias-crud.md) | Categories: list + create + update + delete         | 4 category checkboxes      |
+| 04    | [`04-transacoes-crud.md`](./04-transacoes-crud.md) | Transactions: table + filters + pagination + CRUD   | 4 transaction checkboxes   |
+| 05    | [`05-dashboard.md`](./05-dashboard.md)             | Dashboard: stats + recent + category summary        | (derived from the lists — implicit) |
+| 06    | [`06-perfil-logout.md`](./06-perfil-logout.md)     | Profile + user menu + logout                        | (closes the flow)          |
 
-Ordem rígida: `00 → 01 → 02 → 03 → 04 → 05 → 06`. Cada tarefa assume tudo anterior pronto.
+Strict order: `00 → 01 → 02 → 03 → 04 → 05 → 06`. Each tarefa assumes everything before it is done.
 
 ## Workflow per tarefa
 
@@ -46,20 +46,20 @@ Ordem rígida: `00 → 01 → 02 → 03 → 04 → 05 → 06`. Cada tarefa assum
 git checkout main && git pull --ff-only
 git checkout -b feat/NN-slug                # e.g. feat/00-scaffolding
 
-# implementa seguindo docs/NN-*.md
+# implement following docs/NN-*.md
 pnpm check                                  # Biome lint + format autofix
 pnpm tsc --noEmit                           # type check
 pnpm test                                   # vitest
 
-# checkboxes de Testing + Acceptance criteria preenchidos no MD da tarefa
-# linhas de requisitos.md (Tarefas) que casem com o escopo marcadas
+# Testing + Acceptance criteria checkboxes filled in the tarefa's MD
+# matching lines in requisitos.md (Tarefas) checked off
 
 git add .
-git commit -m "<short summary>"             # sem prefix "feat:", sem número da tarefa (estilo do owner)
+git commit -m "<short summary>"             # no "feat:" prefix, no tarefa number (owner's style)
 git push -u origin feat/NN-slug
 
 gh pr create --draft \
-  --title "<curto>" \
+  --title "<short>" \
   --body "$(cat <<'EOF'
 Closes the scope in `docs/NN-<slug>.md`.
 
@@ -67,36 +67,36 @@ Closes the scope in `docs/NN-<slug>.md`.
 - <bullet>
 
 ## Test plan
-- [ ] manual: <como exercitar a feature no browser>
-- [ ] automated: `pnpm test` (ver novos `*.spec.tsx`)
+- [ ] manual: <how to exercise the feature in the browser>
+- [ ] automated: `pnpm test` (see new `*.spec.tsx`)
 EOF
 )"
 ```
 
-O usuário revê o draft, marca como ready e faz merge. A próxima tarefa parte de um `main` atualizado.
+The user reviews the draft, marks it ready, and merges. The next tarefa starts from an up-to-date `main`.
 
-## Verificação end-to-end (após tudo)
+## End-to-end verification (after everything)
 
-1. Subir backend (`cd ../backend && pnpm dev`) em `:4000`.
-2. Subir frontend (`pnpm dev`) em `:5173`.
+1. Start the backend (`cd ../backend && pnpm dev`) on `:4000`.
+2. Start the frontend (`pnpm dev`) on `:5173`.
 3. Smoke:
-   - Cadastrar usuário → dashboard vazio
-   - Criar 3 categorias com ícones e cores distintas
-   - Criar 5 transações em meses diferentes, mix INCOME/EXPENSE
-   - Dashboard: stats batem com a aritmética manual
-   - Filtrar transações por categoria, paginar
-   - Editar e deletar uma transação
-   - Tentar deletar categoria com transações → backend rejeita (`onDelete: Restrict`) → toast com a mensagem
-   - Logout, re-login, dados persistem
-4. `pnpm test` verde, `pnpm check` limpo, `pnpm tsc --noEmit` limpo.
-5. Todas as 10 linhas em `requisitos.md` marcadas.
+   - Sign up a user → empty dashboard
+   - Create 3 categories with distinct icons and colors
+   - Create 5 transactions across different months, mixing INCOME/EXPENSE
+   - Dashboard: stats match the manual arithmetic
+   - Filter transactions by category, paginate
+   - Edit and delete a transaction
+   - Try to delete a category with transactions → backend rejects (`onDelete: Restrict`) → toast with the message
+   - Log out, log back in, data persists
+4. `pnpm test` green, `pnpm check` clean, `pnpm tsc --noEmit` clean.
+5. All 10 lines in `requisitos.md` checked.
 
-## Out of scope (do projeto inteiro)
+## Out of scope (whole project)
 
-- Refresh token rotation (backend não suporta).
-- Recuperação de senha.
-- Tema dark.
-- i18n (todo texto em pt-BR).
+- Refresh token rotation (the backend doesn't support it).
+- Password recovery.
+- Dark theme.
+- i18n (all text is in English).
 - PWA / offline.
 - Storybook.
-- E2E (Playwright) — pode entrar depois como tarefa 07 se necessário.
+- E2E (Playwright) — may land later as tarefa 07 if needed.

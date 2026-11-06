@@ -49,10 +49,10 @@ function setupServer() {
 function renderApp() {
   return render(
     <ApolloProvider client={apolloClient}>
-      <MemoryRouter initialEntries={['/perfil']}>
+      <MemoryRouter initialEntries={['/profile']}>
         <Routes>
           <Route element={<AppLayout />}>
-            <Route path="/perfil" element={<ProfilePage />} />
+            <Route path="/profile" element={<ProfilePage />} />
           </Route>
           <Route path="/login" element={<div>Tela de login</div>} />
         </Routes>
@@ -62,7 +62,7 @@ function renderApp() {
   )
 }
 
-describe('Logout — fluxo completo', () => {
+describe('Logout — full flow', () => {
   it('limpa store, limpa Apollo cache e redireciona para /login', async () => {
     useAuthStore.getState().setSession({
       token: 'tkn-abc',
@@ -75,9 +75,7 @@ describe('Logout — fluxo completo', () => {
 
     expect(await screen.findByText('conta@teste.com')).toBeInTheDocument()
 
-    await user.click(
-      screen.getAllByRole('button', { name: /Sair da conta/i })[0],
-    )
+    await user.click(screen.getAllByRole('button', { name: /Log out/i })[0])
 
     expect(await screen.findByText('Tela de login')).toBeInTheDocument()
 

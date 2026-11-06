@@ -11,7 +11,7 @@ import { useEffect, useState } from 'react'
 import { toast } from 'sonner'
 import { z } from 'zod'
 
-const nameSchema = z.string().trim().min(1, 'Nome obrigatório')
+const nameSchema = z.string().trim().min(1, 'Name is required')
 
 export function ProfilePage() {
   const { data, loading } = useQuery(MeDocument)
@@ -36,7 +36,7 @@ export function ProfilePage() {
     event.preventDefault()
     const parsed = nameSchema.safeParse(name)
     if (!parsed.success) {
-      setNameError(parsed.error.issues[0]?.message ?? 'Nome obrigatório')
+      setNameError(parsed.error.issues[0]?.message ?? 'Name is required')
       return
     }
     setNameError(null)
@@ -47,23 +47,23 @@ export function ProfilePage() {
       })
       const updated = result.data?.updateProfile
       if (!updated || !token) {
-        toast.error('Não foi possível salvar o perfil')
+        toast.error('Could not save profile')
         return
       }
       setSession({
         token,
         user: { id: updated.id, name: updated.name, email: updated.email },
       })
-      toast.success('Perfil atualizado')
+      toast.success('Profile updated')
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : 'Erro ao salvar')
+      toast.error(err instanceof Error ? err.message : 'Failed to save')
     }
   }
 
   return (
     <div className="mx-auto flex max-w-xl flex-col gap-6">
       <section
-        aria-label="Dados do usuário"
+        aria-label="User details"
         className="flex flex-col gap-6 rounded-xl border border-gray-200 bg-white p-8"
       >
         {loading || !me ? (
@@ -97,7 +97,7 @@ export function ProfilePage() {
                   htmlFor="profile-name"
                   state={nameError ? 'error' : 'default'}
                 >
-                  Nome completo
+                  Full name
                 </Label>
                 <Input
                   id="profile-name"
@@ -117,7 +117,7 @@ export function ProfilePage() {
               </div>
 
               <div className="flex flex-col gap-1.5">
-                <Label htmlFor="profile-email">E-mail</Label>
+                <Label htmlFor="profile-email">Email</Label>
                 <Input
                   id="profile-email"
                   type="email"
@@ -127,12 +127,12 @@ export function ProfilePage() {
                   readOnly
                 />
                 <span className="text-xs text-gray-500">
-                  O e-mail não pode ser alterado
+                  Email cannot be changed
                 </span>
               </div>
 
               <Button type="submit" disabled={saving} className="w-full">
-                {saving ? 'Salvando...' : 'Salvar alterações'}
+                {saving ? 'Saving...' : 'Save changes'}
               </Button>
             </form>
 
@@ -144,7 +144,7 @@ export function ProfilePage() {
               }}
               className="w-full text-danger hover:bg-red-light hover:text-red-base"
             >
-              <LogOut className="size-4" /> Sair da conta
+              <LogOut className="size-4" /> Log out
             </Button>
           </>
         )}
@@ -157,7 +157,7 @@ function ProfileSkeleton() {
   return (
     <div className="flex flex-col items-center gap-3">
       <span
-        aria-label="Carregando avatar"
+        aria-label="Loading avatar"
         className="inline-block size-20 animate-pulse rounded-full bg-gray-200"
       />
       <div className="flex w-full flex-col items-center gap-2">

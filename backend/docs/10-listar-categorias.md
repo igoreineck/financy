@@ -1,11 +1,11 @@
-# Tarefa 10 — Deve ser possível listar todas as categorias
+# Tarefa 10 — It must be possible to list all categories
 
-> Origem: linha 67 da seção "Tarefas" em `requisitos.md`.
+> Origin: line 67 of the "Tarefas" section in `requisitos.md`.
 > Branch: `feat/10-listar-categorias`.
 
-## Objetivo
+## Goal
 
-Listar todas as categorias do próprio usuário.
+List all of the user's own categories.
 
 ## GraphQL surface
 
@@ -24,38 +24,38 @@ type Query {
     orderBy: { name: 'asc' },
   })
   ```
-- `src/graphql/resolvers/category.resolver.ts` — adicionar `@Query(() => [CategoryModel]) listCategories(@GqlUser() user)`.
+- `src/graphql/resolvers/category.resolver.ts` — add `@Query(() => [CategoryModel]) listCategories(@GqlUser() user)`.
 
 ## Authorization
 
-Ver [02 — Escopo por usuário](./02-escopo-por-usuario.md). `findMany` **deve** ter `where: { userId }`.
+See [02 — Per-user scoping](./02-escopo-por-usuario.md). The `findMany` **must** have `where: { userId }`.
 
 ## Testing
 
 - `src/app/categories/list-categories.spec.ts`
-  - [x] retorna só as categorias do autenticado (criar categorias de A e B, listar como A, B não aparece).
-  - [x] ordem `name` ascendente.
-  - [x] usuário sem categorias recebe `[]`.
+  - [x] returns only the authenticated user's categories (create categories for A and B, list as A, B's don't show up).
+  - [x] `name` ascending order.
+  - [x] a user with no categories gets `[]`.
 - `src/graphql/resolvers/category.resolver.spec.ts`
-  - [x] query retorna lista.
-  - [x] sem token → erro de autenticação.
+  - [x] query returns the list.
+  - [x] no token → authentication error.
 
 ## Acceptance criteria
 
-- [x] `listCategories` retorna só as categorias do autenticado.
-- [x] Ordem: `name` asc.
-- [x] Vazio → `[]`.
-- [x] Sem JWT → `Usuário não autenticado!`.
-- [x] Suite verde.
+- [x] `listCategories` returns only the authenticated user's categories.
+- [x] Order: `name` asc.
+- [x] Empty → `[]`.
+- [x] No JWT → `User not authenticated!`.
+- [x] Suite green.
 
 ## Depends on
 
-- [07 — Criar categoria](./07-criar-categoria.md).
-- [01 — Criar conta e login](./01-criar-conta-e-login.md).
-- [02 — Escopo por usuário](./02-escopo-por-usuario.md).
+- [07 — Create category](./07-criar-categoria.md).
+- [01 — Create account and log in](./01-criar-conta-e-login.md).
+- [02 — Per-user scoping](./02-escopo-por-usuario.md).
 
 ## Out of scope
 
-- Paginação.
-- Filtros / busca.
-- Contagem de transações por categoria (FieldResolver opcional, fora deste escopo).
+- Pagination.
+- Filters / search.
+- Transaction count per category (optional FieldResolver, outside this scope).

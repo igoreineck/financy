@@ -151,7 +151,7 @@ describe('AuthResolver', () => {
     })
 
     expect(result.data).toBeNull()
-    expect(result.errors?.[0]?.message).toBe('Credenciais inválidas!')
+    expect(result.errors?.[0]?.message).toBe('Invalid credentials!')
   })
 
   it('register response does not include the password field', async () => {
@@ -178,21 +178,21 @@ describe('AuthResolver', () => {
     const result = await execute(ME, {})
 
     expect(result.data).toBeNull()
-    expect(result.errors?.[0]?.message).toBe('Usuário não autenticado!')
+    expect(result.errors?.[0]?.message).toBe('User not authenticated!')
   })
 
-  it('me with an expired token surfaces "Sessão expirada!"', async () => {
+  it('me with an expired token surfaces "Session expired!"', async () => {
     const result = await execute(ME, {}, undefined, 'expired')
 
     expect(result.data).toBeNull()
-    expect(result.errors?.[0]?.message).toBe('Sessão expirada!')
+    expect(result.errors?.[0]?.message).toBe('Session expired!')
   })
 
-  it('me with an invalid token surfaces "Token inválido!"', async () => {
+  it('me with an invalid token surfaces "Invalid token!"', async () => {
     const result = await execute(ME, {}, undefined, 'invalid')
 
     expect(result.data).toBeNull()
-    expect(result.errors?.[0]?.message).toBe('Token inválido!')
+    expect(result.errors?.[0]?.message).toBe('Invalid token!')
   })
 
   it('me with a token for a deleted user rejects with auth error', async () => {
@@ -212,7 +212,7 @@ describe('AuthResolver', () => {
     const result = await execute(ME, {}, register.user.id)
 
     expect(result.data).toBeNull()
-    expect(result.errors?.[0]?.message).toBe('Usuário não autenticado!')
+    expect(result.errors?.[0]?.message).toBe('User not authenticated!')
   })
 
   it('me with a valid token returns the user', async () => {
@@ -270,7 +270,7 @@ describe('AuthResolver', () => {
     })
 
     expect(result.data).toBeNull()
-    expect(result.errors?.[0]?.message).toBe('Usuário não autenticado!')
+    expect(result.errors?.[0]?.message).toBe('User not authenticated!')
   })
 
   it('updateProfile rejects when the new name is blank', async () => {
@@ -292,6 +292,6 @@ describe('AuthResolver', () => {
     )
 
     expect(result.data).toBeNull()
-    expect(result.errors?.[0]?.message).toBe('Nome obrigatório!')
+    expect(result.errors?.[0]?.message).toBe('Name is required!')
   })
 })

@@ -1,19 +1,19 @@
-# Tarefa 07 — Deve ser possível criar uma categoria
+# Tarefa 07 — It must be possible to create a category
 
-> Origem: linha 64 da seção "Tarefas" em `requisitos.md`.
+> Origin: line 64 of the "Tarefas" section in `requisitos.md`.
 > Branch: `feat/07-criar-categoria`.
 
-## Objetivo
+## Goal
 
-Permitir ao usuário autenticado criar uma categoria para classificar suas transações.
+Let the authenticated user create a category to classify their transactions.
 
 ## GraphQL surface
 
 ```graphql
 input CreateCategoryInput {
   name: String!
-  color: String!         # hex, ex.: '#FF5733'
-  icon: String!          # identificador (ex.: nome de ícone Lucide)
+  color: String!         # hex, e.g. '#FF5733'
+  icon: String!          # identifier (e.g. a Lucide icon name)
   description: String
 }
 
@@ -25,7 +25,7 @@ type Mutation {
 ## Files to add or change
 
 ### Prisma
-- `prisma/schema.prisma` — adicionar:
+- `prisma/schema.prisma` — add:
   ```prisma
   model Category {
     id          String   @id @default(uuid())
@@ -42,7 +42,7 @@ type Mutation {
     transactions Transaction[]
   }
   ```
-- Rodar `pnpm migrate --name add-category`. (Vem **antes** da migration de Transaction na tarefa 03 — categoria precisa existir antes de qualquer FK apontar pra ela.)
+- Run `pnpm migrate --name add-category`. (Comes **before** the Transaction migration in tarefa 03 — the category must exist before any FK points at it.)
 
 ### GraphQL surface
 - `src/graphql/models/category.model.ts` — `@ObjectType CategoryModel`.
@@ -56,38 +56,38 @@ type Mutation {
   ```
 
 ### Wiring
-- `src/infra/http/server.ts` — registrar `CategoryResolver`.
+- `src/infra/http/server.ts` — register `CategoryResolver`.
 
 ## Authorization
 
-Ver [02 — Escopo por usuário](./02-escopo-por-usuario.md). `userId` vem de `@GqlUser()`, **nunca** do input.
+See [02 — Per-user scoping](./02-escopo-por-usuario.md). `userId` comes from `@GqlUser()`, **never** from the input.
 
 ## Testing
 
 - `src/app/categories/create-category.spec.ts`
-  - [x] cria categoria e retorna o objeto com `userId` correto.
-  - [x] `description` opcional vira `null` quando ausente.
+  - [x] creates the category and returns the object with the correct `userId`.
+  - [x] optional `description` becomes `null` when absent.
 - `src/graphql/resolvers/category.resolver.spec.ts`
-  - [x] mutation `createCategory` com token cria.
-  - [x] sem token → erro de autenticação.
-- Atualizar `src/test/setup.ts` para `await prisma.category.deleteMany()` antes de `prisma.user.deleteMany()`.
+  - [x] `createCategory` mutation with a token creates it.
+  - [x] no token → authentication error.
+- Update `src/test/setup.ts` to `await prisma.category.deleteMany()` before `prisma.user.deleteMany()`.
 
 ## Acceptance criteria
 
-- [x] Criar categoria válida retorna o objeto.
-- [x] `color` armazenada como string (sem validação hex — frontend valida).
-- [x] `description` opcional.
-- [x] Sem JWT → `Usuário não autenticado!`.
-- [x] Suite verde.
+- [x] Creating a valid category returns the object.
+- [x] `color` stored as a string (no hex validation — the frontend validates).
+- [x] `description` optional.
+- [x] No JWT → `User not authenticated!`.
+- [x] Suite green.
 
 ## Depends on
 
-- [01 — Criar conta e login](./01-criar-conta-e-login.md).
-- [02 — Escopo por usuário](./02-escopo-por-usuario.md).
+- [01 — Create account and log in](./01-criar-conta-e-login.md).
+- [02 — Per-user scoping](./02-escopo-por-usuario.md).
 
 ## Out of scope
 
-- Validação de cor (regex hex).
-- Validação de nome único por usuário.
-- Categorias-padrão pré-cadastradas (seed).
-- Categorias compartilhadas / globais.
+- Color validation (hex regex).
+- Unique-name-per-user validation.
+- Pre-registered default categories (seed).
+- Shared / global categories.

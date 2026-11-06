@@ -7,11 +7,11 @@ import { IconButton } from './icon-button'
 describe('<IconButton />', () => {
   it('renders outline variant by default', () => {
     render(
-      <IconButton aria-label="Editar">
+      <IconButton aria-label="Edit">
         <Trash2 />
       </IconButton>,
     )
-    const button = screen.getByRole('button', { name: 'Editar' })
+    const button = screen.getByRole('button', { name: 'Edit' })
     expect(button).toHaveClass('border-gray-300')
   })
 
@@ -28,7 +28,7 @@ describe('<IconButton />', () => {
     const user = userEvent.setup()
     const onClick = vi.fn()
     render(
-      <IconButton aria-label="Editar" onClick={onClick}>
+      <IconButton aria-label="Edit" onClick={onClick}>
         <Trash2 />
       </IconButton>,
     )
@@ -40,7 +40,7 @@ describe('<IconButton />', () => {
     const user = userEvent.setup()
     const onClick = vi.fn()
     render(
-      <IconButton aria-label="Editar" disabled onClick={onClick}>
+      <IconButton aria-label="Edit" disabled onClick={onClick}>
         <Trash2 />
       </IconButton>,
     )

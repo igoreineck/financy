@@ -29,23 +29,23 @@ export function DashboardPage() {
   return (
     <div className="mx-auto flex max-w-6xl flex-col gap-6">
       <section
-        aria-label="Resumo do mês"
+        aria-label="Monthly summary"
         className="grid grid-cols-1 gap-4 sm:grid-cols-3"
       >
         <StatCard
-          label="Saldo total"
+          label="Total balance"
           valueCents={summary.saldo}
           icon={Wallet}
           variant="neutral"
         />
         <StatCard
-          label="Receitas do mês"
+          label="Monthly income"
           valueCents={summary.receitas}
           icon={CircleArrowUp}
           variant="positive"
         />
         <StatCard
-          label="Despesas do mês"
+          label="Monthly expenses"
           valueCents={summary.despesas}
           icon={CircleArrowDown}
           variant="negative"
@@ -53,7 +53,7 @@ export function DashboardPage() {
       </section>
 
       {loading ? (
-        <p className="text-sm text-gray-500">Carregando dashboard...</p>
+        <p className="text-sm text-gray-500">Loading dashboard...</p>
       ) : transactions.length === 0 ? (
         <EmptyState onCreate={() => setDialogOpen(true)} />
       ) : (
@@ -83,18 +83,18 @@ function EmptyState({ onCreate }: { onCreate: () => void }) {
       </div>
       <div className="flex flex-col gap-1">
         <h2 className="text-base font-semibold text-gray-800">
-          Nenhuma transação ainda
+          No transactions yet
         </h2>
         <p className="text-sm text-gray-500">
-          Comece criando sua primeira transação
+          Start by creating your first transaction
         </p>
       </div>
       <div className="flex items-center gap-2">
         <Button size="sm" onClick={onCreate}>
-          <Plus className="size-4" /> Nova transação
+          <Plus className="size-4" /> New transaction
         </Button>
         <Button asChild size="sm" variant="outline">
-          <Link to="/transacoes">Ver transações</Link>
+          <Link to="/transactions">View transactions</Link>
         </Button>
       </div>
     </div>

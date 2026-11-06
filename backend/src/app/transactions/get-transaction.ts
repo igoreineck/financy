@@ -9,6 +9,6 @@ export async function getTransaction(
     where: { id, userId },
     include: { category: true },
   })
-  if (!transaction) throw new Error('Transação não encontrada')
+  if (!transaction) throw new Error('Transaction not found')
   return transaction
 }

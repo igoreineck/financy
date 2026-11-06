@@ -12,7 +12,7 @@ export async function updateProfile({
 }: UpdateProfileInput): Promise<SafeUser> {
   const trimmed = name.trim()
   if (trimmed.length === 0) {
-    throw new Error('Nome obrigatório!')
+    throw new Error('Name is required!')
   }
 
   const user = await prisma.user.update({

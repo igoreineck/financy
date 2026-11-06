@@ -24,10 +24,10 @@ import { ColorPicker } from './color-picker'
 import { IconPicker } from './icon-picker'
 
 const categorySchema = z.object({
-  name: z.string().trim().min(1, 'Título obrigatório'),
+  name: z.string().trim().min(1, 'Title is required'),
   description: z.string().trim().optional(),
-  icon: z.string().refine(isCategoryIcon, 'Selecione um ícone'),
-  color: z.string().refine(isCategoryColor, 'Selecione uma cor'),
+  icon: z.string().refine(isCategoryIcon, 'Select an icon'),
+  color: z.string().refine(isCategoryColor, 'Select a color'),
 })
 
 type CategoryForm = {
@@ -102,16 +102,16 @@ export function CategoryDialog({
     try {
       if (mode === 'create') {
         await createCategory({ variables: { data } })
-        toast.success('Categoria criada')
+        toast.success('Category created')
       } else if (initialValues?.id) {
         await updateCategory({
           variables: { id: initialValues.id, data },
         })
-        toast.success('Categoria atualizada')
+        toast.success('Category updated')
       }
       onOpenChange(false)
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : 'Erro ao salvar')
+      toast.error(err instanceof Error ? err.message : 'Failed to save')
     }
   })
 
@@ -127,21 +127,21 @@ export function CategoryDialog({
       <DialogContent>
         <DialogHeader>
           <DialogTitle>
-            {mode === 'create' ? 'Nova categoria' : 'Editar categoria'}
+            {mode === 'create' ? 'New category' : 'Edit category'}
           </DialogTitle>
           <DialogDescription>
-            Organize suas transações com categorias
+            Organize your transactions with categories
           </DialogDescription>
         </DialogHeader>
 
         <form className="flex flex-col gap-5" onSubmit={onSubmit} noValidate>
           <div className="flex flex-col gap-1.5">
             <Label htmlFor="name" state={errors.name ? 'error' : 'default'}>
-              Título
+              Title
             </Label>
             <Input
               id="name"
-              placeholder="Ex. Alimentação"
+              placeholder="E.g. Food"
               error={Boolean(errors.name)}
               {...register('name')}
             />
@@ -151,17 +151,17 @@ export function CategoryDialog({
           </div>
 
           <div className="flex flex-col gap-1.5">
-            <Label htmlFor="description">Descrição</Label>
+            <Label htmlFor="description">Description</Label>
             <Input
               id="description"
-              placeholder="Descrição da categoria"
+              placeholder="Category description"
               {...register('description')}
             />
-            <span className="text-xs text-gray-500">Opcional</span>
+            <span className="text-xs text-gray-500">Optional</span>
           </div>
 
           <div className="flex flex-col gap-3">
-            <Label state={errors.icon ? 'error' : 'default'}>Ícone</Label>
+            <Label state={errors.icon ? 'error' : 'default'}>Icon</Label>
             <Controller
               control={control}
               name="icon"
@@ -179,7 +179,7 @@ export function CategoryDialog({
           </div>
 
           <div className="flex flex-col gap-3">
-            <Label state={errors.color ? 'error' : 'default'}>Cor</Label>
+            <Label state={errors.color ? 'error' : 'default'}>Color</Label>
             <Controller
               control={control}
               name="color"
@@ -199,7 +199,7 @@ export function CategoryDialog({
           </div>
 
           <Button type="submit" className="w-full" disabled={loading}>
-            {loading ? 'Salvando...' : 'Salvar'}
+            {loading ? 'Saving...' : 'Save'}
           </Button>
         </form>
       </DialogContent>

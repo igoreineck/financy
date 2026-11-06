@@ -19,7 +19,7 @@ export function signJwt(
 export function verifyJwt(token: string): JwtPayload {
   const decoded = verify(token, env.JWT_SECRET)
   if (typeof decoded === 'string') {
-    throw new Error('Token inválido!')
+    throw new Error('Invalid token!')
   }
   const { id, email } = decoded as JwtPayload
   return { id, email }

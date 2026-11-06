@@ -28,7 +28,7 @@ export async function registerUser({
     where: { email: normalizedEmail },
   })
   if (existing) {
-    throw new Error('E-mail já cadastrado!')
+    throw new Error('Email already registered!')
   }
 
   const hashed = await hashPassword(password)

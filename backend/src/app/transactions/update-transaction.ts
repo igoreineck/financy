@@ -22,19 +22,19 @@ export async function updateTransaction(
     data.occurredAt === null ||
     data.categoryId === null
   ) {
-    throw new Error('Campos obrigatórios não podem ser nulos')
+    throw new Error('Required fields cannot be null')
   }
 
   const existing = await prisma.transaction.findFirst({
     where: { id, userId },
   })
-  if (!existing) throw new Error('Transação não encontrada')
+  if (!existing) throw new Error('Transaction not found')
 
   if (data.categoryId && data.categoryId !== existing.categoryId) {
     const category = await prisma.category.findFirst({
       where: { id: data.categoryId, userId },
     })
-    if (!category) throw new Error('Categoria não encontrada')
+    if (!category) throw new Error('Category not found')
   }
 
   return prisma.transaction.update({

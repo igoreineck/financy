@@ -44,7 +44,7 @@ describe('updateProfile', () => {
 
     await expect(
       updateProfile({ userId: user.id, name: '   ' }),
-    ).rejects.toThrow('Nome obrigatório!')
+    ).rejects.toThrow('Name is required!')
   })
 
   it('does not modify the email when only the name changes', async () => {

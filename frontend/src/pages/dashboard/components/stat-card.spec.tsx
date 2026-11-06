@@ -6,16 +6,16 @@ import { StatCard } from './stat-card'
 describe('StatCard', () => {
   it('formats the value as pt-BR currency', () => {
     render(
-      <StatCard label="Receitas do mês" valueCents={123_456} icon={Wallet} />,
+      <StatCard label="Monthly income" valueCents={123_456} icon={Wallet} />,
     )
     expect(screen.getByText('R$ 1.234,56')).toBeInTheDocument()
-    expect(screen.getByText('Receitas do mês')).toBeInTheDocument()
+    expect(screen.getByText('Monthly income')).toBeInTheDocument()
   })
 
   it('keeps the value text neutral regardless of variant', () => {
     render(
       <StatCard
-        label="Saldo total"
+        label="Total balance"
         valueCents={5_000}
         icon={Wallet}
         variant="positive"
@@ -27,7 +27,7 @@ describe('StatCard', () => {
   it('marks the variant on the root element', () => {
     const { container } = render(
       <StatCard
-        label="Despesas do mês"
+        label="Monthly expenses"
         valueCents={9_900}
         icon={Wallet}
         variant="negative"
@@ -38,7 +38,7 @@ describe('StatCard', () => {
 
   it('defaults to the neutral variant', () => {
     const { container } = render(
-      <StatCard label="Saldo total" valueCents={0} icon={Wallet} />,
+      <StatCard label="Total balance" valueCents={0} icon={Wallet} />,
     )
     expect(container.firstChild).toHaveAttribute('data-variant', 'neutral')
   })

@@ -45,24 +45,24 @@ export function RecentTransactions({
 
   return (
     <section
-      aria-label="Transações recentes"
+      aria-label="Recent transactions"
       className="flex flex-col rounded-xl border border-gray-200 bg-white"
     >
       <header className="flex items-center justify-between px-5 py-4">
         <h2 className="text-xs font-medium uppercase tracking-wide text-gray-500">
-          Transações recentes
+          Recent transactions
         </h2>
         <Link
-          to="/transacoes"
+          to="/transactions"
           className="inline-flex items-center gap-1 text-xs font-medium text-brand-base hover:text-brand-dark"
         >
-          Ver todas <ChevronRight className="size-3" />
+          View all <ChevronRight className="size-3" />
         </Link>
       </header>
 
       {sorted.length === 0 ? (
         <p className="border-t border-gray-200 px-5 py-6 text-sm text-gray-500">
-          Nenhuma transação por aqui.
+          No transactions here.
         </p>
       ) : (
         <ul className="flex flex-col divide-y divide-gray-200 border-t border-gray-200">
@@ -96,7 +96,7 @@ export function RecentTransactions({
         onClick={onCreate}
         className="flex items-center justify-center gap-2 border-t border-gray-200 px-5 py-3 text-sm font-medium text-brand-base transition-colors hover:bg-gray-100"
       >
-        <Plus className="size-4" /> Nova transação
+        <Plus className="size-4" /> New transaction
       </button>
     </section>
   )

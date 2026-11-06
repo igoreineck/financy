@@ -60,7 +60,7 @@ describe('deleteTransaction', () => {
 
     await expect(
       deleteTransaction(faker.string.uuid(), user.id),
-    ).rejects.toThrow('Transação não encontrada')
+    ).rejects.toThrow('Transaction not found')
   })
 
   it('throws when the transaction belongs to another user', async () => {
@@ -71,7 +71,7 @@ describe('deleteTransaction', () => {
 
     await expect(
       deleteTransaction(transaction.id, attacker.id),
-    ).rejects.toThrow('Transação não encontrada')
+    ).rejects.toThrow('Transaction not found')
 
     const stillThere = await prisma.transaction.findUnique({
       where: { id: transaction.id },

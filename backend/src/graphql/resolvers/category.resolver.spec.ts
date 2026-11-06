@@ -181,7 +181,7 @@ describe('CategoryResolver', () => {
     })
 
     expect(result.data).toBeNull()
-    expect(result.errors?.[0]?.message).toBe('Usuário não autenticado!')
+    expect(result.errors?.[0]?.message).toBe('User not authenticated!')
   })
 
   it('listCategories returns the authenticated user list ordered by name asc', async () => {
@@ -215,7 +215,7 @@ describe('CategoryResolver', () => {
     const result = await execute(LIST_CATEGORIES, {})
 
     expect(result.data).toBeNull()
-    expect(result.errors?.[0]?.message).toBe('Usuário não autenticado!')
+    expect(result.errors?.[0]?.message).toBe('User not authenticated!')
   })
 
   it('updateCategory updates the provided fields', async () => {
@@ -269,7 +269,7 @@ describe('CategoryResolver', () => {
     )
 
     expect(result.data).toBeNull()
-    expect(result.errors?.[0]?.message).toBe('Categoria não encontrada')
+    expect(result.errors?.[0]?.message).toBe('Category not found')
   })
 
   it('updateCategory without token rejects with auth error', async () => {
@@ -279,7 +279,7 @@ describe('CategoryResolver', () => {
     })
 
     expect(result.data).toBeNull()
-    expect(result.errors?.[0]?.message).toBe('Usuário não autenticado!')
+    expect(result.errors?.[0]?.message).toBe('User not authenticated!')
   })
 
   it('deleteCategory returns true on success', async () => {
@@ -315,14 +315,14 @@ describe('CategoryResolver', () => {
     const result = await execute(DELETE_CATEGORY, { id }, userB.id)
 
     expect(result.data).toBeNull()
-    expect(result.errors?.[0]?.message).toBe('Categoria não encontrada')
+    expect(result.errors?.[0]?.message).toBe('Category not found')
   })
 
   it('deleteCategory without token rejects with auth error', async () => {
     const result = await execute(DELETE_CATEGORY, { id: 'whatever' })
 
     expect(result.data).toBeNull()
-    expect(result.errors?.[0]?.message).toBe('Usuário não autenticado!')
+    expect(result.errors?.[0]?.message).toBe('User not authenticated!')
   })
 
   it('category returns the category owned by the user', async () => {
@@ -356,13 +356,13 @@ describe('CategoryResolver', () => {
     const result = await execute(GET_CATEGORY, { id }, attacker.id)
 
     expect(result.data).toBeNull()
-    expect(result.errors?.[0]?.message).toBe('Categoria não encontrada')
+    expect(result.errors?.[0]?.message).toBe('Category not found')
   })
 
   it('category without token rejects with auth error', async () => {
     const result = await execute(GET_CATEGORY, { id: faker.string.uuid() })
 
     expect(result.data).toBeNull()
-    expect(result.errors?.[0]?.message).toBe('Usuário não autenticado!')
+    expect(result.errors?.[0]?.message).toBe('User not authenticated!')
   })
 })

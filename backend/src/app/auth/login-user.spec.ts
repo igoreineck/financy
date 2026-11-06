@@ -31,7 +31,7 @@ describe('loginUser', () => {
         email: faker.internet.email().toLowerCase(),
         password: faker.internet.password({ length: 12 }),
       }),
-    ).rejects.toThrow('Credenciais inválidas!')
+    ).rejects.toThrow('Invalid credentials!')
   })
 
   it('rejects when the password is wrong', async () => {
@@ -39,7 +39,7 @@ describe('loginUser', () => {
 
     await expect(
       loginUser({ email: user.email, password: 'wrong-password' }),
-    ).rejects.toThrow('Credenciais inválidas!')
+    ).rejects.toThrow('Invalid credentials!')
   })
 
   it('matches the user when email casing differs from registration', async () => {

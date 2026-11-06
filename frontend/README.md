@@ -1,73 +1,73 @@
 # Financy — Frontend
 
-SPA em React 19 + Vite que consome a API GraphQL do `../backend`. Cobre auth
-(login / cadastro), dashboard, CRUD de categorias e transações, e perfil do
-usuário.
+React 19 + Vite SPA that consumes the GraphQL API from `../backend`. Covers
+auth (login / sign-up), dashboard, CRUD for categories and transactions, and
+the user profile.
 
 ## Stack
 
-- **React 19 + Vite 7** (sem framework).
-- **Apollo Client 4** com `graphql-codegen` gerando tipos em `src/gql/`.
-- **Tailwind CSS v4** com tokens em `@theme` (`src/index.css`).
-- **Radix UI** para primitivos (Dialog, DropdownMenu, Select).
-- **Zustand** com `persist` para a sessão (dual storage: local/session).
-- **React Hook Form + Zod** para forms; parse on submit, sem `zodResolver`.
+- **React 19 + Vite 7** (no framework).
+- **Apollo Client 4** with `graphql-codegen` generating types into `src/gql/`.
+- **Tailwind CSS v4** with tokens in `@theme` (`src/index.css`).
+- **Radix UI** for primitives (Dialog, DropdownMenu, Select).
+- **Zustand** with `persist` for the session (dual storage: local/session).
+- **React Hook Form + Zod** for forms; parse on submit, no `zodResolver`.
 - **React Router 7** (`createBrowserRouter` + guards).
-- **Vitest + MSW + Testing Library** para a bateria de testes.
-- **Biome** para lint + format.
+- **Vitest + MSW + Testing Library** for the test suite.
+- **Biome** for lint + format.
 
 ## Setup
 
 ```bash
 pnpm install
-cp .env.example .env                # ajuste VITE_BACKEND_URL se o backend não estiver em :4000
-pnpm codegen                        # gera src/gql/ a partir de ../backend/schema.graphql
+cp .env.example .env                # adjust VITE_BACKEND_URL if the backend isn't on :4000
+pnpm codegen                        # generates src/gql/ from ../backend/schema.graphql
 pnpm dev                            # http://localhost:5173
 ```
 
-Se o backend estiver rodando com o seed aplicado (`cd ../backend && pnpm seed`),
-você pode logar com:
+If the backend is running with the seed applied (`cd ../backend && pnpm seed`),
+you can log in with:
 
-- **e-mail**: `conta@teste.com`
-- **senha**: `senha123`
+- **email**: `conta@teste.com`
+- **password**: `senha123`
 
-## Comandos
+## Commands
 
-| Comando                     | O que faz                                          |
+| Command                     | What it does                                       |
 | --------------------------- | -------------------------------------------------- |
-| `pnpm dev`                  | Vite dev server em `:5173` (HMR)                   |
+| `pnpm dev`                  | Vite dev server on `:5173` (HMR)                   |
 | `pnpm build`                | `tsc -b && vite build`                             |
-| `pnpm preview`              | Serve `dist/` para smoke check                     |
-| `pnpm test`                 | Roda todos os `*.spec.tsx`                         |
-| `pnpm test:watch`           | Vitest em watch mode                               |
-| `pnpm lint` / `pnpm format` | Biome sem / com autofix                            |
-| `pnpm check`                | Biome lint + format autofix — antes de cada commit |
-| `pnpm codegen`              | Regera `src/gql/` a partir do schema do backend    |
-| `pnpm codegen:watch`        | Mesmo, em watch mode                               |
+| `pnpm preview`              | Serves `dist/` for a smoke check                   |
+| `pnpm test`                 | Runs every `*.spec.tsx`                            |
+| `pnpm test:watch`           | Vitest in watch mode                               |
+| `pnpm lint` / `pnpm format` | Biome without / with autofix                       |
+| `pnpm check`                | Biome lint + format autofix — before every commit  |
+| `pnpm codegen`              | Regenerates `src/gql/` from the backend schema     |
+| `pnpm codegen:watch`        | Same, in watch mode                                |
 
-Não há script `type-check` separado — `pnpm build` roda `tsc -b`. Para checagem
-rápida, `pnpm tsc --noEmit`.
+There's no separate `type-check` script — `pnpm build` runs `tsc -b`. For a
+quick check, use `pnpm tsc --noEmit`.
 
-## Estrutura
+## Structure
 
-Detalhes completos (arquitetura, convenções, gotchas) em
-[`CLAUDE.md`](./CLAUDE.md). Resumo:
+Full details (architecture, conventions, gotchas) in
+[`CLAUDE.md`](./CLAUDE.md). Summary:
 
 ```
 src/
-├── env.ts                 # env Zod-validado
+├── env.ts                 # Zod-validated env
 ├── lib/                   # apollo, auth (useLogout), format, initials, utils
 ├── store/                 # auth store (Zustand persist)
 ├── components/
-│   ├── ui/                # primitivos shadcn-style (Radix + cva + cn)
+│   ├── ui/                # shadcn-style primitives (Radix + cva + cn)
 │   ├── layout/            # AppLayout (navbar + outlet), UserMenu
 │   └── guards/            # ProtectedRoute, PublicRoute
 └── pages/
     ├── auth/              # login + sign-up
-    ├── dashboard/         # stats + recentes + categorias
-    ├── transactions/      # tabela + filtros + paginação + CRUD
+    ├── dashboard/         # stats + recent + categories
+    ├── transactions/      # table + filters + pagination + CRUD
     ├── categories/        # grid + CRUD + color/icon pickers
-    └── profile/           # form (edita nome; e-mail bloqueado) + logout
+    └── profile/           # form (edits name; email locked) + logout
 ```
 
-Requisitos funcionais em [`requisitos.md`](./requisitos.md) (todos marcados).
+Functional requirements in [`requisitos.md`](./requisitos.md) (all checked).

@@ -51,10 +51,10 @@ export function TransactionDeleteConfirm({
     if (!transaction) return
     try {
       await deleteTransaction({ variables: { id: transaction.id } })
-      toast.success('Transação excluída')
+      toast.success('Transaction deleted')
       onOpenChange(false)
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : 'Erro ao excluir')
+      toast.error(err instanceof Error ? err.message : 'Failed to delete')
     }
   }
 
@@ -62,10 +62,12 @@ export function TransactionDeleteConfirm({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-sm">
         <DialogHeader>
-          <DialogTitle>Excluir transação?</DialogTitle>
+          <DialogTitle>Delete transaction?</DialogTitle>
           <DialogDescription>
-            Esta ação não pode ser desfeita.
-            {transaction ? ` "${transaction.description}" será removida.` : ''}
+            This action cannot be undone.
+            {transaction
+              ? ` "${transaction.description}" will be removed.`
+              : ''}
           </DialogDescription>
         </DialogHeader>
         <DialogFooter>
@@ -75,7 +77,7 @@ export function TransactionDeleteConfirm({
             onClick={() => onOpenChange(false)}
             disabled={loading}
           >
-            Cancelar
+            Cancel
           </Button>
           <Button
             type="button"
@@ -83,7 +85,7 @@ export function TransactionDeleteConfirm({
             disabled={loading}
             className="bg-danger hover:bg-danger/90"
           >
-            {loading ? 'Excluindo...' : 'Excluir'}
+            {loading ? 'Deleting...' : 'Delete'}
           </Button>
         </DialogFooter>
       </DialogContent>

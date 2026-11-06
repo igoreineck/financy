@@ -32,7 +32,7 @@ function renderList(ui: React.ReactElement) {
 describe('RecentTransactions', () => {
   it('shows an empty message when there are no transactions', () => {
     renderList(<RecentTransactions transactions={[]} />)
-    expect(screen.getByText('Nenhuma transação por aqui.')).toBeInTheDocument()
+    expect(screen.getByText('No transactions here.')).toBeInTheDocument()
   })
 
   it('limits to 5 items by default', () => {
@@ -92,19 +92,19 @@ describe('RecentTransactions', () => {
     expect(expense).not.toHaveClass('text-danger')
   })
 
-  it('exposes a "Ver todas" link pointing to /transacoes', () => {
+  it('exposes a "View all" link pointing to /transactions', () => {
     renderList(<RecentTransactions transactions={[]} />)
-    expect(screen.getByRole('link', { name: /Ver todas/i })).toHaveAttribute(
+    expect(screen.getByRole('link', { name: /View all/i })).toHaveAttribute(
       'href',
-      '/transacoes',
+      '/transactions',
     )
   })
 
-  it('triggers onCreate when the "Nova transação" button is clicked', async () => {
+  it('triggers onCreate when the "New transaction" button is clicked', async () => {
     const onCreate = vi.fn()
     const user = userEvent.setup()
     renderList(<RecentTransactions transactions={[]} onCreate={onCreate} />)
-    await user.click(screen.getByRole('button', { name: /Nova transação/i }))
+    await user.click(screen.getByRole('button', { name: /New transaction/i }))
     expect(onCreate).toHaveBeenCalledTimes(1)
   })
 })

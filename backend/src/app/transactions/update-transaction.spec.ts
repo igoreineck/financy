@@ -68,7 +68,7 @@ describe('updateTransaction', () => {
     expect(updated.amount).toBe(0)
   })
 
-  it('rejects update on another user transaction with "Transação não encontrada"', async () => {
+  it('rejects update on another user transaction with "Transaction not found"', async () => {
     const owner = await makeUser()
     const attacker = await makeUser()
     const category = await makeCategory(owner.id)
@@ -76,10 +76,10 @@ describe('updateTransaction', () => {
 
     await expect(
       updateTransaction(transaction.id, { amount: 1 }, attacker.id),
-    ).rejects.toThrow('Transação não encontrada')
+    ).rejects.toThrow('Transaction not found')
   })
 
-  it('rejects categoryId owned by another user with "Categoria não encontrada"', async () => {
+  it('rejects categoryId owned by another user with "Category not found"', async () => {
     const user = await makeUser()
     const attacker = await makeUser()
     const ownCategory = await makeCategory(user.id)
@@ -92,7 +92,7 @@ describe('updateTransaction', () => {
         { categoryId: otherCategory.id },
         user.id,
       ),
-    ).rejects.toThrow('Categoria não encontrada')
+    ).rejects.toThrow('Category not found')
   })
 
   it('bumps updatedAt on change', async () => {

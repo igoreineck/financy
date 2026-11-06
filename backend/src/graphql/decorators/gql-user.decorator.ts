@@ -8,7 +8,7 @@ export function GqlUser() {
   return createParameterDecorator<GraphqlContext>(
     async ({ context }): Promise<SafeUser> => {
       if (!context.user) {
-        throw new Error('Usuário não autenticado!')
+        throw new Error('User not authenticated!')
       }
 
       const user = await prisma.user.findUnique({
@@ -17,7 +17,7 @@ export function GqlUser() {
       })
 
       if (!user) {
-        throw new Error('Usuário não autenticado!')
+        throw new Error('User not authenticated!')
       }
 
       return user

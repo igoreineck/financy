@@ -32,7 +32,7 @@ describe('getCategory', () => {
     const user = await makeUser()
 
     await expect(getCategory(faker.string.uuid(), user.id)).rejects.toThrow(
-      'Categoria não encontrada',
+      'Category not found',
     )
   })
 
@@ -45,7 +45,7 @@ describe('getCategory', () => {
     )
 
     await expect(getCategory(category.id, attacker.id)).rejects.toThrow(
-      'Categoria não encontrada',
+      'Category not found',
     )
   })
 })

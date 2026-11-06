@@ -31,38 +31,37 @@ afterEach(async () => {
 describe('<Login />', () => {
   it('renders email, password and the entrar button', () => {
     renderLogin()
-    expect(screen.getByLabelText('E-mail')).toBeInTheDocument()
-    expect(screen.getByLabelText('Senha')).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: 'Entrar' })).toBeInTheDocument()
+    expect(screen.getByLabelText('Email')).toBeInTheDocument()
+    expect(screen.getByLabelText('Password')).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Sign in' })).toBeInTheDocument()
   })
 
-  it('exposes a Criar conta CTA in the footer that links to /cadastro', () => {
+  it('exposes a Create account CTA in the footer that links to /signup', () => {
     renderLogin()
-    expect(screen.getByRole('link', { name: /Criar conta/i })).toHaveAttribute(
-      'href',
-      '/cadastro',
-    )
+    expect(
+      screen.getByRole('link', { name: /Create account/i }),
+    ).toHaveAttribute('href', '/signup')
   })
 
   it('toggles password visibility via the eye button', async () => {
     const user = userEvent.setup()
     renderLogin()
 
-    const passwordInput = screen.getByLabelText('Senha')
+    const passwordInput = screen.getByLabelText('Password')
     expect(passwordInput).toHaveAttribute('type', 'password')
 
-    await user.click(screen.getByRole('button', { name: /Mostrar senha/i }))
+    await user.click(screen.getByRole('button', { name: /Show password/i }))
     expect(passwordInput).toHaveAttribute('type', 'text')
 
-    await user.click(screen.getByRole('button', { name: /Ocultar senha/i }))
+    await user.click(screen.getByRole('button', { name: /Hide password/i }))
     expect(passwordInput).toHaveAttribute('type', 'password')
   })
 
   it('blocks submit when fields are invalid', async () => {
     const user = userEvent.setup()
     renderLogin()
-    await user.click(screen.getByRole('button', { name: 'Entrar' }))
-    expect(await screen.findByText('Email inválido')).toBeInTheDocument()
+    await user.click(screen.getByRole('button', { name: 'Sign in' }))
+    expect(await screen.findByText('Invalid email')).toBeInTheDocument()
     expect(useAuthStore.getState().isAuthenticated).toBe(false)
   })
 
@@ -89,9 +88,9 @@ describe('<Login />', () => {
     const user = userEvent.setup()
     renderLogin()
 
-    await user.type(screen.getByLabelText('E-mail'), 'igor@example.com')
-    await user.type(screen.getByLabelText('Senha'), 'secret')
-    await user.click(screen.getByRole('button', { name: 'Entrar' }))
+    await user.type(screen.getByLabelText('Email'), 'igor@example.com')
+    await user.type(screen.getByLabelText('Password'), 'secret')
+    await user.click(screen.getByRole('button', { name: 'Sign in' }))
 
     expect(await screen.findByText('dashboard placeholder')).toBeInTheDocument()
     expect(useAuthStore.getState().token).toBe('jwt-token')
@@ -102,7 +101,7 @@ describe('<Login />', () => {
     server.use(
       graphql.mutation('Login', () =>
         HttpResponse.json({
-          errors: [{ message: 'Senha inválida!' }],
+          errors: [{ message: 'Invalid password!' }],
         }),
       ),
     )
@@ -110,11 +109,11 @@ describe('<Login />', () => {
     const user = userEvent.setup()
     renderLogin()
 
-    await user.type(screen.getByLabelText('E-mail'), 'igor@example.com')
-    await user.type(screen.getByLabelText('Senha'), 'wrong')
-    await user.click(screen.getByRole('button', { name: 'Entrar' }))
+    await user.type(screen.getByLabelText('Email'), 'igor@example.com')
+    await user.type(screen.getByLabelText('Password'), 'wrong')
+    await user.click(screen.getByRole('button', { name: 'Sign in' }))
 
-    expect(await screen.findByText('Senha inválida!')).toBeInTheDocument()
+    expect(await screen.findByText('Invalid password!')).toBeInTheDocument()
     expect(useAuthStore.getState().isAuthenticated).toBe(false)
   })
 })

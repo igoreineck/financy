@@ -5,14 +5,14 @@ import { Button } from './button'
 
 describe('<Button />', () => {
   it('renders solid variant by default', () => {
-    render(<Button>Salvar</Button>)
-    const button = screen.getByRole('button', { name: 'Salvar' })
+    render(<Button>Save</Button>)
+    const button = screen.getByRole('button', { name: 'Save' })
     expect(button).toHaveClass('bg-brand-base')
   })
 
   it('renders outline variant', () => {
-    render(<Button variant="outline">Cancelar</Button>)
-    const button = screen.getByRole('button', { name: 'Cancelar' })
+    render(<Button variant="outline">Cancel</Button>)
+    const button = screen.getByRole('button', { name: 'Cancel' })
     expect(button).toHaveClass('border', 'bg-white')
   })
 
@@ -28,7 +28,7 @@ describe('<Button />', () => {
     const onClick = vi.fn()
     render(
       <Button disabled onClick={onClick}>
-        Salvar
+        Save
       </Button>,
     )
     await user.click(screen.getByRole('button'))

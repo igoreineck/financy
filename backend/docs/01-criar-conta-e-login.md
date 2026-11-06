@@ -1,11 +1,11 @@
-# Tarefa 01 — O usuário pode criar uma conta e fazer login
+# Tarefa 01 — The user can create an account and log in
 
-> Origem: linha 58 da seção "Tarefas" em `requisitos.md`.
-> Branch: `feat/01-criar-conta-e-login`. Workflow geral em [`CLAUDE.md`](../CLAUDE.md#workflow-per-tarefa).
+> Origin: line 58 of the "Tarefas" section in `requisitos.md`.
+> Branch: `feat/01-criar-conta-e-login`. General workflow in [`CLAUDE.md`](../CLAUDE.md#workflow-per-tarefa).
 
-## Objetivo
+## Goal
 
-Permitir cadastro com email/senha e emissão de um JWT no login. Estabelece toda a infraestrutura de autenticação que as tarefas seguintes consomem.
+Allow sign-up with email/password and issue a JWT on login. Establishes the whole authentication infrastructure that the following tarefas consume.
 
 ## GraphQL surface
 
@@ -32,12 +32,12 @@ type Mutation {
 }
 ```
 
-> **Divergência da referência:** o repo `ftr-pos-360-mindshare` retorna `{ token, refreshToken, user }` mas emite os dois com a mesma expiração — não é um refresh real. Aqui retornamos só `token`.
+> **Divergence from the reference:** the `ftr-pos-360-mindshare` repo returns `{ token, refreshToken, user }` but issues both with the same expiration — it isn't a real refresh. Here we return only `token`.
 
 ## Files to add or change
 
 ### Prisma
-- `prisma/schema.prisma` — adicionar:
+- `prisma/schema.prisma` — add:
   ```prisma
   model User {
     id        String   @id @default(uuid())
@@ -48,73 +48,73 @@ type Mutation {
     updatedAt DateTime @updatedAt
   }
   ```
-- Rodar `pnpm migrate --name add-user`.
+- Run `pnpm migrate --name add-user`.
 
-### GraphQL surface (classes — TypeGraphQL exige)
-- `src/graphql/models/user.model.ts` — `@ObjectType UserModel`. **Não expor** `password` no GraphQL.
+### GraphQL surface (classes — required by TypeGraphQL)
+- `src/graphql/models/user.model.ts` — `@ObjectType UserModel`. **Do not expose** `password` in GraphQL.
 - `src/graphql/inputs/auth.input.ts` — `RegisterInput`, `LoginInput`.
 - `src/graphql/outputs/auth.output.ts` — `AuthOutput { token, user }`.
-- `src/graphql/resolvers/auth.resolver.ts` — `@Resolver` com `register` e `login` mutations; delega às funções em `src/app/auth/`.
-- `src/graphql/context.ts` — `buildContext({ req })`: lê `Authorization: Bearer <token>`, valida com `verifyJwt`, expõe `GraphqlContext = { user: string | undefined, token, req, res }`.
-- `src/graphql/decorators/gql-user.decorator.ts` — `@GqlUser()` parameter decorator que busca o `User` completo via `prisma`.
-- `src/graphql/middlewares/is-auth.middleware.ts` — `IsAuth` MiddlewareFn que lança erro se `!context.user`.
+- `src/graphql/resolvers/auth.resolver.ts` — `@Resolver` with `register` and `login` mutations; delegates to the functions in `src/app/auth/`.
+- `src/graphql/context.ts` — `buildContext({ req })`: reads `Authorization: Bearer <token>`, validates it with `verifyJwt`, exposes `GraphqlContext = { user: string | undefined, token, req, res }`.
+- `src/graphql/decorators/gql-user.decorator.ts` — `@GqlUser()` parameter decorator that fetches the full `User` via `prisma`.
+- `src/graphql/middlewares/is-auth.middleware.ts` — `IsAuth` MiddlewareFn that throws if `!context.user`.
 
-### Business logic (funções — brev.ly style)
+### Business logic (functions — brev.ly style)
 - `src/app/auth/register-user.ts` — `export async function registerUser({ name, email, password })`:
-  1. `prisma.user.findUnique({ where: { email } })` — se existir, lança `E-mail já cadastrado!`.
+  1. `prisma.user.findUnique({ where: { email } })` — if it exists, throws `Email already registered!`.
   2. `hashPassword(password)`.
   3. `prisma.user.create(...)`.
-  4. Retorna `{ token: signJwt({ id, email }, '1d'), user }`.
+  4. Returns `{ token: signJwt({ id, email }, '1d'), user }`.
 - `src/app/auth/login-user.ts` — `export async function loginUser({ email, password })`:
-  1. `prisma.user.findUnique({ where: { email } })` — se vazio, lança `Usuário não cadastrado!`.
-  2. `comparePassword(password, user.password)` — se falso, lança `Senha inválida!`.
-  3. Retorna `{ token, user }`.
+  1. `prisma.user.findUnique({ where: { email } })` — if empty, throws `User not registered!`.
+  2. `comparePassword(password, user.password)` — if false, throws `Invalid password!`.
+  3. Returns `{ token, user }`.
 - `src/shared/hash.ts` — `hashPassword`, `comparePassword` (bcrypt, salt 10).
-- `src/shared/jwt.ts` — `signJwt`, `verifyJwt` lendo `env.JWT_SECRET`.
+- `src/shared/jwt.ts` — `signJwt`, `verifyJwt` reading `env.JWT_SECRET`.
 
 ### Wiring
-- `src/infra/http/server.ts` — registrar `AuthResolver` em `buildSchema`, passar `buildContext` em `expressMiddleware`, **remover** `HealthResolver` (e o arquivo `src/graphql/resolvers/health.resolver.ts`).
+- `src/infra/http/server.ts` — register `AuthResolver` in `buildSchema`, pass `buildContext` to `expressMiddleware`, **remove** `HealthResolver` (and the `src/graphql/resolvers/health.resolver.ts` file).
 
 ## Authorization
 
-Esta tarefa **estabelece** o mecanismo. `register` e `login` são públicos; tudo a partir daqui usa `@UseMiddleware(IsAuth)` + `@GqlUser()`. Ver [`02-escopo-por-usuario.md`](./02-escopo-por-usuario.md).
+This tarefa **establishes** the mechanism. `register` and `login` are public; everything from here on uses `@UseMiddleware(IsAuth)` + `@GqlUser()`. See [`02-escopo-por-usuario.md`](./02-escopo-por-usuario.md).
 
-## Testing (obrigatório — ver CLAUDE.md > Testing)
+## Testing (mandatory — see CLAUDE.md > Testing)
 
 - `src/app/auth/register-user.spec.ts`
-  - [x] cria usuário e retorna `{ token, user }` com password hasheada (verificar bcrypt).
-  - [x] lança `E-mail já cadastrado!` quando email duplicado.
+  - [x] creates the user and returns `{ token, user }` with a hashed password (verify bcrypt).
+  - [x] throws `Email already registered!` on duplicate email.
 - `src/app/auth/login-user.spec.ts`
-  - [x] login com credenciais válidas retorna `token` e o user correto.
-  - [x] email inexistente lança `Usuário não cadastrado!`.
-  - [x] senha errada lança `Senha inválida!`.
+  - [x] login with valid credentials returns `token` and the correct user.
+  - [x] unknown email throws `User not registered!`.
+  - [x] wrong password throws `Invalid password!`.
 - `src/shared/jwt.spec.ts`
-  - [x] `signJwt`/`verifyJwt` roundtrip preserva payload.
-  - [x] token expirado falha em `verifyJwt`.
+  - [x] `signJwt`/`verifyJwt` roundtrip preserves the payload.
+  - [x] expired token fails in `verifyJwt`.
 - `src/graphql/resolvers/auth.resolver.spec.ts` (integration)
-  - [x] `mutation register` retorna `token` + `user` em GraphQL.
-  - [x] `mutation login` retorna `token` + `user` em GraphQL.
-  - [x] formato dos erros propagados é o esperado pelo Apollo.
-- Atualizar `src/test/setup.ts` para incluir `await prisma.user.deleteMany()` em `beforeEach`.
+  - [x] `mutation register` returns `token` + `user` over GraphQL.
+  - [x] `mutation login` returns `token` + `user` over GraphQL.
+  - [x] propagated errors have the shape Apollo expects.
+- Update `src/test/setup.ts` to include `await prisma.user.deleteMany()` in `beforeEach`.
 
 ## Acceptance criteria
 
-- [x] Mutation `register` cria usuário com senha hasheada (bcrypt, salt 10) e retorna `token` + `user`.
-- [x] Registro com email duplicado lança `E-mail já cadastrado!`.
-- [x] Mutation `login` com credenciais válidas retorna `token` + `user`.
-- [x] Login com email inexistente: `Usuário não cadastrado!`.
-- [x] Login com senha errada: `Senha inválida!`.
-- [x] JWT decodificável com `env.JWT_SECRET`, payload `{ id, email }`, expiração 1 dia.
-- [x] Requisição com `Authorization: Bearer <token>` válido passa em resolvers protegidos; sem header ou token inválido lança `Usuário não autenticado!`.
-- [x] `pnpm check` limpo; `npx tsc --noEmit` limpo; `pnpm test` verde.
+- [x] `register` mutation creates a user with a hashed password (bcrypt, salt 10) and returns `token` + `user`.
+- [x] Registering with a duplicate email throws `Email already registered!`.
+- [x] `login` mutation with valid credentials returns `token` + `user`.
+- [x] Login with unknown email: `User not registered!`.
+- [x] Login with wrong password: `Invalid password!`.
+- [x] JWT decodable with `env.JWT_SECRET`, payload `{ id, email }`, 1-day expiration.
+- [x] A request with a valid `Authorization: Bearer <token>` passes protected resolvers; no header or an invalid token throws `User not authenticated!`.
+- [x] `pnpm check` clean; `npx tsc --noEmit` clean; `pnpm test` green.
 
 ## Depends on
 
-Nenhuma. Primeira tarefa a implementar.
+None. First tarefa to implement.
 
 ## Out of scope
 
-- Refresh tokens reais (divergência documentada acima).
-- Recuperação de senha / verificação de email.
-- Roles / permissões granulares.
-- Rate limiting de login.
+- Real refresh tokens (divergence documented above).
+- Password recovery / email verification.
+- Roles / granular permissions.
+- Login rate limiting.

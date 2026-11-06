@@ -73,13 +73,13 @@ afterEach(async () => {
 })
 
 describe('<TransactionDialog />', () => {
-  it('toggles between Despesa and Receita marking the active option', async () => {
+  it('toggles between Expense and Income marking the active option', async () => {
     seedCategories()
     const user = userEvent.setup()
     renderDialog()
 
-    const despesa = screen.getByRole('button', { name: /Despesa/i })
-    const receita = screen.getByRole('button', { name: /Receita/i })
+    const despesa = screen.getByRole('button', { name: /Expense/i })
+    const receita = screen.getByRole('button', { name: /Income/i })
 
     expect(despesa).toHaveAttribute('aria-pressed', 'true')
     expect(despesa).toHaveClass('border-danger')
@@ -96,7 +96,7 @@ describe('<TransactionDialog />', () => {
     const user = userEvent.setup()
     renderDialog()
 
-    const amount = screen.getByLabelText('Valor')
+    const amount = screen.getByLabelText('Amount')
     await user.type(amount, '12,34')
     expect(amount).toHaveValue('R$ 12,34')
   })
@@ -106,14 +106,16 @@ describe('<TransactionDialog />', () => {
     const user = userEvent.setup()
     renderDialog()
 
-    await user.click(screen.getByRole('button', { name: 'Salvar' }))
+    await user.click(screen.getByRole('button', { name: 'Save' }))
 
-    expect(await screen.findByText('Descrição obrigatória')).toBeInTheDocument()
     expect(
-      screen.getByText('Valor deve ser maior que zero'),
+      await screen.findByText('Description is required'),
     ).toBeInTheDocument()
-    expect(screen.getByText('Data obrigatória')).toBeInTheDocument()
-    expect(screen.getByText('Selecione uma categoria')).toBeInTheDocument()
+    expect(
+      screen.getByText('Amount must be greater than zero'),
+    ).toBeInTheDocument()
+    expect(screen.getByText('Date is required')).toBeInTheDocument()
+    expect(screen.getByText('Select a category')).toBeInTheDocument()
   })
 
   it('submits a valid form with the expected mutation payload', async () => {
@@ -152,16 +154,16 @@ describe('<TransactionDialog />', () => {
     const onOpenChange = vi.fn()
     renderDialog({ onOpenChange })
 
-    await user.type(screen.getByLabelText('Descrição'), 'Mercado')
-    await user.type(screen.getByLabelText('Valor'), '1234')
-    await user.type(screen.getByLabelText('Data'), '2025-11-10')
+    await user.type(screen.getByLabelText('Description'), 'Mercado')
+    await user.type(screen.getByLabelText('Amount'), '1234')
+    await user.type(screen.getByLabelText('Date'), '2025-11-10')
 
-    await user.click(screen.getByRole('combobox', { name: 'Categoria' }))
+    await user.click(screen.getByRole('combobox', { name: 'Category' }))
     await user.click(await screen.findByRole('option', { name: 'Alimentação' }))
 
-    await user.click(screen.getByRole('button', { name: 'Salvar' }))
+    await user.click(screen.getByRole('button', { name: 'Save' }))
 
-    await screen.findByText('Transação criada')
+    await screen.findByText('Transaction created')
     expect(onOpenChange).toHaveBeenCalledWith(false)
     expect(captured[0]).toEqual({
       data: {
@@ -188,10 +190,10 @@ describe('<TransactionDialog />', () => {
       },
     })
 
-    expect(screen.getByLabelText('Descrição')).toHaveValue('Almoço')
-    expect(screen.getByLabelText('Valor')).toHaveValue('R$ 45,00')
-    expect(screen.getByLabelText('Data')).toHaveValue('2025-11-08')
-    const trigger = await screen.findByRole('combobox', { name: 'Categoria' })
+    expect(screen.getByLabelText('Description')).toHaveValue('Almoço')
+    expect(screen.getByLabelText('Amount')).toHaveValue('R$ 45,00')
+    expect(screen.getByLabelText('Date')).toHaveValue('2025-11-08')
+    const trigger = await screen.findByRole('combobox', { name: 'Category' })
     await waitFor(() => expect(trigger).toHaveTextContent('Alimentação'))
   })
 })

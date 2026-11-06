@@ -5,8 +5,8 @@ import { UserMenu } from './user-menu'
 
 const navLinks = [
   { to: '/', label: 'Dashboard', end: true },
-  { to: '/transacoes', label: 'Transações' },
-  { to: '/categorias', label: 'Categorias' },
+  { to: '/transactions', label: 'Transactions' },
+  { to: '/categories', label: 'Categories' },
 ]
 
 export function AppLayout() {

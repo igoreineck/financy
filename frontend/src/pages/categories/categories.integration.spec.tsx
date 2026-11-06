@@ -94,8 +94,8 @@ afterEach(async () => {
   await apolloClient.clearStore()
 })
 
-describe('Categorias — fluxo completo', () => {
-  it('lista, cria, edita e deleta categorias com refresh do grid', async () => {
+describe('Categories — full flow', () => {
+  it('lists, creates, edits, and deletes categories with grid refresh', async () => {
     makeMutableServer([
       {
         id: 'c1',
@@ -113,21 +113,21 @@ describe('Categorias — fluxo completo', () => {
       await screen.findByRole('heading', { name: 'Alimentação' }),
     ).toBeInTheDocument()
 
-    await user.click(screen.getByRole('button', { name: /Nova categoria/i }))
-    await user.type(screen.getByLabelText('Título'), 'Transporte')
+    await user.click(screen.getByRole('button', { name: /New category/i }))
+    await user.type(screen.getByLabelText('Title'), 'Transporte')
     await user.click(screen.getByRole('button', { name: 'house' }))
     await user.click(screen.getByRole('button', { name: 'blue' }))
-    await user.click(screen.getByRole('button', { name: 'Salvar' }))
+    await user.click(screen.getByRole('button', { name: 'Save' }))
 
     expect(
       await screen.findByRole('heading', { name: 'Transporte' }),
     ).toBeInTheDocument()
 
-    await user.click(screen.getByRole('button', { name: 'Editar Transporte' }))
-    const nameInput = screen.getByLabelText('Título')
+    await user.click(screen.getByRole('button', { name: 'Edit Transporte' }))
+    const nameInput = screen.getByLabelText('Title')
     await user.clear(nameInput)
     await user.type(nameInput, 'Mobilidade')
-    await user.click(screen.getByRole('button', { name: 'Salvar' }))
+    await user.click(screen.getByRole('button', { name: 'Save' }))
 
     expect(
       await screen.findByRole('heading', { name: 'Mobilidade' }),
@@ -136,15 +136,13 @@ describe('Categorias — fluxo completo', () => {
       screen.queryByRole('heading', { name: 'Transporte' }),
     ).not.toBeInTheDocument()
 
-    await user.click(
-      screen.getByRole('button', { name: 'Excluir Alimentação' }),
-    )
+    await user.click(screen.getByRole('button', { name: 'Delete Alimentação' }))
     const confirmDialog = await screen.findByRole('dialog')
     await user.click(
-      within(confirmDialog).getByRole('button', { name: 'Excluir' }),
+      within(confirmDialog).getByRole('button', { name: 'Delete' }),
     )
 
-    await screen.findByText('Categoria excluída')
+    await screen.findByText('Category deleted')
     expect(
       screen.queryByRole('heading', { name: 'Alimentação' }),
     ).not.toBeInTheDocument()

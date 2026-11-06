@@ -18,15 +18,15 @@ export function CategorySummary({
 
   return (
     <section
-      aria-label="Categorias mais usadas"
+      aria-label="Most used categories"
       className="flex flex-col rounded-xl border border-gray-200 bg-white"
     >
       <header className="flex items-center justify-between border-b border-gray-200 px-5 py-4">
         <h2 className="text-xs font-medium uppercase tracking-wide text-gray-500">
-          Categorias
+          Categories
         </h2>
         <Link
-          to="/categorias"
+          to="/categories"
           className="inline-flex items-center gap-1 text-xs font-medium text-brand-base hover:text-brand-dark"
         >
           Gerenciar <ChevronRight className="size-3" />
@@ -35,7 +35,7 @@ export function CategorySummary({
 
       {top.length === 0 ? (
         <p className="px-5 py-5 text-sm text-gray-500">
-          Sem categorias movimentadas neste mês.
+          No category activity this month.
         </p>
       ) : (
         <ul className="flex flex-col gap-4 px-5 py-5">
@@ -49,7 +49,7 @@ export function CategorySummary({
                   {category.name}
                 </Tag>
                 <span className="ml-auto w-16 shrink-0 text-right text-xs text-gray-500">
-                  {count} {count === 1 ? 'item' : 'itens'}
+                  {count} {count === 1 ? 'item' : 'items'}
                 </span>
                 <span className="shrink-0 text-sm font-semibold text-gray-800">
                   {formatCurrencyCents(total)}

@@ -54,22 +54,20 @@ describe('ProfilePage', () => {
       }),
     )
     renderWithProviders(<ProfilePage />)
-    expect(screen.getByLabelText('Carregando avatar')).toBeInTheDocument()
+    expect(screen.getByLabelText('Loading avatar')).toBeInTheDocument()
   })
 
   it('pre-fills the form with the authenticated user and disables the email', async () => {
     server.use(meHandler())
     renderWithProviders(<ProfilePage />)
 
-    const nameInput = await screen.findByLabelText('Nome completo')
+    const nameInput = await screen.findByLabelText('Full name')
     expect(nameInput).toHaveValue('Conta Teste')
 
-    const emailInput = screen.getByLabelText('E-mail')
+    const emailInput = screen.getByLabelText('Email')
     expect(emailInput).toHaveValue('conta@teste.com')
     expect(emailInput).toBeDisabled()
-    expect(
-      screen.getByText('O e-mail não pode ser alterado'),
-    ).toBeInTheDocument()
+    expect(screen.getByText('Email cannot be changed')).toBeInTheDocument()
   })
 
   it('saves a new name via the updateProfile mutation', async () => {
@@ -95,10 +93,10 @@ describe('ProfilePage', () => {
     const user = userEvent.setup()
     renderWithProviders(<ProfilePage />)
 
-    const nameInput = await screen.findByLabelText('Nome completo')
+    const nameInput = await screen.findByLabelText('Full name')
     await user.clear(nameInput)
     await user.type(nameInput, 'Igor Eineck')
-    await user.click(screen.getByRole('button', { name: /Salvar alterações/i }))
+    await user.click(screen.getByRole('button', { name: /Save changes/i }))
 
     await waitFor(() =>
       expect(useAuthStore.getState().user?.name).toBe('Igor Eineck'),
@@ -111,14 +109,14 @@ describe('ProfilePage', () => {
     const user = userEvent.setup()
     renderWithProviders(<ProfilePage />)
 
-    const nameInput = await screen.findByLabelText('Nome completo')
+    const nameInput = await screen.findByLabelText('Full name')
     await user.clear(nameInput)
-    await user.click(screen.getByRole('button', { name: /Salvar alterações/i }))
+    await user.click(screen.getByRole('button', { name: /Save changes/i }))
 
-    expect(await screen.findByText('Nome obrigatório')).toBeInTheDocument()
+    expect(await screen.findByText('Name is required')).toBeInTheDocument()
   })
 
-  it('triggers the logout flow when clicking "Sair da conta"', async () => {
+  it('triggers the logout flow when clicking "Log out"', async () => {
     server.use(meHandler())
     const logoutSpy = vi.fn().mockResolvedValue(undefined)
     vi.spyOn(authLib, 'useLogout').mockReturnValue(logoutSpy)
@@ -126,9 +124,7 @@ describe('ProfilePage', () => {
     const user = userEvent.setup()
     renderWithProviders(<ProfilePage />)
 
-    await user.click(
-      await screen.findByRole('button', { name: /Sair da conta/i }),
-    )
+    await user.click(await screen.findByRole('button', { name: /Log out/i }))
     expect(logoutSpy).toHaveBeenCalledTimes(1)
   })
 })

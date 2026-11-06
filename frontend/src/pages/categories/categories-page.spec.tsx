@@ -110,26 +110,24 @@ describe('<CategoriesPage />', () => {
   it('shows the empty state when there are no categories', async () => {
     seed({ categories: [], transactions: [] })
     renderPage()
+    expect(await screen.findByText('No categories yet')).toBeInTheDocument()
     expect(
-      await screen.findByText('Nenhuma categoria ainda'),
-    ).toBeInTheDocument()
-    expect(
-      screen.getByText('Comece criando sua primeira categoria'),
+      screen.getByText('Start by creating your first category'),
     ).toBeInTheDocument()
   })
 
-  it('opens the create dialog when clicking "Nova categoria"', async () => {
+  it('opens the create dialog when clicking "New category"', async () => {
     seed()
     const user = userEvent.setup()
     renderPage()
 
     await screen.findByRole('heading', { name: 'Alimentação' })
-    await user.click(screen.getByRole('button', { name: /Nova categoria/i }))
+    await user.click(screen.getByRole('button', { name: /New category/i }))
 
     expect(
-      await screen.findByRole('heading', { name: 'Nova categoria' }),
+      await screen.findByRole('heading', { name: 'New category' }),
     ).toBeInTheDocument()
-    expect(screen.getByLabelText('Título')).toHaveValue('')
+    expect(screen.getByLabelText('Title')).toHaveValue('')
   })
 
   it('shows the correct stat counts', async () => {
@@ -139,12 +137,12 @@ describe('<CategoriesPage />', () => {
     await screen.findByRole('heading', { name: 'Alimentação' })
 
     const stats = screen.getByRole('region', {
-      name: 'Resumo de categorias',
+      name: 'Categories summary',
     })
-    expect(stats).toHaveTextContent('Total de categorias')
+    expect(stats).toHaveTextContent('Total categories')
     expect(stats).toHaveTextContent('3')
-    expect(stats).toHaveTextContent('Total de transações')
-    expect(stats).toHaveTextContent('Categoria mais utilizada')
+    expect(stats).toHaveTextContent('Total transactions')
+    expect(stats).toHaveTextContent('Most used category')
     expect(stats).toHaveTextContent('Alimentação')
   })
 })

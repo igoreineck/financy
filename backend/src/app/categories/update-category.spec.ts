@@ -71,7 +71,7 @@ describe('updateCategory', () => {
 
     await expect(
       updateCategory(fromA.id, { name: 'Hackeada' }, userB.id),
-    ).rejects.toThrow('Categoria não encontrada')
+    ).rejects.toThrow('Category not found')
   })
 
   it('rejects an explicit null for a non-nullable field instead of silently no-opping', async () => {
@@ -83,7 +83,7 @@ describe('updateCategory', () => {
 
     await expect(
       updateCategory(original.id, { name: null }, user.id),
-    ).rejects.toThrow('Nome, cor e ícone não podem ser nulos')
+    ).rejects.toThrow('Name, color, and icon cannot be null')
 
     const stored = await prisma.category.findUniqueOrThrow({
       where: { id: original.id },

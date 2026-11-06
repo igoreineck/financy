@@ -50,13 +50,13 @@ export function TransactionsPage() {
     <div className="mx-auto flex max-w-6xl flex-col gap-6">
       <header className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex flex-col gap-2">
-          <h1 className="text-2xl font-bold text-gray-800">Transações</h1>
+          <h1 className="text-2xl font-bold text-gray-800">Transactions</h1>
           <p className="text-sm text-gray-500">
-            Gerencie todas as suas transações financeiras
+            Manage all your financial transactions
           </p>
         </div>
         <Button size="sm" onClick={() => setDialogState({ mode: 'create' })}>
-          <Plus className="size-4" /> Nova transação
+          <Plus className="size-4" /> New transaction
         </Button>
       </header>
 
@@ -67,7 +67,7 @@ export function TransactionsPage() {
       />
 
       {loading ? (
-        <p className="text-sm text-gray-500">Carregando transações...</p>
+        <p className="text-sm text-gray-500">Loading transactions...</p>
       ) : transactions.length === 0 ? (
         <EmptyState />
       ) : rows.length === 0 ? (
@@ -78,12 +78,12 @@ export function TransactionsPage() {
             <table className="w-full">
               <thead>
                 <tr className="border-b border-gray-200 text-left text-xs uppercase tracking-wide text-gray-500">
-                  <th className="px-4 py-3 font-normal">Descrição</th>
-                  <th className="px-4 py-3 font-normal">Data</th>
-                  <th className="px-4 py-3 font-normal">Categoria</th>
-                  <th className="px-4 py-3 font-normal">Tipo</th>
-                  <th className="px-4 py-3 text-right font-normal">Valor</th>
-                  <th className="px-4 py-3 text-right font-normal">Ações</th>
+                  <th className="px-4 py-3 font-normal">Description</th>
+                  <th className="px-4 py-3 font-normal">Date</th>
+                  <th className="px-4 py-3 font-normal">Category</th>
+                  <th className="px-4 py-3 font-normal">Type</th>
+                  <th className="px-4 py-3 text-right font-normal">Amount</th>
+                  <th className="px-4 py-3 text-right font-normal">Actions</th>
                 </tr>
               </thead>
               <tbody>
@@ -118,11 +118,11 @@ export function TransactionsPage() {
 
           <div className="flex flex-col gap-2 border-t border-gray-200 px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
             <span className="text-xs text-gray-500">
-              {start} a {end} | {total} resultados
+              {start} to {end} | {total} results
             </span>
             <div className="flex items-center gap-2">
               <PaginationButton
-                aria-label="Página anterior"
+                aria-label="Previous page"
                 onClick={() => setPage(page - 1)}
                 disabled={page <= 1}
               >
@@ -131,7 +131,7 @@ export function TransactionsPage() {
               {Array.from({ length: totalPages }, (_, i) => i + 1).map(p => (
                 <PaginationButton
                   key={p}
-                  aria-label={`Página ${p}`}
+                  aria-label={`Page ${p}`}
                   active={p === page}
                   onClick={() => setPage(p)}
                 >
@@ -139,7 +139,7 @@ export function TransactionsPage() {
                 </PaginationButton>
               ))}
               <PaginationButton
-                aria-label="Próxima página"
+                aria-label="Next page"
                 onClick={() => setPage(page + 1)}
                 disabled={page >= totalPages}
               >
@@ -182,10 +182,10 @@ function EmptyState() {
       </div>
       <div className="flex flex-col gap-1">
         <h2 className="text-base font-semibold text-gray-800">
-          Nenhuma transação ainda
+          No transactions yet
         </h2>
         <p className="text-sm text-gray-500">
-          Registre sua primeira transação para começar
+          Record your first transaction to get started
         </p>
       </div>
     </div>
@@ -195,11 +195,9 @@ function EmptyState() {
 function FilterEmptyState() {
   return (
     <div className="flex flex-col items-center gap-2 rounded-xl border border-dashed border-gray-300 bg-white px-6 py-12 text-center">
-      <h2 className="text-base font-semibold text-gray-800">
-        Nenhum resultado
-      </h2>
+      <h2 className="text-base font-semibold text-gray-800">No results</h2>
       <p className="text-sm text-gray-500">
-        Ajuste os filtros para ver outras transações
+        Adjust the filters to see other transactions
       </p>
     </div>
   )

@@ -7,7 +7,7 @@ export async function deleteTransaction(
   const existing = await prisma.transaction.findFirst({
     where: { id, userId },
   })
-  if (!existing) throw new Error('Transação não encontrada')
+  if (!existing) throw new Error('Transaction not found')
 
   await prisma.transaction.delete({ where: { id } })
   return true

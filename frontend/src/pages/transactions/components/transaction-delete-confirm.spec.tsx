@@ -33,7 +33,7 @@ describe('<TransactionDeleteConfirm />', () => {
     const onOpenChange = vi.fn()
     renderConfirm({ onOpenChange })
 
-    await user.click(screen.getByRole('button', { name: 'Cancelar' }))
+    await user.click(screen.getByRole('button', { name: 'Cancel' }))
     expect(onOpenChange).toHaveBeenCalledWith(false)
   })
 
@@ -50,8 +50,8 @@ describe('<TransactionDeleteConfirm />', () => {
     const onOpenChange = vi.fn()
     renderConfirm({ onOpenChange })
 
-    await user.click(screen.getByRole('button', { name: 'Excluir' }))
-    await screen.findByText('Transação excluída')
+    await user.click(screen.getByRole('button', { name: 'Delete' }))
+    await screen.findByText('Transaction deleted')
 
     expect(captured[0]).toEqual({ id: 't1' })
     expect(onOpenChange).toHaveBeenCalledWith(false)
@@ -70,7 +70,7 @@ describe('<TransactionDeleteConfirm />', () => {
     const onOpenChange = vi.fn()
     renderConfirm({ onOpenChange })
 
-    await user.click(screen.getByRole('button', { name: 'Excluir' }))
+    await user.click(screen.getByRole('button', { name: 'Delete' }))
     expect(
       await screen.findByText('Falha ao excluir transação'),
     ).toBeInTheDocument()
