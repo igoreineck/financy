@@ -1,13 +1,13 @@
-# Tarefa 03 — Categorias CRUD
+# Tarefa 03 — Categories CRUD
 
-> Origem: linhas 79–82 (criar/deletar/editar/listar categoria) em `requisitos.md`.
-> Branch: `feat/03-categorias-crud`. Workflow geral em [`README.md`](./README.md#workflow-per-tarefa).
+> Origin: lines 79–82 (create/delete/edit/list category) in `requisitos.md`.
+> Branch: `feat/03-categorias-crud`. General workflow in [`README.md`](./README.md#workflow-per-tarefa).
 
-## Objetivo
+## Goal
 
-Página `/categorias` completa: header + 3 stat cards + grid de cards + dialog de create/edit + confirm de delete. Cobre as 4 operações de categoria do schema porque o dialog é compartilhado entre create e edit.
+Complete `/categories` page: header + 3 stat cards + card grid + create/edit dialog + delete confirmation. Covers all 4 category operations from the schema because the dialog is shared between create and edit.
 
-## GraphQL surface (consumido)
+## GraphQL surface (consumed)
 
 ```graphql
 query ListCategories {
@@ -38,91 +38,91 @@ mutation DeleteCategory($id: ID!) {
 }
 ```
 
-Documentos em `src/pages/categories/queries.graphql`.
+Documents in `src/pages/categories/queries.graphql`.
 
 ## Files to add or change
 
-### Página e componentes
+### Page and components
 
 - `src/pages/categories/categories-page.tsx`
-  - Header: título "Categorias", subtítulo "Organize suas transações por categorias", botão "Nova categoria".
-  - Stats cards no topo: total de categorias, total de transações, categoria mais usada. Computados client-side a partir de `listCategories` + `listTransactions` (mesma cache).
-  - Grid 4 colunas de `<CategoryCard />`.
-  - Empty state se zero categorias: ilustração + "Comece criando sua primeira categoria" + CTA.
-- `src/pages/categories/components/category-card.tsx` — ícone à esquerda (cor do `color` aplicada), nome, descrição, "X itens", ações (icon-button editar + icon-button delete-danger).
+  - Header: title "Categories", subtitle "Organize your transactions by category", "New category" button.
+  - Stat cards at the top: total categories, total transactions, most-used category. Computed client-side from `listCategories` + `listTransactions` (same cache).
+  - 4-column grid of `<CategoryCard />`.
+  - Empty state when there are zero categories: illustration + "Start by creating your first category" + CTA.
+- `src/pages/categories/components/category-card.tsx` — icon on the left (with the `color` applied), name, description, "X items", actions (edit icon-button + danger delete icon-button).
 - `src/pages/categories/components/category-dialog.tsx`
   - Props: `{ open, onOpenChange, mode: 'create' | 'edit', initialValues? }`.
-  - Form RHF + Zod: `name` required, `description` optional, `icon` required, `color` required.
-  - `<IconPicker />` e `<ColorPicker />` controlados via `Controller`.
+  - RHF + Zod form: `name` required, `description` optional, `icon` required, `color` required.
+  - `<IconPicker />` and `<ColorPicker />` controlled via `Controller`.
 - `src/pages/categories/components/category-delete-confirm.tsx`
-  - Pequeno Dialog: "Excluir categoria?" + "Esta ação não pode ser desfeita." + botões "Cancelar" / "Excluir" (danger).
+  - Small Dialog: "Delete category?" + "This action cannot be undone." + "Cancel" / "Delete" (danger) buttons.
 - `src/pages/categories/components/icon-picker.tsx`
-  - Grid 6×3 dos 18 ícones do style guide (`piggy-bank`, `briefcase-business`, `utensils`, `shopping-cart`, `car-front`, `heart-pulse`, `ticket`, `tool-case`, `wallet`, `tag`, `book-open`, `gift`, `dumbbell`, `house`, `paw-print`, `baggage-claim`, `mailbox`, `receipt-text`).
-  - Selecionado fica com borda + bg-brand.
+  - 6×3 grid of the style guide's 18 icons (`piggy-bank`, `briefcase-business`, `utensils`, `shopping-cart`, `car-front`, `heart-pulse`, `ticket`, `tool-case`, `wallet`, `tag`, `book-open`, `gift`, `dumbbell`, `house`, `paw-print`, `baggage-claim`, `mailbox`, `receipt-text`).
+  - The selected one gets a border + bg-brand.
 - `src/pages/categories/components/color-picker.tsx`
-  - Linha com 8 swatches (`tag-gray`, `tag-blue`, ..., `tag-green`).
-  - Selecionado tem outline preto.
+  - Row with 8 swatches (`tag-gray`, `tag-blue`, ..., `tag-green`).
+  - The selected one has a black outline.
 
 ### Cache strategy
 
 - `createCategory` / `updateCategory` — `refetchQueries: [{ query: ListCategoriesDocument }]`.
-- `deleteCategory` — `update(cache, { data })`: faz `cache.modify` removendo o id da lista pra sumir instantâneo.
-  - Tratar erro do backend (`onDelete: Restrict` se categoria tem transações) — toast com mensagem.
+- `deleteCategory` — `update(cache, { data })`: runs `cache.modify` removing the id from the list so it disappears instantly.
+  - Handle the backend error (`onDelete: Restrict` if the category has transactions) — toast with the message.
 
-### Hooks auxiliares
+### Helper hooks
 
-- `src/pages/categories/hooks/use-category-stats.ts` — recebe `categories` + `transactions`, retorna `{ totalCategories, totalTransactions, mostUsed }`.
+- `src/pages/categories/hooks/use-category-stats.ts` — takes `categories` + `transactions`, returns `{ totalCategories, totalTransactions, mostUsed }`.
 
-### Mapeamento de ícone string → componente
+### Icon string → component mapping
 
-- `src/pages/categories/icon-map.ts` — `Record<string, LucideIcon>` (`{ 'piggy-bank': PiggyBank, ... }`). Pra render dinâmico dos cards.
+- `src/pages/categories/icon-map.ts` — `Record<string, LucideIcon>` (`{ 'piggy-bank': PiggyBank, ... }`). For dynamic rendering in the cards.
 
 ## Testing
 
 - [x] `pages/categories/categories-page.spec.tsx`
-  - Renderiza grid com mock de 3 categorias.
-  - Empty state aparece quando `listCategories` retorna `[]`.
-  - Click em "Nova categoria" abre o dialog em modo `create`.
-  - Stats cards mostram contagens corretas.
+  - Renders the grid with a mock of 3 categories.
+  - Empty state appears when `listCategories` returns `[]`.
+  - Clicking "New category" opens the dialog in `create` mode.
+  - Stat cards show the correct counts.
 - [x] `pages/categories/components/category-dialog.spec.tsx`
-  - Modo `create`: submit sem nome bloqueia; sem ícone bloqueia; sem cor bloqueia.
-  - Modo `edit`: campos pre-populados com `initialValues`.
-  - Submit válido chama mutation com input correto.
-  - Cancel fecha sem chamar mutation.
-- [x] `pages/categories/components/icon-picker.spec.tsx` — click marca selecionado (aria-pressed); apenas um selecionado por vez.
-- [x] `pages/categories/components/color-picker.spec.tsx` — espelho.
+  - `create` mode: submit without a name blocks; without an icon blocks; without a color blocks.
+  - `edit` mode: fields pre-populated with `initialValues`.
+  - Valid submit calls the mutation with the correct input.
+  - Cancel closes without calling the mutation.
+- [x] `pages/categories/components/icon-picker.spec.tsx` — click marks it selected (aria-pressed); only one selected at a time.
+- [x] `pages/categories/components/color-picker.spec.tsx` — mirror.
 - [x] `pages/categories/components/category-delete-confirm.spec.tsx`
-  - Confirmar chama mutation; cancelar fecha sem chamar.
-  - Backend retorna erro de FK (`onDelete: Restrict`) → toast com mensagem.
+  - Confirm calls the mutation; cancel closes without calling it.
+  - Backend returns an FK error (`onDelete: Restrict`) → toast with the message.
 - [x] `pages/categories/hooks/use-category-stats.spec.ts`
-  - Inputs vazios → tudo zero.
-  - Categorias com transações → contagem certa; `mostUsed` é a com mais transactions.
+  - Empty inputs → all zeros.
+  - Categories with transactions → correct count; `mostUsed` is the one with the most transactions.
 - [x] `categories.integration.spec.tsx` (MSW)
-  - Carrega `ListCategories` → grid renderiza.
-  - Cria categoria → grid inclui o novo card.
-  - Edita categoria → card atualiza in-place.
-  - Deleta categoria → card desaparece (cache update).
+  - Loads `ListCategories` → grid renders.
+  - Creates a category → grid includes the new card.
+  - Edits a category → card updates in place.
+  - Deletes a category → card disappears (cache update).
 
 ## Acceptance criteria
 
-- [x] Listagem renderiza cards com ícone (com cor do tag aplicada), nome, descrição, "X itens" (de transações).
-- [x] "Nova categoria" abre dialog limpo; "Editar" abre dialog pré-preenchido.
-- [x] Deletar pede confirmação; após confirmar, card desaparece sem refetch visível.
-- [x] Backend rejeita delete de categoria com transações → toast com mensagem do backend, card permanece.
-- [x] 3 stat cards no topo (total categorias, total transações, mais usada) refletem o dataset.
-- [x] Empty state quando zero categorias.
-- [x] Linhas em `requisitos.md`: criar/deletar/editar/listar categoria marcadas.
-- [x] `pnpm test` verde; `pnpm check` limpo; `pnpm tsc --noEmit` limpo.
-- [x] `docs/03-categorias-crud.md` (este arquivo) com checkboxes preenchidos.
+- [x] Listing renders cards with icon (with the tag color applied), name, description, "X items" (transactions).
+- [x] "New category" opens a blank dialog; "Edit" opens a pre-filled dialog.
+- [x] Deleting asks for confirmation; after confirming, the card disappears without a visible refetch.
+- [x] Backend rejects deleting a category with transactions → toast with the backend message, the card stays.
+- [x] 3 stat cards at the top (total categories, total transactions, most used) reflect the dataset.
+- [x] Empty state when there are zero categories.
+- [x] Lines in `requisitos.md`: create/delete/edit/list category checked.
+- [x] `pnpm test` green; `pnpm check` clean; `pnpm tsc --noEmit` clean.
+- [x] `docs/03-categorias-crud.md` (this file) with checkboxes filled in.
 
 ## Depends on
 
 - [`00-scaffolding.md`](./00-scaffolding.md), [`01-design-system.md`](./01-design-system.md), [`02-auth.md`](./02-auth.md).
-- Backend `07/08/09/10` (categorias CRUD) já mergeados (`f36d32a`).
+- Backend `07/08/09/10` (categories CRUD) already merged (`f36d32a`).
 
 ## Out of scope
 
-- Reordenar categorias (drag-and-drop).
-- Cores/ícones customizados além dos 8 + 18 do style guide.
-- Hierarquia / subcategorias.
+- Reordering categories (drag-and-drop).
+- Custom colors/icons beyond the style guide's 8 + 18.
+- Hierarchy / subcategories.
 - Bulk delete.

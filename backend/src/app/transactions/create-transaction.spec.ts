@@ -77,7 +77,7 @@ describe('createTransaction', () => {
     expect(transaction.amount).toBe(500000)
   })
 
-  it('rejects categoryId owned by another user with "Categoria não encontrada"', async () => {
+  it('rejects categoryId owned by another user with "Category not found"', async () => {
     const owner = await makeUser()
     const attacker = await makeUser()
     const category = await makeCategory(owner.id)
@@ -93,13 +93,13 @@ describe('createTransaction', () => {
         },
         attacker.id,
       ),
-    ).rejects.toThrow('Categoria não encontrada')
+    ).rejects.toThrow('Category not found')
 
     const count = await prisma.transaction.count()
     expect(count).toBe(0)
   })
 
-  it('rejects nonexistent categoryId with "Categoria não encontrada"', async () => {
+  it('rejects nonexistent categoryId with "Category not found"', async () => {
     const user = await makeUser()
 
     await expect(
@@ -113,6 +113,6 @@ describe('createTransaction', () => {
         },
         user.id,
       ),
-    ).rejects.toThrow('Categoria não encontrada')
+    ).rejects.toThrow('Category not found')
   })
 })

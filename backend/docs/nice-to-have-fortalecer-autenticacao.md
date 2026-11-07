@@ -1,61 +1,61 @@
-# Nice to have — Fortalecer autenticação (rotação, revogação e refresh tokens)
+# Nice to have — Harden authentication (rotation, revocation, and refresh tokens)
 
-> Origem: seção "Nice to have (futuro)" em `requisitos.md`. Não faz parte do escopo obrigatório das tarefas 01–10.
-> Branch sugerida: `feat/nth-fortalecer-autenticacao` quando for atacar.
+> Origin: "Nice to have (future)" section in `requisitos.md`. Not part of the mandatory scope of tarefas 01–10.
+> Suggested branch: `feat/nth-fortalecer-autenticacao` when it gets picked up.
 
-## Objetivo
+## Goal
 
-Endurecer o fluxo de autenticação de JWT do projeto, hoje stateless e sem mecanismo de revogação, introduzindo expiração curta, refresh tokens persistidos e/ou versionamento de credencial.
+Harden the project's JWT authentication flow — currently stateless with no revocation mechanism — by introducing short expiration, persisted refresh tokens, and/or credential versioning.
 
-## Estado atual
+## Current state
 
-Stateless puro. O backend assina e esquece — não há tabela de sessões, blocklist nem refresh token.
+Pure stateless. The backend signs and forgets — there's no sessions table, no blocklist, and no refresh token.
 
-- `signJwt` em `src/shared/jwt.ts:14` emite token com `expiresIn` default `'1d'`.
-- `registerUser` (`src/app/auth/register-user.ts:40`) e `loginUser` (`src/app/auth/login-user.ts`) devolvem `{ token, user }`; o servidor não persiste o token.
-- `buildContext` (`src/graphql/context.ts:25-37`) lê `Authorization: Bearer <token>`, chama `verifyJwt` e expõe `{ user, token, authError }`. Verificação **não consulta o banco** — só assinatura + expiração contra `env.JWT_SECRET`.
-- O `User` no Prisma só tem `id`, `name`, `email`, `password` — nenhum campo de versão/sessão.
+- `signJwt` in `src/shared/jwt.ts:14` issues a token with a default `expiresIn` of `'1d'`.
+- `registerUser` (`src/app/auth/register-user.ts:40`) and `loginUser` (`src/app/auth/login-user.ts`) return `{ token, user }`; the server doesn't persist the token.
+- `buildContext` (`src/graphql/context.ts:25-37`) reads `Authorization: Bearer <token>`, calls `verifyJwt`, and exposes `{ user, token, authError }`. Verification **doesn't hit the database** — only signature + expiration against `env.JWT_SECRET`.
+- The Prisma `User` only has `id`, `name`, `email`, `password` — no version/session field.
 
-### Implicações que motivam essa tarefa
+### Implications that motivate this tarefa
 
-- **Logout no backend é no-op.** Não dá pra invalidar um token específico antes do TTL — o frontend só consegue apagar do storage local; o JWT continua válido até expirar.
-- **Trocar senha não desloga sessões antigas.** O token não referencia versão de credencial.
-- **"Botão de pânico" é grosso.** A única forma de invalidar tudo em circulação é trocar `JWT_SECRET`, o que mata todas as sessões de todos os usuários.
+- **Backend logout is a no-op.** There's no way to invalidate a specific token before its TTL — the frontend can only delete it from local storage; the JWT stays valid until it expires.
+- **Changing the password doesn't log out old sessions.** The token doesn't reference a credential version.
+- **The "panic button" is blunt.** The only way to invalidate everything in circulation is to rotate `JWT_SECRET`, which kills every session for every user.
 
-## Proposta
+## Proposal
 
-Três caminhos, em ordem crescente de esforço. Podem ser combinados — escolher conforme o apetite quando a tarefa for atacada.
+Three paths, in increasing order of effort. They can be combined — pick based on appetite when the tarefa is picked up.
 
-### Opção A — `tokenVersion` no `User` (menor esforço, ganho focado)
+### Option A — `tokenVersion` on `User` (least effort, focused gain)
 
-Adiciona um inteiro versionado no `User`; o JWT inclui essa versão no payload; `verifyJwt` (ou um passo após ele em `buildContext`) compara com o valor atual em DB.
+Add a versioned integer on `User`; the JWT includes that version in its payload; `verifyJwt` (or a step after it in `buildContext`) compares it with the current value in the DB.
 
-- Resolve "trocar senha desloga sessões antigas" sem refresh token.
-- Adiciona uma consulta `prisma.user.findUnique` por request — aceitável dado o volume do projeto.
-- Não dá revogação por sessão (todas caem juntas quando a versão sobe).
+- Solves "changing the password logs out old sessions" without a refresh token.
+- Adds one `prisma.user.findUnique` query per request — acceptable given the project's volume.
+- Doesn't give per-session revocation (all sessions drop together when the version bumps).
 
-### Opção B — TTL curto + refresh token persistido (médio esforço, padrão da indústria)
+### Option B — short TTL + persisted refresh token (medium effort, industry standard)
 
-- `signJwt` passa a usar `'15m'` (access token).
-- Nova tabela `RefreshToken { id, userId, tokenHash, expiresAt, revokedAt, createdAt, replacedById? }` (cuidar de FK e índice em `userId`).
-- Mutations novas: `refreshToken(input: { refreshToken: String! }): AuthOutput!`, `logout(input: { refreshToken: String! }): Boolean!`.
-- Login/register emitem **dois** tokens (access curto + refresh longo, ex.: 30d). Refresh é rotacionado a cada uso (`replacedById`); reuso de refresh já consumido invalida toda a cadeia (token theft detection).
-- Logout marca `revokedAt`. Não toca no access token — ele continua válido até expirar, mas como expira em 15min o impacto é pequeno.
+- `signJwt` switches to `'15m'` (access token).
+- New table `RefreshToken { id, userId, tokenHash, expiresAt, revokedAt, createdAt, replacedById? }` (mind the FK and an index on `userId`).
+- New mutations: `refreshToken(input: { refreshToken: String! }): AuthOutput!`, `logout(input: { refreshToken: String! }): Boolean!`.
+- Login/register issue **two** tokens (short access + long refresh, e.g. 30d). The refresh is rotated on every use (`replacedById`); reusing an already-consumed refresh invalidates the whole chain (token theft detection).
+- Logout sets `revokedAt`. It doesn't touch the access token — that stays valid until it expires, but since it expires in 15min the impact is small.
 
-### Opção C — Blocklist em Redis (custo operacional alto)
+### Option C — Redis blocklist (high operational cost)
 
-Mantém o JWT stateless de 1d mas consulta um Redis a cada request pra ver se o `jti` foi revogado. Resolve revogação imediata mas:
-- vira stateful (perde a vantagem do JWT puro);
-- introduz Redis na infra (não existe hoje);
-- desproporcional pro escopo do projeto.
+Keeps the 1d stateless JWT but checks Redis on every request to see whether the `jti` was revoked. Solves immediate revocation, but:
+- becomes stateful (loses the advantage of a pure JWT);
+- introduces Redis into the infra (it doesn't exist today);
+- disproportionate for the project's scope.
 
-**Recomendação:** Opção A como passo inicial, Opção B se houver vontade de fazer o fluxo completo. Não fazer C por enquanto.
+**Recommendation:** Option A as the first step, Option B if there's appetite for the full flow. Don't do C for now.
 
 ## GraphQL surface
 
-Variável conforme a opção escolhida.
+Varies with the chosen option.
 
-### Comum a A e B
+### Common to A and B
 
 ```graphql
 type Mutation {
@@ -63,7 +63,7 @@ type Mutation {
 }
 ```
 
-### Adicional na Opção B
+### Additional in Option B
 
 ```graphql
 input RefreshTokenInput {
@@ -72,7 +72,7 @@ input RefreshTokenInput {
 
 type AuthOutput {
   token: String!
-  refreshToken: String!   # novo campo — register/login/refresh
+  refreshToken: String!   # new field — register/login/refresh
   user: UserModel!
 }
 
@@ -82,77 +82,77 @@ type Mutation {
 }
 ```
 
-**Breaking change na shape de `AuthOutput`** — coordenar com o frontend.
+**Breaking change to the `AuthOutput` shape** — coordinate with the frontend.
 
 ## Files to add or change
 
-### Opção A
+### Option A
 
-- `prisma/schema.prisma` — adicionar `tokenVersion Int @default(0)` em `User`. Migrar com `pnpm migrate --name add-user-token-version`.
-- `src/shared/jwt.ts` — `JwtPayload` ganha `tokenVersion`.
-- `src/app/auth/register-user.ts`, `src/app/auth/login-user.ts` — incluir `tokenVersion: 0` no payload (ou ler do user).
-- `src/graphql/context.ts` — após `verifyJwt`, comparar `tokenVersion` do payload com o valor em DB; mismatch → `authError = 'invalid'`.
-- Nova função `src/app/auth/bump-token-version.ts` chamada por `changePassword`/`logout`.
-- `src/graphql/resolvers/auth.resolver.ts` — mutation `logout` que incrementa `tokenVersion`.
+- `prisma/schema.prisma` — add `tokenVersion Int @default(0)` to `User`. Migrate with `pnpm migrate --name add-user-token-version`.
+- `src/shared/jwt.ts` — `JwtPayload` gains `tokenVersion`.
+- `src/app/auth/register-user.ts`, `src/app/auth/login-user.ts` — include `tokenVersion: 0` in the payload (or read it from the user).
+- `src/graphql/context.ts` — after `verifyJwt`, compare the payload's `tokenVersion` with the DB value; mismatch → `authError = 'invalid'`.
+- New function `src/app/auth/bump-token-version.ts` called by `changePassword`/`logout`.
+- `src/graphql/resolvers/auth.resolver.ts` — `logout` mutation that increments `tokenVersion`.
 
-### Opção B (acumula sobre A ou substitui)
+### Option B (builds on A or replaces it)
 
-- `prisma/schema.prisma` — modelo `RefreshToken`.
-- `src/shared/jwt.ts` — separar `signAccessToken('15m')` e `signRefreshToken('30d')` com payloads distintos; refresh carrega `jti`.
-- `src/app/auth/issue-tokens.ts` — gera o par, persiste hash do refresh.
-- `src/app/auth/refresh-token.ts` — valida, detecta reuso, rotaciona.
-- `src/app/auth/logout.ts` — marca `revokedAt`.
-- `src/graphql/outputs/auth.output.ts` — adicionar `refreshToken: String!`.
+- `prisma/schema.prisma` — `RefreshToken` model.
+- `src/shared/jwt.ts` — split into `signAccessToken('15m')` and `signRefreshToken('30d')` with distinct payloads; the refresh carries a `jti`.
+- `src/app/auth/issue-tokens.ts` — generates the pair, persists the refresh hash.
+- `src/app/auth/refresh-token.ts` — validates, detects reuse, rotates.
+- `src/app/auth/logout.ts` — sets `revokedAt`.
+- `src/graphql/outputs/auth.output.ts` — add `refreshToken: String!`.
 - `src/graphql/inputs/auth.input.ts` — `RefreshTokenInput`.
-- `src/graphql/resolvers/auth.resolver.ts` — mutations `refreshToken` e `logout`.
-- `src/test/setup.ts` — `prisma.refreshToken.deleteMany()` no `beforeEach`.
+- `src/graphql/resolvers/auth.resolver.ts` — `refreshToken` and `logout` mutations.
+- `src/test/setup.ts` — `prisma.refreshToken.deleteMany()` in `beforeEach`.
 
 ## Testing
 
-### Opção A
+### Option A
 
-- `src/app/auth/bump-token-version.spec.ts` — incrementa versão; verifica que tokens emitidos antes deixam de validar.
-- `src/graphql/resolvers/auth.resolver.spec.ts` (extender) — `logout` invalida tokens existentes do mesmo usuário em chamadas subsequentes; tokens de **outros** usuários não são afetados.
+- `src/app/auth/bump-token-version.spec.ts` — increments the version; verifies that tokens issued earlier stop validating.
+- `src/graphql/resolvers/auth.resolver.spec.ts` (extend) — `logout` invalidates the same user's existing tokens on subsequent calls; **other** users' tokens aren't affected.
 
-### Opção B
+### Option B
 
 - `src/app/auth/refresh-token.spec.ts`
-  - happy path: rotaciona, marca antigo `replacedById`.
-  - refresh expirado → `Refresh token expirado!`.
-  - refresh revogado → `Refresh token inválido!`.
-  - **reuso de refresh já rotacionado** → revoga toda a cadeia daquele usuário (detecção de roubo).
+  - happy path: rotates, marks the old one's `replacedById`.
+  - expired refresh → `Refresh token expired!`.
+  - revoked refresh → `Invalid refresh token!`.
+  - **reuse of an already-rotated refresh** → revokes that user's whole chain (theft detection).
 - `src/app/auth/logout.spec.ts`
-  - marca `revokedAt`; refresh subsequente com mesmo token falha.
-  - logout de A não afeta refresh tokens de B.
-- `src/graphql/resolvers/auth.resolver.spec.ts` — integração das mutations novas; assert no formato de `AuthOutput` com `refreshToken`.
+  - sets `revokedAt`; a subsequent refresh with the same token fails.
+  - A's logout doesn't affect B's refresh tokens.
+- `src/graphql/resolvers/auth.resolver.spec.ts` — integration of the new mutations; assert on the `AuthOutput` shape with `refreshToken`.
 
 ## Acceptance criteria
 
-### Opção A
+### Option A
 
-- [ ] `User.tokenVersion` existe e migra limpo.
-- [ ] Mutation `logout` incrementa `tokenVersion` do usuário autenticado.
-- [ ] Token emitido antes do `logout` retorna `Usuário não autenticado!` em resolvers protegidos.
-- [ ] Tokens de outros usuários permanecem válidos.
-- [ ] `pnpm check` limpo; `npx tsc --noEmit` limpo; `pnpm test` verde.
+- [ ] `User.tokenVersion` exists and migrates cleanly.
+- [ ] `logout` mutation increments the authenticated user's `tokenVersion`.
+- [ ] A token issued before `logout` returns `User not authenticated!` on protected resolvers.
+- [ ] Other users' tokens remain valid.
+- [ ] `pnpm check` clean; `npx tsc --noEmit` clean; `pnpm test` green.
 
-### Opção B
+### Option B
 
-- [ ] `register` e `login` devolvem `{ token, refreshToken, user }`.
-- [ ] `token` (access) expira em 15min; `refreshToken` expira em 30 dias.
-- [ ] `refreshToken` mutation rotaciona o refresh (antigo vira inválido) e emite novo par.
-- [ ] Reuso de refresh já rotacionado invalida toda a cadeia daquele usuário.
-- [ ] `logout` revoga o refresh; tentativa de refresh subsequente falha.
-- [ ] `pnpm check`, `npx tsc --noEmit`, `pnpm test` todos limpos.
+- [ ] `register` and `login` return `{ token, refreshToken, user }`.
+- [ ] `token` (access) expires in 15min; `refreshToken` expires in 30 days.
+- [ ] `refreshToken` mutation rotates the refresh (the old one becomes invalid) and issues a new pair.
+- [ ] Reusing an already-rotated refresh invalidates that user's whole chain.
+- [ ] `logout` revokes the refresh; a subsequent refresh attempt fails.
+- [ ] `pnpm check`, `npx tsc --noEmit`, `pnpm test` all clean.
 
 ## Depends on
 
-- [01 — Criar conta e login](./01-criar-conta-e-login.md) (estabelece o fluxo atual que esta tarefa endurece).
+- [01 — Create account and log in](./01-criar-conta-e-login.md) (establishes the current flow this tarefa hardens).
 
 ## Out of scope
 
-- Recuperação de senha / verificação de email.
-- Rate limiting de login / refresh.
-- Roles e permissões além de "dono do recurso".
+- Password recovery / email verification.
+- Login / refresh rate limiting.
+- Roles and permissions beyond "resource owner".
 - 2FA / TOTP.
-- Blocklist em Redis (Opção C) — descartada por desproporcionalidade.
+- Redis blocklist (Option C) — discarded as disproportionate.

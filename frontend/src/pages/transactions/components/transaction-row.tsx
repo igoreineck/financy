@@ -72,13 +72,13 @@ export function TransactionRow({
         <div className="flex items-center justify-end gap-2">
           <IconButton
             variant="danger"
-            aria-label={`Excluir ${transaction.description}`}
+            aria-label={`Delete ${transaction.description}`}
             onClick={onDelete}
           >
             <Trash />
           </IconButton>
           <IconButton
-            aria-label={`Editar ${transaction.description}`}
+            aria-label={`Edit ${transaction.description}`}
             onClick={onEdit}
           >
             <SquarePen />

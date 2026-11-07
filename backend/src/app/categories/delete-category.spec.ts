@@ -37,7 +37,7 @@ describe('deleteCategory', () => {
     const user = await makeUser()
 
     await expect(deleteCategory(faker.string.uuid(), user.id)).rejects.toThrow(
-      'Categoria não encontrada',
+      'Category not found',
     )
   })
 
@@ -50,7 +50,7 @@ describe('deleteCategory', () => {
     )
 
     await expect(deleteCategory(fromA.id, userB.id)).rejects.toThrow(
-      'Categoria não encontrada',
+      'Category not found',
     )
 
     const stillThere = await prisma.category.findUnique({
@@ -77,7 +77,7 @@ describe('deleteCategory', () => {
     )
 
     await expect(deleteCategory(category.id, user.id)).rejects.toThrow(
-      'Categoria possui transações associadas e não pode ser excluída',
+      'Category has associated transactions and cannot be deleted',
     )
 
     const stillThere = await prisma.category.findUnique({

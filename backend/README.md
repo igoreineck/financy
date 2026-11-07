@@ -32,14 +32,14 @@ pnpm dev                      # http://localhost:4000/graphql
 Apollo Sandbox is served at the same URL — paste the operations below into it. After `login`/`register`, set the HTTP header `Authorization: Bearer <token>` to call the protected resolvers.
 
 `pnpm seed` is idempotent: it `upsert`s the demo user, wipes that user's
-categorias + transações, and re-creates them.
+categories + transactions, and re-creates them.
 
 Demo credentials seeded:
 
-- **e-mail**: `conta@teste.com`
-- **senha**: `senha123`
-- 10 categorias (Alimentação, Transporte, Lazer, Saúde, Moradia, ...)
-- ~70 transações across 5 months, biased toward the current month so the
+- **email**: `conta@teste.com`
+- **password**: `senha123`
+- 10 categories (Food, Transportation, Leisure, Health, Housing, ...)
+- ~70 transactions across 5 months, biased toward the current month so the
   frontend's dashboard, filters, and pagination all have data to chew on.
 
 ### Environment variables
@@ -67,7 +67,7 @@ Demo credentials seeded:
 | `pnpm check` | Biome lint **and** format with autofix — run before every commit |
 | `pnpm migrate` | `prisma migrate dev` (pass `--name <slug>` for new migrations) |
 | `pnpm generate` | Regenerate the Prisma client without migrating |
-| `pnpm seed` | `tsx --env-file=.env prisma/seed.ts` — wipes the demo user's data and re-creates 10 categorias + ~70 transações |
+| `pnpm seed` | `tsx --env-file=.env prisma/seed.ts` — wipes the demo user's data and re-creates 10 categories + ~70 transactions |
 | `pnpm export-schema` | Build the GraphQL schema and write `./schema.graphql` for the frontend |
 
 ## Project layout
@@ -190,22 +190,22 @@ input UpdateTransactionInput {    # all nullable
 |---|---|---|---|
 | `me` | required | `UserModel!` | The authenticated user row |
 | `listCategories` | required | `[CategoryModel!]!` | Only the caller's categories |
-| `category(id: ID!)` | required | `CategoryModel!` | Cross-user or missing id → `Categoria não encontrada` |
+| `category(id: ID!)` | required | `CategoryModel!` | Cross-user or missing id → `Category not found` |
 | `listTransactions` | required | `[TransactionModel!]!` | Only the caller's transactions, ordered by `occurredAt DESC` |
-| `transaction(id: ID!)` | required | `TransactionModel!` | Cross-user or missing id → `Transação não encontrada` |
+| `transaction(id: ID!)` | required | `TransactionModel!` | Cross-user or missing id → `Transaction not found` |
 
 ### Mutations
 
 | Operation | Auth | Returns | Notes |
 |---|---|---|---|
 | `register(data: RegisterInput!)` | public | `AuthOutput!` | Hashes password, normalizes email (trim + lowercase), issues 1-day JWT |
-| `login(data: LoginInput!)` | public | `AuthOutput!` | Normalizes email casing; both unknown email and bad password throw `Credenciais inválidas!` |
-| `updateProfile(data: UpdateProfileInput!)` | required | `UserModel!` | Trims the new name; blank name throws `Nome obrigatório!`. E-mail / password are never editable through this mutation |
+| `login(data: LoginInput!)` | public | `AuthOutput!` | Normalizes email casing; both unknown email and bad password throw `Invalid credentials!` |
+| `updateProfile(data: UpdateProfileInput!)` | required | `UserModel!` | Trims the new name; blank name throws `Name is required!`. E-mail / password are never editable through this mutation |
 | `createCategory(data: CreateCategoryInput!)` | required | `CategoryModel!` | |
-| `updateCategory(id: ID!, data: UpdateCategoryInput!)` | required | `CategoryModel!` | Partial; `description: null` clears the field; passing `null` on `name`/`color`/`icon` throws `Nome, cor e ícone não podem ser nulos` |
-| `deleteCategory(id: ID!)` | required | `Boolean!` | Blocks with `Categoria possui transações associadas e não pode ser excluída` if linked transactions exist (FK is `onDelete: Restrict`) |
-| `createTransaction(data: CreateTransactionInput!)` | required | `TransactionModel!` | Rejects with `Categoria não encontrada` if `categoryId` belongs to another user |
-| `updateTransaction(id: ID!, data: UpdateTransactionInput!)` | required | `TransactionModel!` | Partial; cross-user `categoryId` → `Categoria não encontrada`; explicit `null` on any field → `Campos obrigatórios não podem ser nulos` |
+| `updateCategory(id: ID!, data: UpdateCategoryInput!)` | required | `CategoryModel!` | Partial; `description: null` clears the field; passing `null` on `name`/`color`/`icon` throws `Name, color, and icon cannot be null` |
+| `deleteCategory(id: ID!)` | required | `Boolean!` | Blocks with `Category has associated transactions and cannot be deleted` if linked transactions exist (FK is `onDelete: Restrict`) |
+| `createTransaction(data: CreateTransactionInput!)` | required | `TransactionModel!` | Rejects with `Category not found` if `categoryId` belongs to another user |
+| `updateTransaction(id: ID!, data: UpdateTransactionInput!)` | required | `TransactionModel!` | Partial; cross-user `categoryId` → `Category not found`; explicit `null` on any field → `Required fields cannot be null` |
 | `deleteTransaction(id: ID!)` | required | `Boolean!` | |
 
 ### Example operations
@@ -225,14 +225,14 @@ Then with header `Authorization: Bearer <token>`:
 
 ```graphql
 mutation {
-  createCategory(data: { name: "Alimentação", color: "#FF5733", icon: "utensils" }) {
+  createCategory(data: { name: "Food", color: "#FF5733", icon: "utensils" }) {
     id name color icon
   }
 }
 
 mutation {
   createTransaction(data: {
-    description: "Almoço"
+    description: "Lunch"
     amount: 1234              # R$ 12,34
     type: EXPENSE
     occurredAt: "2026-06-08T12:00:00.000Z"
@@ -261,11 +261,11 @@ curl -s -X POST http://localhost:4000/graphql \
 
 ## Authorization model
 
-Every resolver that reads or writes `Category` or `Transaction` is decorated with `@UseMiddleware(IsAuth)` and every Prisma call is scoped to the caller's `userId`. Cross-user access returns the same "não encontrado" message used for genuinely missing rows — the API never confirms whether another user's resource exists. See `docs/02-escopo-por-usuario.md` for the full invariant and the IDOR cases the tests cover.
+Every resolver that reads or writes `Category` or `Transaction` is decorated with `@UseMiddleware(IsAuth)` and every Prisma call is scoped to the caller's `userId`. Cross-user access returns the same "not found" message used for genuinely missing rows — the API never confirms whether another user's resource exists. See `docs/02-escopo-por-usuario.md` for the full invariant and the IDOR cases the tests cover.
 
-The JWT context distinguishes three states: no token (or a token whose user no longer exists) → `Usuário não autenticado!`; expired token → `Sessão expirada!`; malformed/forged token → `Token inválido!`. The FE can branch on these to decide whether to refresh, redirect to login, or surface a generic auth failure.
+The JWT context distinguishes three states: no token (or a token whose user no longer exists) → `User not authenticated!`; expired token → `Session expired!`; malformed/forged token → `Invalid token!`. The FE can branch on these to decide whether to refresh, redirect to login, or surface a generic auth failure.
 
-User-facing error messages are in Portuguese (the assignment is a Brazilian course); everything else — code, tests, comments, commits — is English.
+Everything is in English — user-facing error messages, code, tests, comments, and commits. Amounts are still Brazilian reais (cents).
 
 ## Testing
 

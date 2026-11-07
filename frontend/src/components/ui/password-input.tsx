@@ -18,7 +18,7 @@ export const PasswordInput = forwardRef<HTMLInputElement, PasswordInputProps>(
         suffix={
           <button
             type="button"
-            aria-label={visible ? 'Ocultar senha' : 'Mostrar senha'}
+            aria-label={visible ? 'Hide password' : 'Show password'}
             aria-pressed={visible}
             onClick={() => setVisible(v => !v)}
             className="inline-flex size-8 cursor-pointer items-center justify-center rounded-md text-gray-400 transition-colors hover:text-gray-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-base/40"

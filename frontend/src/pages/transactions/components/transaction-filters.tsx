@@ -23,21 +23,21 @@ type TransactionFiltersProps = {
 }
 
 const periodOptions = [
-  { value: 'this-month' as const, label: 'Este mês' },
-  { value: 'last-month' as const, label: 'Mês passado' },
-  { value: 'all' as const, label: 'Todo o período' },
-  { value: 'custom' as const, label: 'Personalizado' },
+  { value: 'this-month' as const, label: 'This month' },
+  { value: 'last-month' as const, label: 'Last month' },
+  { value: 'all' as const, label: 'All time' },
+  { value: 'custom' as const, label: 'Custom' },
 ]
 
-const monthFormatter = new Intl.DateTimeFormat('pt-BR', { month: 'long' })
+const monthFormatter = new Intl.DateTimeFormat('en-US', { month: 'long' })
 
 function capitalize(value: string) {
   return value.charAt(0).toUpperCase() + value.slice(1)
 }
 
 function periodTriggerLabel(kind: PeriodFilter['kind']) {
-  if (kind === 'all') return 'Todo o período'
-  if (kind === 'custom') return 'Personalizado'
+  if (kind === 'all') return 'All time'
+  if (kind === 'custom') return 'Custom'
   const now = new Date()
   const ref =
     kind === 'last-month'
@@ -77,44 +77,44 @@ export function TransactionFilters({
     <div className="flex flex-col gap-4 rounded-xl border border-gray-200 bg-white p-4">
       <div className="grid grid-cols-1 gap-3 md:grid-cols-4">
         <div className="flex flex-col gap-1.5">
-          <Label htmlFor="filter-search">Buscar</Label>
+          <Label htmlFor="filter-search">Search</Label>
           <Input
             id="filter-search"
             icon={<Search />}
-            placeholder="Buscar por descrição"
+            placeholder="Search by description"
             value={filters.search}
             onChange={event => update({ search: event.target.value })}
           />
         </div>
 
         <div className="flex flex-col gap-1.5">
-          <Label htmlFor="filter-type">Tipo</Label>
+          <Label htmlFor="filter-type">Type</Label>
           <Select
             value={filters.type}
             onValueChange={value => update({ type: value as Filters['type'] })}
           >
-            <SelectTrigger id="filter-type" aria-label="Tipo">
+            <SelectTrigger id="filter-type" aria-label="Type">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="ALL">Todos</SelectItem>
-              <SelectItem value="INCOME">Receita</SelectItem>
-              <SelectItem value="EXPENSE">Despesa</SelectItem>
+              <SelectItem value="ALL">All</SelectItem>
+              <SelectItem value="INCOME">Income</SelectItem>
+              <SelectItem value="EXPENSE">Expense</SelectItem>
             </SelectContent>
           </Select>
         </div>
 
         <div className="flex flex-col gap-1.5">
-          <Label htmlFor="filter-category">Categoria</Label>
+          <Label htmlFor="filter-category">Category</Label>
           <Select
             value={filters.categoryId}
             onValueChange={value => update({ categoryId: value })}
           >
-            <SelectTrigger id="filter-category" aria-label="Categoria">
+            <SelectTrigger id="filter-category" aria-label="Category">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value={ALL_CATEGORIES}>Todas</SelectItem>
+              <SelectItem value={ALL_CATEGORIES}>All</SelectItem>
               {categories.map(category => (
                 <SelectItem key={category.id} value={category.id}>
                   {category.name}
@@ -125,14 +125,14 @@ export function TransactionFilters({
         </div>
 
         <div className="flex flex-col gap-1.5">
-          <Label htmlFor="filter-period">Período</Label>
+          <Label htmlFor="filter-period">Period</Label>
           <Select
             value={filters.period.kind}
             onValueChange={value =>
               setPeriodKind(value as PeriodFilter['kind'])
             }
           >
-            <SelectTrigger id="filter-period" aria-label="Período">
+            <SelectTrigger id="filter-period" aria-label="Period">
               <SelectValue>
                 {periodTriggerLabel(filters.period.kind)}
               </SelectValue>
@@ -151,7 +151,7 @@ export function TransactionFilters({
       {filters.period.kind === 'custom' ? (
         <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
           <div className="flex flex-col gap-1.5">
-            <Label htmlFor="filter-from">De</Label>
+            <Label htmlFor="filter-from">From</Label>
             <Input
               id="filter-from"
               type="date"
@@ -160,7 +160,7 @@ export function TransactionFilters({
             />
           </div>
           <div className="flex flex-col gap-1.5">
-            <Label htmlFor="filter-to">Até</Label>
+            <Label htmlFor="filter-to">To</Label>
             <Input
               id="filter-to"
               type="date"

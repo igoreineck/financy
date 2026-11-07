@@ -23,12 +23,12 @@ export async function loginUser({
     where: { email: normalizedEmail },
   })
   if (!user) {
-    throw new Error('Credenciais inválidas!')
+    throw new Error('Invalid credentials!')
   }
 
   const ok = await comparePassword(password, user.password)
   if (!ok) {
-    throw new Error('Credenciais inválidas!')
+    throw new Error('Invalid credentials!')
   }
 
   const token = signJwt({ id: user.id, email: user.email })

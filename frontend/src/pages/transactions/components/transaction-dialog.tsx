@@ -32,10 +32,10 @@ import { z } from 'zod'
 
 const transactionSchema = z.object({
   type: z.enum(['INCOME', 'EXPENSE']),
-  description: z.string().trim().min(1, 'Descrição obrigatória'),
-  amount: z.number().int().positive('Valor deve ser maior que zero'),
-  occurredAt: z.string().min(1, 'Data obrigatória'),
-  categoryId: z.string().min(1, 'Selecione uma categoria'),
+  description: z.string().trim().min(1, 'Description is required'),
+  amount: z.number().int().positive('Amount must be greater than zero'),
+  occurredAt: z.string().min(1, 'Date is required'),
+  categoryId: z.string().min(1, 'Select a category'),
 })
 
 type TransactionForm = {
@@ -116,16 +116,16 @@ export function TransactionDialog({
     try {
       if (mode === 'create') {
         await createTransaction({ variables: { data } })
-        toast.success('Transação criada')
+        toast.success('Transaction created')
       } else if (initialValues?.id) {
         await updateTransaction({
           variables: { id: initialValues.id, data },
         })
-        toast.success('Transação atualizada')
+        toast.success('Transaction updated')
       }
       onOpenChange(false)
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : 'Erro ao salvar')
+      toast.error(err instanceof Error ? err.message : 'Failed to save')
     }
   })
 
@@ -141,9 +141,9 @@ export function TransactionDialog({
       <DialogContent>
         <DialogHeader>
           <DialogTitle>
-            {mode === 'create' ? 'Nova transação' : 'Editar transação'}
+            {mode === 'create' ? 'New transaction' : 'Edit transaction'}
           </DialogTitle>
-          <DialogDescription>Registre sua despesa ou receita</DialogDescription>
+          <DialogDescription>Record your expense or income</DialogDescription>
         </DialogHeader>
 
         <form className="flex flex-col gap-5" onSubmit={onSubmit} noValidate>
@@ -152,7 +152,7 @@ export function TransactionDialog({
             name="type"
             render={({ field }) => (
               <div
-                aria-label="Tipo da transação"
+                aria-label="Transaction type"
                 className="grid grid-cols-2 gap-3"
               >
                 <TypeToggleButton
@@ -161,7 +161,7 @@ export function TransactionDialog({
                   icon={<CircleArrowDown className="size-5" />}
                   onClick={() => field.onChange('EXPENSE')}
                 >
-                  Despesa
+                  Expense
                 </TypeToggleButton>
                 <TypeToggleButton
                   active={field.value === 'INCOME'}
@@ -169,7 +169,7 @@ export function TransactionDialog({
                   icon={<CircleArrowUp className="size-5" />}
                   onClick={() => field.onChange('INCOME')}
                 >
-                  Receita
+                  Income
                 </TypeToggleButton>
               </div>
             )}
@@ -180,11 +180,11 @@ export function TransactionDialog({
               htmlFor="description"
               state={errors.description ? 'error' : 'default'}
             >
-              Descrição
+              Description
             </Label>
             <Input
               id="description"
-              placeholder="Ex. Almoço no restaurante"
+              placeholder="E.g. Lunch at a restaurant"
               error={Boolean(errors.description)}
               {...register('description')}
             />
@@ -201,7 +201,7 @@ export function TransactionDialog({
                 htmlFor="occurredAt"
                 state={errors.occurredAt ? 'error' : 'default'}
               >
-                Data
+                Date
               </Label>
               <Input
                 id="occurredAt"
@@ -221,7 +221,7 @@ export function TransactionDialog({
                 htmlFor="amount"
                 state={errors.amount ? 'error' : 'default'}
               >
-                Valor
+                Amount
               </Label>
               <Controller
                 control={control}
@@ -248,7 +248,7 @@ export function TransactionDialog({
               htmlFor="categoryId"
               state={errors.categoryId ? 'error' : 'default'}
             >
-              Categoria
+              Category
             </Label>
             <Controller
               control={control}
@@ -259,10 +259,10 @@ export function TransactionDialog({
                   <Select value={field.value} onValueChange={field.onChange}>
                     <SelectTrigger
                       id="categoryId"
-                      aria-label="Categoria"
+                      aria-label="Category"
                       error={Boolean(errors.categoryId)}
                     >
-                      <SelectValue placeholder="Selecione">
+                      <SelectValue placeholder="Select">
                         {selected?.name}
                       </SelectValue>
                     </SelectTrigger>
@@ -285,7 +285,7 @@ export function TransactionDialog({
           </div>
 
           <Button type="submit" className="w-full" disabled={loading}>
-            {loading ? 'Salvando...' : 'Salvar'}
+            {loading ? 'Saving...' : 'Save'}
           </Button>
         </form>
       </DialogContent>

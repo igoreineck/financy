@@ -14,7 +14,7 @@ export function IconPicker({
 }: IconPickerProps) {
   return (
     <div
-      aria-label="Selecionar ícone"
+      aria-label="Select icon"
       aria-invalid={ariaInvalid || undefined}
       className={cn(
         'grid grid-cols-8 gap-2',

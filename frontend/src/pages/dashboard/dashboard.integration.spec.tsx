@@ -102,8 +102,8 @@ afterEach(async () => {
   await apolloClient.clearStore()
 })
 
-describe('Dashboard — integração', () => {
-  it('mostra stats do mês, top 5 recentes e top 5 categorias', async () => {
+describe('Dashboard — integration', () => {
+  it('shows monthly stats, top 5 recent and top 5 categories', async () => {
     const seeds: Seed[] = [
       {
         id: 't1',
@@ -165,7 +165,7 @@ describe('Dashboard — integração', () => {
     expect(screen.getByText('R$ 3.170,00')).toBeInTheDocument()
 
     const recent = screen.getByRole('region', {
-      name: 'Transações recentes',
+      name: 'Recent transactions',
     })
     const recentItems = within(recent).getAllByRole('listitem')
     expect(recentItems).toHaveLength(5)
@@ -174,7 +174,7 @@ describe('Dashboard — integração', () => {
     expect(within(recentItems[4]).getByText('Salário')).toBeInTheDocument()
 
     const summary = screen.getByRole('region', {
-      name: 'Categorias mais usadas',
+      name: 'Most used categories',
     })
     const summaryItems = within(summary).getAllByRole('listitem')
     expect(summaryItems).toHaveLength(3)
@@ -183,18 +183,16 @@ describe('Dashboard — integração', () => {
     expect(within(summaryItems[2]).getByText('Lazer')).toBeInTheDocument()
   })
 
-  it('mostra o empty state quando não há nenhuma transação', async () => {
+  it('shows the empty state when there are no transactions', async () => {
     setup([])
     renderPage()
 
+    expect(await screen.findByText('No transactions yet')).toBeInTheDocument()
     expect(
-      await screen.findByText('Nenhuma transação ainda'),
+      screen.getByRole('button', { name: /New transaction/i }),
     ).toBeInTheDocument()
     expect(
-      screen.getByRole('button', { name: /Nova transação/i }),
-    ).toBeInTheDocument()
-    expect(
-      screen.getByRole('link', { name: /Ver transações/i }),
-    ).toHaveAttribute('href', '/transacoes')
+      screen.getByRole('link', { name: /View transactions/i }),
+    ).toHaveAttribute('href', '/transactions')
   })
 })

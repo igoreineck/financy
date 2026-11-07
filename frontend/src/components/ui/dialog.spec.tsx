@@ -57,7 +57,7 @@ describe('<Dialog />', () => {
     const onOpenChange = vi.fn()
     render(<ControlledDialog onOpenChange={onOpenChange} />)
     await user.click(screen.getByRole('button', { name: 'Abrir' }))
-    await user.click(screen.getByRole('button', { name: 'Fechar' }))
+    await user.click(screen.getByRole('button', { name: 'Close' }))
     expect(onOpenChange).toHaveBeenLastCalledWith(false)
   })
 })

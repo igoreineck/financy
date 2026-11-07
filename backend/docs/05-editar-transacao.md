@@ -1,11 +1,11 @@
-# Tarefa 05 — Deve ser possível editar uma transação
+# Tarefa 05 — It must be possible to edit a transaction
 
-> Origem: linha 62 da seção "Tarefas" em `requisitos.md`.
+> Origin: line 62 of the "Tarefas" section in `requisitos.md`.
 > Branch: `feat/05-editar-transacao`.
 
-## Objetivo
+## Goal
 
-Atualizar campos de uma transação existente do próprio usuário.
+Update fields of an existing transaction owned by the user.
 
 ## GraphQL surface
 
@@ -23,51 +23,51 @@ type Mutation {
 }
 ```
 
-Todos opcionais — só os enviados são alterados.
+All optional — only the fields sent are changed.
 
 ## Files to add or change
 
-- `src/graphql/inputs/transaction.input.ts` — adicionar `UpdateTransactionInput` (mesma forma do create, todos `@Field({ nullable: true })`).
+- `src/graphql/inputs/transaction.input.ts` — add `UpdateTransactionInput` (same shape as create, all `@Field({ nullable: true })`).
 - `src/app/transactions/update-transaction.ts` — `export async function updateTransaction(id, data, userId)`:
-  1. `prisma.transaction.findFirst({ where: { id, userId } })` → se vazio, lança `Transação não encontrada`.
-  2. Se `data.categoryId` foi enviado e difere da atual: `prisma.category.findFirst({ where: { id: data.categoryId, userId } })` → se vazio, lança `Categoria não encontrada`.
+  1. `prisma.transaction.findFirst({ where: { id, userId } })` → if empty, throws `Transaction not found`.
+  2. If `data.categoryId` was sent and differs from the current one: `prisma.category.findFirst({ where: { id: data.categoryId, userId } })` → if empty, throws `Category not found`.
   3. `prisma.transaction.update({ where: { id }, data })`.
-- `src/graphql/resolvers/transaction.resolver.ts` — adicionar mutation `updateTransaction(@Arg('id'), @Arg('data'), @GqlUser() user)`.
+- `src/graphql/resolvers/transaction.resolver.ts` — add the `updateTransaction(@Arg('id'), @Arg('data'), @GqlUser() user)` mutation.
 
 ## Authorization
 
-Ver [02 — Escopo por usuário](./02-escopo-por-usuario.md). Dois pontos:
+See [02 — Per-user scoping](./02-escopo-por-usuario.md). Two points:
 
-1. A transação alvo pertence ao usuário.
-2. A nova `categoryId` (se enviada) também pertence ao usuário — caso contrário, um atacante "moveria" a própria transação para categoria alheia.
+1. The target transaction belongs to the user.
+2. The new `categoryId` (if sent) also belongs to the user — otherwise an attacker could "move" their own transaction into someone else's category.
 
 ## Testing
 
 - `src/app/transactions/update-transaction.spec.ts`
-  - [x] update parcial (só `description`) altera só o campo enviado.
-  - [x] `amount: 0` é aceito (distinguir de "não enviado").
-  - [x] update com `id` de outro usuário → `Transação não encontrada`.
-  - [x] update com `categoryId` de outro usuário → `Categoria não encontrada`.
-  - [x] `updatedAt` é atualizado.
+  - [x] partial update (only `description`) changes only the field sent.
+  - [x] `amount: 0` is accepted (distinguish from "not sent").
+  - [x] update with another user's `id` → `Transaction not found`.
+  - [x] update with another user's `categoryId` → `Category not found`.
+  - [x] `updatedAt` is updated.
 - `src/graphql/resolvers/transaction.resolver.spec.ts`
-  - [x] mutation retorna o objeto atualizado.
-  - [x] usuário A não consegue editar transação de B.
+  - [x] mutation returns the updated object.
+  - [x] user A can't edit B's transaction.
 
 ## Acceptance criteria
 
-- [x] Update parcial preserva campos não enviados.
-- [x] `amount: 0` aceito.
-- [x] Update cross-user → `Transação não encontrada`.
-- [x] Mudança de `categoryId` para categoria alheia → `Categoria não encontrada`.
-- [x] Suite verde.
+- [x] Partial update preserves fields not sent.
+- [x] `amount: 0` accepted.
+- [x] Cross-user update → `Transaction not found`.
+- [x] Changing `categoryId` to someone else's category → `Category not found`.
+- [x] Suite green.
 
 ## Depends on
 
-- [03 — Criar transação](./03-criar-transacao.md).
-- [01 — Criar conta e login](./01-criar-conta-e-login.md).
-- [02 — Escopo por usuário](./02-escopo-por-usuario.md).
+- [03 — Create transaction](./03-criar-transacao.md).
+- [01 — Create account and log in](./01-criar-conta-e-login.md).
+- [02 — Per-user scoping](./02-escopo-por-usuario.md).
 
 ## Out of scope
 
-- Histórico de versões.
-- Edição em lote.
+- Version history.
+- Batch editing.

@@ -13,8 +13,8 @@ import { AuthCard } from './components/auth-card'
 import { LoginMutation } from './queries'
 
 const loginSchema = z.object({
-  email: z.string().email('Email inválido'),
-  password: z.string().min(1, 'Senha obrigatória'),
+  email: z.string().email('Invalid email'),
+  password: z.string().min(1, 'Password is required'),
 })
 
 type LoginForm = z.infer<typeof loginSchema> & { remember: boolean }
@@ -47,34 +47,32 @@ export function Login() {
     try {
       const result = await login({ variables: { data: parsed.data } })
       if (!result.data) {
-        toast.error('Não foi possível fazer login')
+        toast.error('Could not log in')
         return
       }
       setSession({ ...result.data.login, remember: Boolean(raw.remember) })
       navigate('/', { replace: true })
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : 'Erro ao entrar')
+      toast.error(err instanceof Error ? err.message : 'Failed to log in')
     }
   })
 
   return (
     <AuthCard
-      title="Fazer login"
-      subtitle="Entre na sua conta para continuar"
+      title="Log in"
+      subtitle="Sign in to your account to continue"
       align="center"
       footer={
         <div className="flex w-full flex-col gap-4">
           <div className="flex items-center gap-3 text-xs text-gray-400">
             <span className="h-px flex-1 bg-gray-200" />
-            ou
+            or
             <span className="h-px flex-1 bg-gray-200" />
           </div>
-          <p className="text-center text-sm text-gray-500">
-            Ainda não tem uma conta?
-          </p>
+          <p className="text-center text-sm text-gray-500">No account yet?</p>
           <Button asChild variant="outline" className="w-full">
-            <Link to="/cadastro">
-              <UserPlus className="size-4" /> Criar conta
+            <Link to="/signup">
+              <UserPlus className="size-4" /> Create account
             </Link>
           </Button>
         </div>
@@ -83,12 +81,12 @@ export function Login() {
       <form className="flex flex-col gap-5" onSubmit={onSubmit} noValidate>
         <div className="flex flex-col gap-1.5">
           <Label htmlFor="email" state={errors.email ? 'error' : 'default'}>
-            E-mail
+            Email
           </Label>
           <Input
             id="email"
             type="email"
-            placeholder="mail@exemplo.com"
+            placeholder="mail@example.com"
             icon={<Mail />}
             error={Boolean(errors.email)}
             autoComplete="email"
@@ -104,11 +102,11 @@ export function Login() {
             htmlFor="password"
             state={errors.password ? 'error' : 'default'}
           >
-            Senha
+            Password
           </Label>
           <PasswordInput
             id="password"
-            placeholder="Digite sua senha"
+            placeholder="Enter your password"
             error={Boolean(errors.password)}
             autoComplete="current-password"
             {...register('password')}
@@ -127,19 +125,19 @@ export function Login() {
               className="size-4 rounded border-gray-300 text-brand-base focus:ring-brand-base/40"
               {...register('remember')}
             />
-            Lembrar-me
+            Remember me
           </label>
           <span
             aria-disabled="true"
-            title="Em breve"
+            title="Coming soon"
             className="cursor-not-allowed text-brand-base/50"
           >
-            Recuperar senha
+            Forgot password
           </span>
         </div>
 
         <Button type="submit" disabled={loading} className="w-full">
-          {loading ? 'Entrando...' : 'Entrar'}
+          {loading ? 'Signing in...' : 'Sign in'}
         </Button>
       </form>
     </AuthCard>

@@ -7,7 +7,7 @@ export async function deleteCategory(
   userId: string,
 ): Promise<boolean> {
   const existing = await prisma.category.findFirst({ where: { id, userId } })
-  if (!existing) throw new Error('Categoria não encontrada')
+  if (!existing) throw new Error('Category not found')
 
   try {
     await prisma.category.delete({ where: { id } })
@@ -17,7 +17,7 @@ export async function deleteCategory(
       err.code === 'P2003'
     ) {
       throw new Error(
-        'Categoria possui transações associadas e não pode ser excluída',
+        'Category has associated transactions and cannot be deleted',
       )
     }
     throw err

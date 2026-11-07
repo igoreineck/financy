@@ -1,11 +1,11 @@
-# Tarefa 06 — Deve ser possível listar todas as transações
+# Tarefa 06 — It must be possible to list all transactions
 
-> Origem: linha 63 da seção "Tarefas" em `requisitos.md`.
+> Origin: line 63 of the "Tarefas" section in `requisitos.md`.
 > Branch: `feat/06-listar-transacoes`.
 
-## Objetivo
+## Goal
 
-Listar todas as transações do próprio usuário, com a categoria associada.
+List all of the user's own transactions, with the associated category.
 
 ## GraphQL surface
 
@@ -15,7 +15,7 @@ type Query {
 }
 ```
 
-`TransactionModel` resolve `category: CategoryModel!` via `FieldResolver`.
+`TransactionModel` resolves `category: CategoryModel!` via a `FieldResolver`.
 
 ## Files to add or change
 
@@ -26,44 +26,44 @@ type Query {
     orderBy: { occurredAt: 'desc' },
   })
   ```
-- `src/app/transactions/find-transaction-category.ts` (ou reutilizar `list-categories` / um helper inline no resolver) — para o FieldResolver.
-- `src/graphql/resolvers/transaction.resolver.ts` — adicionar:
+- `src/app/transactions/find-transaction-category.ts` (or reuse `list-categories` / an inline helper in the resolver) — for the FieldResolver.
+- `src/graphql/resolvers/transaction.resolver.ts` — add:
   - `@Query(() => [TransactionModel]) listTransactions(@GqlUser() user)`.
-  - `@FieldResolver(() => CategoryModel) category(@Root() tx: TransactionModel)` — busca por `tx.categoryId` (sem `userId` no `where` porque o `tx` já foi escopado pelo query pai).
+  - `@FieldResolver(() => CategoryModel) category(@Root() tx: TransactionModel)` — looks up by `tx.categoryId` (no `userId` in the `where` because `tx` was already scoped by the parent query).
 
 ## Authorization
 
-Ver [02 — Escopo por usuário](./02-escopo-por-usuario.md). O `findMany` **deve** ter `where: { userId }`. O FieldResolver é seguro pois recebe apenas transações já escopadas.
+See [02 — Per-user scoping](./02-escopo-por-usuario.md). The `findMany` **must** have `where: { userId }`. The FieldResolver is safe because it only receives already-scoped transactions.
 
 ## Testing
 
 - `src/app/transactions/list-transactions.spec.ts`
-  - [x] retorna só as transações do usuário autenticado (criar transações de A e B, listar como A, garantir que B não aparece).
-  - [x] ordem `occurredAt` descendente.
-  - [x] usuário sem transações recebe `[]`.
+  - [x] returns only the authenticated user's transactions (create transactions for A and B, list as A, ensure B's don't show up).
+  - [x] `occurredAt` descending order.
+  - [x] a user with no transactions gets `[]`.
 - `src/graphql/resolvers/transaction.resolver.spec.ts`
-  - [x] query retorna lista populada com `category` resolvida.
-  - [x] sem token → erro de autenticação.
+  - [x] query returns a populated list with `category` resolved.
+  - [x] no token → authentication error.
 
 ## Acceptance criteria
 
-- [x] `listTransactions` retorna só as transações do autenticado.
-- [x] Ordem: `occurredAt` desc.
-- [x] `category` resolvida com nome/cor/ícone.
-- [x] Vazio → `[]`.
-- [x] Sem JWT → `Usuário não autenticado!`.
-- [x] Suite verde.
+- [x] `listTransactions` returns only the authenticated user's transactions.
+- [x] Order: `occurredAt` desc.
+- [x] `category` resolved with name/color/icon.
+- [x] Empty → `[]`.
+- [x] No JWT → `User not authenticated!`.
+- [x] Suite green.
 
 ## Depends on
 
-- [03 — Criar transação](./03-criar-transacao.md).
-- [07 — Criar categoria](./07-criar-categoria.md) (para o FieldResolver).
-- [01 — Criar conta e login](./01-criar-conta-e-login.md).
-- [02 — Escopo por usuário](./02-escopo-por-usuario.md).
+- [03 — Create transaction](./03-criar-transacao.md).
+- [07 — Create category](./07-criar-categoria.md) (for the FieldResolver).
+- [01 — Create account and log in](./01-criar-conta-e-login.md).
+- [02 — Per-user scoping](./02-escopo-por-usuario.md).
 
 ## Out of scope
 
-- Paginação / cursor.
-- Filtros (categoria, tipo, intervalo de datas).
-- Busca textual.
-- Agregações (totais, saldo).
+- Pagination / cursor.
+- Filters (category, type, date range).
+- Text search.
+- Aggregations (totals, balance).

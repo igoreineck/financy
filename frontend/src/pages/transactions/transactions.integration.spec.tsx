@@ -118,8 +118,8 @@ afterEach(async () => {
   await apolloClient.clearStore()
 })
 
-describe('Transações — fluxo completo', () => {
-  it('lista, cria, edita e deleta com refresh da tabela', async () => {
+describe('Transactions — full flow', () => {
+  it('lists, creates, edits, and deletes with table refresh', async () => {
     makeMutableServer([
       {
         id: 't1',
@@ -137,35 +137,35 @@ describe('Transações — fluxo completo', () => {
     expect(await screen.findByText('Mercado')).toBeInTheDocument()
 
     await user.click(
-      screen.getAllByRole('button', { name: /Nova transação/i })[0],
+      screen.getAllByRole('button', { name: /New transaction/i })[0],
     )
-    await user.type(screen.getByLabelText('Descrição'), 'Farmácia')
-    await user.type(screen.getByLabelText('Valor'), '3000')
-    await user.type(screen.getByLabelText('Data'), '2025-11-09')
-    await user.click(screen.getByRole('combobox', { name: 'Categoria' }))
+    await user.type(screen.getByLabelText('Description'), 'Farmácia')
+    await user.type(screen.getByLabelText('Amount'), '3000')
+    await user.type(screen.getByLabelText('Date'), '2025-11-09')
+    await user.click(screen.getByRole('combobox', { name: 'Category' }))
     await user.click(await screen.findByRole('option', { name: 'Alimentação' }))
-    await user.click(screen.getByRole('button', { name: 'Salvar' }))
+    await user.click(screen.getByRole('button', { name: 'Save' }))
 
     expect(await screen.findByText('Farmácia')).toBeInTheDocument()
 
-    await user.click(screen.getByRole('button', { name: 'Editar Farmácia' }))
-    const desc = screen.getByLabelText('Descrição')
+    await user.click(screen.getByRole('button', { name: 'Edit Farmácia' }))
+    const desc = screen.getByLabelText('Description')
     await user.clear(desc)
     await user.type(desc, 'Farmácia Drogasil')
-    await user.click(screen.getByRole('button', { name: 'Salvar' }))
+    await user.click(screen.getByRole('button', { name: 'Save' }))
 
     expect(await screen.findByText('Farmácia Drogasil')).toBeInTheDocument()
     expect(
       screen.queryByText('Farmácia', { exact: true }),
     ).not.toBeInTheDocument()
 
-    await user.click(screen.getByRole('button', { name: 'Excluir Mercado' }))
+    await user.click(screen.getByRole('button', { name: 'Delete Mercado' }))
     const confirmDialog = await screen.findByRole('dialog')
     await user.click(
-      within(confirmDialog).getByRole('button', { name: 'Excluir' }),
+      within(confirmDialog).getByRole('button', { name: 'Delete' }),
     )
 
-    await screen.findByText('Transação excluída')
+    await screen.findByText('Transaction deleted')
     expect(screen.queryByText('Mercado')).not.toBeInTheDocument()
   })
 })

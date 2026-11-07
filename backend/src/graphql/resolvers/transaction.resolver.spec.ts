@@ -191,7 +191,7 @@ describe('TransactionResolver', () => {
     })
 
     expect(result.data).toBeNull()
-    expect(result.errors?.[0]?.message).toBe('Usuário não autenticado!')
+    expect(result.errors?.[0]?.message).toBe('User not authenticated!')
   })
 
   it('createTransaction with categoryId of another user rejects with not-found', async () => {
@@ -214,7 +214,7 @@ describe('TransactionResolver', () => {
     )
 
     expect(result.data).toBeNull()
-    expect(result.errors?.[0]?.message).toBe('Categoria não encontrada')
+    expect(result.errors?.[0]?.message).toBe('Category not found')
   })
 
   it('listTransactions returns the user transactions with resolved category', async () => {
@@ -268,7 +268,7 @@ describe('TransactionResolver', () => {
     const result = await execute(LIST_TRANSACTIONS, {})
 
     expect(result.data).toBeNull()
-    expect(result.errors?.[0]?.message).toBe('Usuário não autenticado!')
+    expect(result.errors?.[0]?.message).toBe('User not authenticated!')
   })
 
   it('updateTransaction returns the updated object', async () => {
@@ -336,7 +336,7 @@ describe('TransactionResolver', () => {
     )
 
     expect(result.data).toBeNull()
-    expect(result.errors?.[0]?.message).toBe('Transação não encontrada')
+    expect(result.errors?.[0]?.message).toBe('Transaction not found')
   })
 
   it('deleteTransaction returns true and the transaction disappears from listTransactions', async () => {
@@ -393,7 +393,7 @@ describe('TransactionResolver', () => {
     const result = await execute(DELETE_TRANSACTION, { id }, attacker.id)
 
     expect(result.data).toBeNull()
-    expect(result.errors?.[0]?.message).toBe('Transação não encontrada')
+    expect(result.errors?.[0]?.message).toBe('Transaction not found')
   })
 
   it('deleteTransaction without token rejects with auth error', async () => {
@@ -402,7 +402,7 @@ describe('TransactionResolver', () => {
     })
 
     expect(result.data).toBeNull()
-    expect(result.errors?.[0]?.message).toBe('Usuário não autenticado!')
+    expect(result.errors?.[0]?.message).toBe('User not authenticated!')
   })
 
   it('transaction returns the transaction owned by the user with its category', async () => {
@@ -465,7 +465,7 @@ describe('TransactionResolver', () => {
     const result = await execute(GET_TRANSACTION, { id }, attacker.id)
 
     expect(result.data).toBeNull()
-    expect(result.errors?.[0]?.message).toBe('Transação não encontrada')
+    expect(result.errors?.[0]?.message).toBe('Transaction not found')
   })
 
   it('transaction including the category field rejects when the parent belongs to another user', async () => {
@@ -491,14 +491,14 @@ describe('TransactionResolver', () => {
     const result = await execute(GET_TRANSACTION, { id }, attacker.id)
 
     expect(result.data).toBeNull()
-    expect(result.errors?.[0]?.message).toBe('Transação não encontrada')
+    expect(result.errors?.[0]?.message).toBe('Transaction not found')
   })
 
   it('transaction without token rejects with auth error', async () => {
     const result = await execute(GET_TRANSACTION, { id: faker.string.uuid() })
 
     expect(result.data).toBeNull()
-    expect(result.errors?.[0]?.message).toBe('Usuário não autenticado!')
+    expect(result.errors?.[0]?.message).toBe('User not authenticated!')
   })
 
   it('createTransaction rejects invalid type values at the schema level', async () => {

@@ -23,15 +23,15 @@ export function UserMenu() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger
-        aria-label={`Menu de ${user.name}`}
+        aria-label={`Menu for ${user.name}`}
         className="inline-flex size-10 cursor-pointer items-center justify-center rounded-full bg-brand-base text-sm font-semibold text-white transition-colors hover:bg-brand-dark focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-base/40"
       >
         {initials}
       </DropdownMenuTrigger>
       <DropdownMenuContent>
-        <DropdownMenuItem onSelect={() => navigate('/perfil')}>
+        <DropdownMenuItem onSelect={() => navigate('/profile')}>
           <User className="size-4" aria-hidden="true" />
-          Meu perfil
+          My profile
         </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem
@@ -41,7 +41,7 @@ export function UserMenu() {
           className="text-danger focus:text-danger data-[highlighted]:text-danger"
         >
           <LogOut className="size-4" aria-hidden="true" />
-          Sair da conta
+          Log out
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

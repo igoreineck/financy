@@ -41,18 +41,18 @@ describe('UserMenu', () => {
     renderWithProviders(<UserMenu />)
 
     await user.click(
-      screen.getByRole('button', { name: /Menu de Conta Teste/i }),
+      screen.getByRole('button', { name: /Menu for Conta Teste/i }),
     )
 
     expect(
-      await screen.findByRole('menuitem', { name: /Meu perfil/i }),
+      await screen.findByRole('menuitem', { name: /My profile/i }),
     ).toBeInTheDocument()
     expect(
-      screen.getByRole('menuitem', { name: /Sair da conta/i }),
+      screen.getByRole('menuitem', { name: /Log out/i }),
     ).toBeInTheDocument()
   })
 
-  it('triggers the logout flow when clicking "Sair da conta"', async () => {
+  it('triggers the logout flow when clicking "Log out"', async () => {
     signIn()
     const logoutSpy = vi.fn().mockResolvedValue(undefined)
     vi.spyOn(authLib, 'useLogout').mockReturnValue(logoutSpy)
@@ -61,11 +61,9 @@ describe('UserMenu', () => {
     renderWithProviders(<UserMenu />)
 
     await user.click(
-      screen.getByRole('button', { name: /Menu de Conta Teste/i }),
+      screen.getByRole('button', { name: /Menu for Conta Teste/i }),
     )
-    await user.click(
-      await screen.findByRole('menuitem', { name: /Sair da conta/i }),
-    )
+    await user.click(await screen.findByRole('menuitem', { name: /Log out/i }))
 
     expect(logoutSpy).toHaveBeenCalledTimes(1)
   })

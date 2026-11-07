@@ -9,8 +9,8 @@ type TypeBadgeProps = {
 }
 
 const labels: Record<TransactionType, string> = {
-  INCOME: 'Entrada',
-  EXPENSE: 'Saída',
+  INCOME: 'Income',
+  EXPENSE: 'Expense',
 }
 
 export function TypeBadge({ type, className }: TypeBadgeProps) {

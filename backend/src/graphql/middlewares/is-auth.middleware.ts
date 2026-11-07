@@ -7,13 +7,13 @@ export const IsAuth: MiddlewareFn<GraphqlContext> = async (
   next,
 ) => {
   if (context.authError === 'expired') {
-    throw new Error('Sessão expirada!')
+    throw new Error('Session expired!')
   }
   if (context.authError === 'invalid') {
-    throw new Error('Token inválido!')
+    throw new Error('Invalid token!')
   }
   if (!context.user) {
-    throw new Error('Usuário não autenticado!')
+    throw new Error('User not authenticated!')
   }
   return next()
 }

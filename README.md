@@ -1,84 +1,86 @@
 # Financy
 
-Aplicação completa de gestão de finanças pessoais — exercício final da Pós-Tech
-Rocketseat. Permite cadastrar transações e categorias, fazer login com
-e-mail/senha, ver um dashboard mensal e gerenciar o próprio perfil.
+Full-stack personal-finance app — final assignment for the Rocketseat
+Pós-Tech program. Lets you register transactions and categories, log in with
+email/password, view a monthly dashboard, and manage your own profile.
 
 ```
 financy/
-├── backend/    # API GraphQL (Node + Apollo + TypeGraphQL + Prisma + SQLite)
+├── backend/    # GraphQL API (Node + Apollo + TypeGraphQL + Prisma + SQLite)
 └── frontend/   # SPA (React 19 + Vite + Apollo Client + Tailwind v4)
 ```
 
-## Telas
+## Screens
 
-| Login | Cadastro |
+| Login | Sign up |
 | --- | --- |
-| ![Login](./frontend/docs/screenshots/01-login.png) | ![Cadastro](./frontend/docs/screenshots/02-cadastro.png) |
+| ![Login](./frontend/docs/screenshots/01-login.png) | ![Sign up](./frontend/docs/screenshots/02-cadastro.png) |
 
-| Dashboard | Transações |
+| Dashboard | Transactions |
 | --- | --- |
-| ![Dashboard](./frontend/docs/screenshots/03-dashboard.png) | ![Transações](./frontend/docs/screenshots/04-transacoes.png) |
+| ![Dashboard](./frontend/docs/screenshots/03-dashboard.png) | ![Transactions](./frontend/docs/screenshots/04-transacoes.png) |
 
-| Categorias | Perfil |
+| Categories | Profile |
 | --- | --- |
-| ![Categorias](./frontend/docs/screenshots/05-categorias.png) | ![Perfil](./frontend/docs/screenshots/06-perfil.png) |
+| ![Categories](./frontend/docs/screenshots/05-categorias.png) | ![Profile](./frontend/docs/screenshots/06-perfil.png) |
 
 ## Quickstart
 
-Em dois terminais, na ordem:
+In two terminals, in this order:
 
 ```bash
 # 1) backend
 cd backend
 pnpm install
-cp .env.example .env                # defina JWT_SECRET
-pnpm migrate                        # cria ./dev.db
-pnpm seed                           # popula com 1 usuário + 10 categorias + 69 transações
+cp .env.example .env                # set JWT_SECRET
+pnpm migrate                        # creates ./dev.db
+pnpm seed                           # populates 1 user + 10 categories + 69 transactions
 pnpm dev                            # http://localhost:4000/graphql
 
-# 2) frontend (em outro terminal)
+# 2) frontend (in another terminal)
 cd frontend
 pnpm install
-cp .env.example .env                # VITE_BACKEND_URL já aponta pra :4000
-pnpm codegen                        # gera src/gql/ a partir de ../backend/schema.graphql
+cp .env.example .env                # VITE_BACKEND_URL already points to :4000
+pnpm codegen                        # generates src/gql/ from ../backend/schema.graphql
 pnpm dev                            # http://localhost:5173
 ```
 
-Login de teste (criado pelo seed):
+Test login (created by the seed):
 
-- **e-mail**: `conta@teste.com`
-- **senha**: `senha123`
+- **email**: `conta@teste.com`
+- **password**: `senha123`
 
-## Documentação por subprojeto
+## Per-package documentation
 
-| Pasta    | README                                       | CLAUDE.md                                    |
+| Folder   | README                                       | CLAUDE.md                                    |
 | -------- | -------------------------------------------- | -------------------------------------------- |
 | Backend  | [`backend/README.md`](./backend/README.md)   | [`backend/CLAUDE.md`](./backend/CLAUDE.md)   |
 | Frontend | [`frontend/README.md`](./frontend/README.md) | [`frontend/CLAUDE.md`](./frontend/CLAUDE.md) |
 
-Cada subprojeto também tem uma pasta `docs/` com o escopo detalhado de cada
-tarefa (numeradas) — útil pra entender as decisões de implementação tarefa a
-tarefa.
+Each package also has a `docs/` folder with the detailed scope of each
+(numbered) tarefa — useful for understanding the implementation decisions
+tarefa by tarefa.
 
-## Stack resumida
+## Stack at a glance
 
-- **Tipo**: TypeScript em tudo, ESM, `pnpm`.
+- **Language**: TypeScript everywhere, ESM, `pnpm`.
 - **Backend**: Node 20+, Apollo Server 5, TypeGraphQL, Prisma 6, SQLite,
-  Express 5, JWT (HS256, 1 dia).
-- **Frontend**: React 19, Vite 7, Apollo Client 4, Tailwind CSS v4 com `@theme`,
-  Zustand (persistido), React Hook Form + Zod, Radix UI, Lucide icons.
-- **Qualidade**: Biome (lint + format), Vitest, MSW no frontend, Prisma + DB
-  real no backend.
+  Express 5, JWT (HS256, 1 day).
+- **Frontend**: React 19, Vite 7, Apollo Client 4, Tailwind CSS v4 with
+  `@theme`, Zustand (persisted), React Hook Form + Zod, Radix UI, Lucide icons.
+- **Quality**: Biome (lint + format), Vitest, MSW on the frontend, Prisma + a
+  real DB on the backend.
 
-## Funcionalidades implementadas
+## Implemented features
 
-- Cadastro e login com e-mail/senha; token JWT no `Authorization` header.
-- Cada usuário só vê e gerencia os próprios dados (escopo enforced no backend).
-- CRUD completo de categorias (nome, cor, ícone, descrição opcional).
-- CRUD completo de transações com filtros (tipo, categoria, descrição) e
-  paginação client-side.
-- Dashboard com saldo, receitas e despesas do mês corrente, top-5 recentes,
-  top-5 categorias mais movimentadas.
-- Página de perfil com edição de nome (e-mail bloqueado), logout que limpa
-  cache Apollo + store.
+- Sign up and log in with email/password; JWT token in the `Authorization`
+  header.
+- Each user only sees and manages their own data (scoping enforced in the
+  backend).
+- Full CRUD for categories (name, color, icon, optional description).
+- Full CRUD for transactions with filters (type, category, description) and
+  client-side pagination.
+- Dashboard with the current month's balance, income, and expenses, the 5 most
+  recent transactions, and the top 5 most-used categories.
+- Profile page with name editing (email locked) and a logout that clears the
+  Apollo cache + store.

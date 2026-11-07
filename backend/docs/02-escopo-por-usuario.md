@@ -1,62 +1,62 @@
-# Tarefa 02 — O usuário pode ver e gerenciar apenas as transações e categorias criadas por ele
+# Tarefa 02 — The user can only see and manage the transactions and categories they created
 
-> Origem: linha 59 da seção "Tarefas" em `requisitos.md`.
-> Branch: `feat/02-escopo-por-usuario` (opcional — esta tarefa pode entrar como parte do PR da 03 ou 07 se ainda não houver nada concreto a entregar).
+> Origin: line 59 of the "Tarefas" section in `requisitos.md`.
+> Branch: `feat/02-escopo-por-usuario` (optional — this tarefa can ship as part of the 03 or 07 PR if there's nothing concrete to deliver yet).
 
-## Objetivo
+## Goal
 
-Regra transversal: cada usuário só enxerga e modifica os próprios dados. Esta tarefa não introduz endpoint próprio — define o invariante que as tarefas 03–10 implementam.
+Cross-cutting rule: each user only sees and modifies their own data. This tarefa introduces no endpoint of its own — it defines the invariant that tarefas 03–10 implement.
 
 ## GraphQL surface
 
-Não introduz tipos, queries ou mutations próprios.
+Introduces no types, queries, or mutations of its own.
 
-## Invariante a ser implementado nas demais tarefas
+## Invariant to implement in the other tarefas
 
-Em **todo** resolver que leia ou escreva `Category` ou `Transaction`:
+In **every** resolver that reads or writes `Category` or `Transaction`:
 
-1. Classe ou método decorado com `@UseMiddleware(IsAuth)`.
-2. Resolver recebe o usuário autenticado via `@GqlUser() user: UserModel`.
-3. **Toda** chamada a `prisma.category.*` ou `prisma.transaction.*` inclui `where: { ..., userId: user.id }`.
-4. Operações de update/delete usam `prisma.<model>.findFirst({ where: { id, userId } })` **antes** da mutação, lançando "não encontrado" se vazio. Nunca `findUnique({ where: { id } })` + check em memória; nunca `update({ where: { id } })` direto.
-5. Em `createTransaction`, se o input traz `categoryId`, **revalidar** que a categoria pertence ao mesmo usuário antes do insert.
-6. `FieldResolver`s que carregam relações (ex.: `Transaction.category`) podem usar `findUnique` — o pai já foi escopado por `userId`, então a relação inevitavelmente pertence ao mesmo usuário.
-7. **Mensagens de erro não vazam existência**: "Categoria não encontrada" deve ser idêntico se o id não existe ou se pertence a outro usuário.
+1. Class or method decorated with `@UseMiddleware(IsAuth)`.
+2. The resolver receives the authenticated user via `@GqlUser() user: UserModel`.
+3. **Every** call to `prisma.category.*` or `prisma.transaction.*` includes `where: { ..., userId: user.id }`.
+4. Update/delete operations use `prisma.<model>.findFirst({ where: { id, userId } })` **before** the mutation, throwing "not found" if empty. Never `findUnique({ where: { id } })` + an in-memory check; never a direct `update({ where: { id } })`.
+5. In `createTransaction`, if the input carries a `categoryId`, **revalidate** that the category belongs to the same user before the insert.
+6. `FieldResolver`s that load relations (e.g. `Transaction.category`) may use `findUnique` — the parent was already scoped by `userId`, so the relation necessarily belongs to the same user.
+7. **Error messages don't leak existence**: "Category not found" must be identical whether the id doesn't exist or belongs to another user.
 
 ## Files to add or change
 
-Nenhum arquivo próprio. As implementações concretas vivem nas tarefas:
+No files of its own. The concrete implementations live in the tarefas:
 
-- [03 — Criar transação](./03-criar-transacao.md)
-- [04 — Deletar transação](./04-deletar-transacao.md)
-- [05 — Editar transação](./05-editar-transacao.md)
-- [06 — Listar transações](./06-listar-transacoes.md)
-- [07 — Criar categoria](./07-criar-categoria.md)
-- [08 — Deletar categoria](./08-deletar-categoria.md)
-- [09 — Editar categoria](./09-editar-categoria.md)
-- [10 — Listar categorias](./10-listar-categorias.md)
+- [03 — Create transaction](./03-criar-transacao.md)
+- [04 — Delete transaction](./04-deletar-transacao.md)
+- [05 — Edit transaction](./05-editar-transacao.md)
+- [06 — List transactions](./06-listar-transacoes.md)
+- [07 — Create category](./07-criar-categoria.md)
+- [08 — Delete category](./08-deletar-categoria.md)
+- [09 — Edit category](./09-editar-categoria.md)
+- [10 — List categories](./10-listar-categorias.md)
 
 ## Testing
 
-Esta tarefa **não tem testes próprios**. Cada tarefa 03–10 ship o teste de IDOR/ownership descrito em CLAUDE.md > Testing > "Smoke test for ownership". Sugestão de helper compartilhado, criado na primeira tarefa que precisar:
+This tarefa **has no tests of its own**. Each tarefa 03–10 ships the IDOR/ownership test described in CLAUDE.md > Testing > "Smoke test for ownership". Suggested shared helper, created by the first tarefa that needs it:
 
-- `src/test/helpers/create-test-user.ts` — `export async function createTestUser(overrides?)` que chama `registerUser` com dados fake (`@faker-js/faker`) e retorna `{ user, token }`. Usado por todos os testes de resolvers/services.
+- `src/test/helpers/create-test-user.ts` — `export async function createTestUser(overrides?)` that calls `registerUser` with fake data (`@faker-js/faker`) and returns `{ user, token }`. Used by all resolver/service tests.
 
 ## Acceptance criteria
 
-Validado nas tarefas 03–10. A matriz:
+Validated in tarefas 03–10. The matrix:
 
-- [x] Usuário A não vê transações/categorias do B em nenhum list/query.
-- [x] Usuário A não consegue atualizar/excluir transação ou categoria do B (mesmo com o id correto) — erro "não encontrado", **mesma mensagem** que id inexistente.
-- [x] Usuário A não consegue criar transação referenciando `categoryId` do B.
-- [x] Resolver protegido sem token / com token inválido → `Usuário não autenticado!`.
+- [x] User A doesn't see B's transactions/categories in any list/query.
+- [x] User A can't update/delete B's transaction or category (even with the correct id) — "not found" error, **same message** as a nonexistent id.
+- [x] User A can't create a transaction referencing B's `categoryId`.
+- [x] Protected resolver without a token / with an invalid token → `User not authenticated!`.
 
 ## Depends on
 
-- [01 — Criar conta e login](./01-criar-conta-e-login.md).
+- [01 — Create account and log in](./01-criar-conta-e-login.md).
 
 ## Out of scope
 
-- Roles / permissões além de "dono do recurso".
-- Soft delete / auditoria.
-- Compartilhamento entre usuários.
+- Roles / permissions beyond "resource owner".
+- Soft delete / auditing.
+- Sharing between users.

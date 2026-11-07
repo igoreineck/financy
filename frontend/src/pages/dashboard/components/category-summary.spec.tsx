@@ -25,7 +25,7 @@ describe('CategorySummary', () => {
   it('renders the empty state when there are no aggregates', () => {
     renderSummary(<CategorySummary aggregates={[]} />)
     expect(
-      screen.getByText('Sem categorias movimentadas neste mês.'),
+      screen.getByText('No category activity this month.'),
     ).toBeInTheDocument()
   })
 
@@ -50,16 +50,16 @@ describe('CategorySummary', () => {
       />,
     )
     expect(screen.getByText('1 item')).toBeInTheDocument()
-    expect(screen.getByText('3 itens')).toBeInTheDocument()
+    expect(screen.getByText('3 items')).toBeInTheDocument()
     expect(screen.getByText('R$ 123,45')).toBeInTheDocument()
     expect(screen.getByText('R$ 99,00')).toBeInTheDocument()
   })
 
-  it('exposes a "Gerenciar" link pointing to /categorias', () => {
+  it('exposes a "Manage" link pointing to /categories', () => {
     renderSummary(<CategorySummary aggregates={[]} />)
     expect(screen.getByRole('link', { name: /Gerenciar/i })).toHaveAttribute(
       'href',
-      '/categorias',
+      '/categories',
     )
   })
 })

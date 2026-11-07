@@ -1,58 +1,58 @@
-### Descrição e requisitos funcionais do Front-end
+### Frontend description and functional requirements
 
-Nesse projeto front-end será desenvolvido uma aplicação React que, em conjunto com a API, permite o gerenciamento de transações e categorias.
+In this frontend project you will build a React application that, together with the API, allows managing transactions and categories.
 
-#### Funcionalidades e Regras
+#### Features and rules
 
-Assim como na API, temos as seguintes funcionalidades e regras:
+Just like in the API, we have the following features and rules:
 
-- O usuário pode criar uma conta e fazer login
-- O usuário pode ver e gerenciar apenas as transações e categorias criadas por ele
-- Deve ser possível criar uma transação
-- Deve ser possível deletar uma transação
-- Deve ser possível editar uma transação
-- Deve ser possível listar todas as transações
-- Deve ser possível criar uma categoria
-- Deve ser possível deletar uma categoria
-- Deve ser possível editar uma categoria
-- Deve ser possível listar todas as categorias
+- The user can create an account and log in
+- The user can only see and manage the transactions and categories they created
+- It must be possible to create a transaction
+- It must be possible to delete a transaction
+- It must be possible to edit a transaction
+- It must be possible to list all transactions
+- It must be possible to create a category
+- It must be possible to delete a category
+- It must be possible to edit a category
+- It must be possible to list all categories
 
-Além disso, também temos algumas regras importantes específicas para o front-end:
+In addition, there are some important frontend-specific rules:
 
-- É obrigatória a criação de uma aplicação React usando GraphQL para consultas na API e Vite como `bundler`;
-- Siga o mais fielmente possível o layout do Figma;
+- You must build a React application that uses GraphQL to query the API and Vite as the `bundler`;
+- Follow the Figma layout as faithfully as possible;
 
-#### Páginas
+#### Pages
 
-Essa aplicação possui 6 páginas e dois modais com os formulários (Dialog):
+This application has 6 pages and two modals with the forms (Dialog):
 
-- A página raiz (`/`) que exibe:
-  - Tela de login caso o usuário esteja deslogado
-  - Tela dashboard caso usuário esteja logado
+- The root page (`/`), which shows:
+  - The login screen if the user is logged out
+  - The dashboard screen if the user is logged in
 
-#### Variáveis ambiente
+#### Environment variables
 
-Todo projeto tem diversas configurações de variáveis que devem ser diferentes de acordo com o ambiente que ele é executado. Para isso, importante sabermos, de forma fácil e intuitiva, quais variáveis são essas. Então é obrigatório que esse projeto tenha um arquivo `.env.example` com as chaves necessárias:
+Every project has several configuration variables that must differ depending on the environment it runs in. So it's important to know, in an easy and intuitive way, which variables those are. Therefore this project must have a `.env.example` file with the required keys:
 
 ```
 VITE_BACKEND_URL=
 ```
 
-#### Boas Práticas
+#### Good practices
 
-- Comece o projeto pela aba `Style Guide` no Figma. Dessa forma, você prepara todo o seu tema, fontes e componentes e quando for criar as páginas vai ser bem mais tranquilo;
-- Assim com a experiência do usuário é importante (UX), a sua experiência no desenvolvimento (DX) também é muito importante. Por isso, apesar de ser possível criar essa aplicação sem nenhuma biblioteca, recomendamos utilizar algumas bibliotecas que vão facilitar tanto o desenvolvimento inicial quanto a manutenção do código;
+- Start the project from the `Style Guide` tab in Figma. That way you prepare your whole theme, fonts, and components, and building the pages will be much smoother;
+- Just as user experience (UX) matters, your development experience (DX) matters a lot too. So, although it's possible to build this application without any library, we recommend using some libraries that will make both the initial development and the code maintenance easier;
 
-#### Requisitos Não Funcionais
+#### Non-functional requirements
 
-É obrigatório o uso de:
+The following are mandatory:
 
 - Typescript
 - React
-- Vite sem framework
+- Vite without a framework
 - GraphQL
 
-É flexível o uso de:
+The following are optional:
 
 - TailwindCSS
 - Shadcn
@@ -62,7 +62,7 @@ VITE_BACKEND_URL=
 
 
 
-### Projeto para ser usado como referência no frontend
+### Reference project for the frontend
 
 - Link: https://github.com/rocketseat-education/ftr-pos-360-mindshare/tree/main/frontend
 
@@ -70,13 +70,13 @@ VITE_BACKEND_URL=
 
 ## Tarefas
 
-- [x] O usuário pode criar uma conta e fazer login
-- [x] O usuário pode ver e gerenciar apenas as transações e categorias criadas por ele
-- [x] Deve ser possível criar uma transação
-- [x] Deve ser possível deletar uma transação
-- [x] Deve ser possível editar uma transação
-- [x] Deve ser possível listar todas as transações
-- [x] Deve ser possível criar uma categoria
-- [x] Deve ser possível deletar uma categoria
-- [x] Deve ser possível editar uma categoria
-- [x] Deve ser possível listar todas as categorias
+- [x] The user can create an account and log in
+- [x] The user can only see and manage the transactions and categories they created
+- [x] It must be possible to create a transaction
+- [x] It must be possible to delete a transaction
+- [x] It must be possible to edit a transaction
+- [x] It must be possible to list all transactions
+- [x] It must be possible to create a category
+- [x] It must be possible to delete a category
+- [x] It must be possible to edit a category
+- [x] It must be possible to list all categories

@@ -1,11 +1,11 @@
-# Tarefa 09 — Deve ser possível editar uma categoria
+# Tarefa 09 — It must be possible to edit a category
 
-> Origem: linha 66 da seção "Tarefas" em `requisitos.md`.
+> Origin: line 66 of the "Tarefas" section in `requisitos.md`.
 > Branch: `feat/09-editar-categoria`.
 
-## Objetivo
+## Goal
 
-Atualizar campos de uma categoria existente do próprio usuário.
+Update fields of an existing category owned by the user.
 
 ## GraphQL surface
 
@@ -22,48 +22,48 @@ type Mutation {
 }
 ```
 
-Todos opcionais.
+All optional.
 
 ## Files to add or change
 
-- `src/graphql/inputs/category.input.ts` — adicionar `UpdateCategoryInput`.
+- `src/graphql/inputs/category.input.ts` — add `UpdateCategoryInput`.
 - `src/app/categories/update-category.ts` — `export async function updateCategory(id, data, userId)`:
   ```ts
   const existing = await prisma.category.findFirst({ where: { id, userId } })
-  if (!existing) throw new Error('Categoria não encontrada')
+  if (!existing) throw new Error('Category not found')
   return prisma.category.update({ where: { id }, data })
   ```
-- `src/graphql/resolvers/category.resolver.ts` — adicionar mutation `updateCategory(@Arg('id'), @Arg('data'), @GqlUser() user)`.
+- `src/graphql/resolvers/category.resolver.ts` — add the `updateCategory(@Arg('id'), @Arg('data'), @GqlUser() user)` mutation.
 
 ## Authorization
 
-Ver [02 — Escopo por usuário](./02-escopo-por-usuario.md).
+See [02 — Per-user scoping](./02-escopo-por-usuario.md).
 
 ## Testing
 
 - `src/app/categories/update-category.spec.ts`
-  - [x] update parcial preserva campos não enviados.
-  - [x] id alheio → `Categoria não encontrada`.
-  - [x] `updatedAt` é atualizado.
+  - [x] partial update preserves fields not sent.
+  - [x] someone else's id → `Category not found`.
+  - [x] `updatedAt` is updated.
 - `src/graphql/resolvers/category.resolver.spec.ts`
-  - [x] mutation retorna o objeto atualizado.
-  - [x] usuário A não consegue editar categoria de B.
+  - [x] mutation returns the updated object.
+  - [x] user A can't edit B's category.
 
 ## Acceptance criteria
 
-- [x] Update parcial só altera os campos enviados.
-- [x] Update cross-user → `Categoria não encontrada`.
-- [x] `updatedAt` atualizado automaticamente.
-- [x] Sem JWT → `Usuário não autenticado!`.
-- [x] Suite verde.
+- [x] Partial update only changes the fields sent.
+- [x] Cross-user update → `Category not found`.
+- [x] `updatedAt` updated automatically.
+- [x] No JWT → `User not authenticated!`.
+- [x] Suite green.
 
 ## Depends on
 
-- [07 — Criar categoria](./07-criar-categoria.md).
-- [01 — Criar conta e login](./01-criar-conta-e-login.md).
-- [02 — Escopo por usuário](./02-escopo-por-usuario.md).
+- [07 — Create category](./07-criar-categoria.md).
+- [01 — Create account and log in](./01-criar-conta-e-login.md).
+- [02 — Per-user scoping](./02-escopo-por-usuario.md).
 
 ## Out of scope
 
-- Histórico de versões.
-- Decisão sobre `description: null` (limpar vs. não-enviado): seguir a regra do TypeGraphQL — campo não enviado = `undefined`, e o Prisma ignora `undefined`. `null` explícito limpa.
+- Version history.
+- Decision on `description: null` (clear vs. not sent): follow TypeGraphQL's rule — a field not sent = `undefined`, and Prisma ignores `undefined`. An explicit `null` clears it.

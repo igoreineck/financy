@@ -5,22 +5,22 @@ import { hash } from 'bcryptjs'
 const prisma = new PrismaClient()
 
 const SEED_USER = {
-  name: 'Conta Teste',
+  name: 'Test Account',
   email: 'conta@teste.com',
   password: 'senha123',
 }
 
 const CATEGORIES = [
-  { name: 'Alimentação', color: 'orange', icon: 'utensils' },
-  { name: 'Transporte', color: 'blue', icon: 'car-front' },
-  { name: 'Lazer', color: 'purple', icon: 'ticket' },
-  { name: 'Saúde', color: 'red', icon: 'heart-pulse' },
-  { name: 'Moradia', color: 'yellow', icon: 'house' },
-  { name: 'Compras', color: 'pink', icon: 'shopping-cart' },
-  { name: 'Educação', color: 'green', icon: 'book-open' },
-  { name: 'Trabalho', color: 'gray', icon: 'briefcase-business' },
+  { name: 'Food', color: 'orange', icon: 'utensils' },
+  { name: 'Transportation', color: 'blue', icon: 'car-front' },
+  { name: 'Leisure', color: 'purple', icon: 'ticket' },
+  { name: 'Health', color: 'red', icon: 'heart-pulse' },
+  { name: 'Housing', color: 'yellow', icon: 'house' },
+  { name: 'Shopping', color: 'pink', icon: 'shopping-cart' },
+  { name: 'Education', color: 'green', icon: 'book-open' },
+  { name: 'Work', color: 'gray', icon: 'briefcase-business' },
   { name: 'Pets', color: 'orange', icon: 'paw-print' },
-  { name: 'Investimentos', color: 'green', icon: 'piggy-bank' },
+  { name: 'Investments', color: 'green', icon: 'piggy-bank' },
 ]
 
 type CategoryDescriptors = {
@@ -32,134 +32,124 @@ type CategoryDescriptors = {
 }
 
 const CATEGORY_PROFILE: Record<string, CategoryDescriptors> = {
-  Alimentação: {
+  Food: {
     expenseDescriptions: [
-      'Supermercado',
-      'Almoço executivo',
-      'Padaria',
+      'Supermarket',
+      'Business lunch',
+      'Bakery',
       'Delivery',
-      'Restaurante',
-      'Hortifruti',
+      'Restaurant',
+      'Produce market',
     ],
     incomeDescriptions: [],
     expenseRange: [2500, 35000],
     incomeRange: [0, 0],
     incomeBias: 0,
   },
-  Transporte: {
+  Transportation: {
     expenseDescriptions: [
-      'Combustível',
+      'Fuel',
       'Uber',
-      'Recarga Bilhete Único',
-      'Estacionamento',
-      'Pedágio',
-      'Revisão do carro',
+      'Transit card top-up',
+      'Parking',
+      'Toll',
+      'Car service',
     ],
     incomeDescriptions: [],
     expenseRange: [1500, 40000],
     incomeRange: [0, 0],
     incomeBias: 0,
   },
-  Lazer: {
+  Leisure: {
     expenseDescriptions: [
-      'Cinema',
+      'Movies',
       'Streaming Netflix',
       'Streaming Spotify',
-      'Bar com amigos',
-      'Viagem fim de semana',
-      'Show',
+      'Drinks with friends',
+      'Weekend trip',
+      'Concert',
     ],
     incomeDescriptions: [],
     expenseRange: [2000, 60000],
     incomeRange: [0, 0],
     incomeBias: 0,
   },
-  Saúde: {
+  Health: {
     expenseDescriptions: [
-      'Farmácia',
-      'Plano de saúde',
-      'Consulta médica',
-      'Academia',
-      'Dentista',
-      'Exames',
+      'Pharmacy',
+      'Health insurance',
+      'Doctor visit',
+      'Gym',
+      'Dentist',
+      'Lab tests',
     ],
     incomeDescriptions: [],
     expenseRange: [3000, 80000],
     incomeRange: [0, 0],
     incomeBias: 0,
   },
-  Moradia: {
+  Housing: {
     expenseDescriptions: [
-      'Aluguel',
-      'Conta de luz',
-      'Conta de água',
+      'Rent',
+      'Electricity bill',
+      'Water bill',
       'Internet',
-      'Gás',
-      'Condomínio',
+      'Gas',
+      'HOA fee',
     ],
     incomeDescriptions: [],
     expenseRange: [8000, 250000],
     incomeRange: [0, 0],
     incomeBias: 0,
   },
-  Compras: {
+  Shopping: {
     expenseDescriptions: [
-      'Roupas',
-      'Eletrônico',
-      'Presente',
-      'Livraria',
-      'Cosméticos',
-      'Loja de departamento',
+      'Clothes',
+      'Electronics',
+      'Gift',
+      'Bookstore',
+      'Cosmetics',
+      'Department store',
     ],
-    incomeDescriptions: ['Estorno de compra'],
+    incomeDescriptions: ['Purchase refund'],
     expenseRange: [4000, 120000],
     incomeRange: [2000, 20000],
     incomeBias: 0.1,
   },
-  Educação: {
+  Education: {
     expenseDescriptions: [
-      'Mensalidade do curso',
-      'Material didático',
-      'Plataforma de cursos',
+      'Course tuition',
+      'Study materials',
+      'Online course platform',
       'Workshop',
-      'Certificação',
+      'Certification',
     ],
-    incomeDescriptions: ['Bolsa de estudos'],
+    incomeDescriptions: ['Scholarship'],
     expenseRange: [5000, 90000],
     incomeRange: [50000, 120000],
     incomeBias: 0.15,
   },
-  Trabalho: {
-    expenseDescriptions: [
-      'Coworking',
-      'Software / SaaS',
-      'Equipamento de escritório',
-    ],
-    incomeDescriptions: ['Salário', 'Freelance', 'Bônus', 'Reembolso'],
+  Work: {
+    expenseDescriptions: ['Coworking', 'Software / SaaS', 'Office equipment'],
+    incomeDescriptions: ['Salary', 'Freelance', 'Bonus', 'Reimbursement'],
     expenseRange: [3000, 60000],
     incomeRange: [50000, 800000],
     incomeBias: 0.65,
   },
   Pets: {
-    expenseDescriptions: [
-      'Ração',
-      'Veterinário',
-      'Pet shop',
-      'Banho e tosa',
-      'Brinquedo',
-    ],
+    expenseDescriptions: ['Pet food', 'Vet', 'Pet shop', 'Grooming', 'Toy'],
     incomeDescriptions: [],
     expenseRange: [3500, 40000],
     incomeRange: [0, 0],
     incomeBias: 0,
   },
-  Investimentos: {
-    expenseDescriptions: ['Aporte CDB', 'Aporte Tesouro Direto', 'Aporte ETF'],
-    incomeDescriptions: [
-      'Dividendos',
-      'Rendimento CDB',
-      'Resgate Tesouro Direto',
+  Investments: {
+    expenseDescriptions: [
+      'CDB deposit',
+      'Treasury bond deposit',
+      'ETF deposit',
     ],
+    incomeDescriptions: ['Dividends', 'CDB yield', 'Treasury bond redemption'],
     expenseRange: [10000, 500000],
     incomeRange: [1000, 60000],
     incomeBias: 0.45,
@@ -227,13 +217,13 @@ async function main() {
 
   const rows: TxRow[] = []
 
-  const trabalho = categories.find(c => c.name === 'Trabalho')
-  if (trabalho) {
+  const work = categories.find(c => c.name === 'Work')
+  if (work) {
     for (const { offset } of MONTH_PLAN) {
       rows.push({
         userId: user.id,
-        categoryId: trabalho.id,
-        description: 'Salário',
+        categoryId: work.id,
+        description: 'Salary',
         amount: faker.number.int({ min: 750_000, max: 820_000 }),
         type: 'INCOME',
         occurredAt: buildOccurredAt(offset, 5),
@@ -280,10 +270,12 @@ async function main() {
 
   const total = await prisma.transaction.count({ where: { userId: user.id } })
 
-  console.log('Seed concluído:')
-  console.log(`  user      → ${user.email} (senha: ${SEED_USER.password})`)
-  console.log(`  categorias → ${categories.length}`)
-  console.log(`  transações → ${total}`)
+  console.log('Seed complete:')
+  console.log(
+    `  user         → ${user.email} (password: ${SEED_USER.password})`,
+  )
+  console.log(`  categories   → ${categories.length}`)
+  console.log(`  transactions → ${total}`)
 }
 
 main()

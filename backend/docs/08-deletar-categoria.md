@@ -1,11 +1,11 @@
-# Tarefa 08 — Deve ser possível deletar uma categoria
+# Tarefa 08 — It must be possible to delete a category
 
-> Origem: linha 65 da seção "Tarefas" em `requisitos.md`.
+> Origin: line 65 of the "Tarefas" section in `requisitos.md`.
 > Branch: `feat/08-deletar-categoria`.
 
-## Objetivo
+## Goal
 
-Excluir uma categoria do próprio usuário **desde que não haja transações vinculadas**.
+Delete one of the user's own categories **as long as no transactions are linked to it**.
 
 ## GraphQL surface
 
@@ -20,7 +20,7 @@ type Mutation {
 - `src/app/categories/delete-category.ts` — `export async function deleteCategory(id, userId)`:
   ```ts
   const existing = await prisma.category.findFirst({ where: { id, userId } })
-  if (!existing) throw new Error('Categoria não encontrada')
+  if (!existing) throw new Error('Category not found')
   try {
     await prisma.category.delete({ where: { id } })
   } catch (err) {
@@ -29,53 +29,53 @@ type Mutation {
       err.code === 'P2003'
     ) {
       throw new Error(
-        'Categoria possui transações associadas e não pode ser excluída',
+        'Category has associated transactions and cannot be deleted',
       )
     }
     throw err
   }
   ```
-  > `P2003` é o código de violação de FK que o `onDelete: Restrict` dispara.
-- `src/graphql/resolvers/category.resolver.ts` — adicionar mutation `deleteCategory(@Arg('id'), @GqlUser() user)`.
+  > `P2003` is the FK-violation code that `onDelete: Restrict` triggers.
+- `src/graphql/resolvers/category.resolver.ts` — add the `deleteCategory(@Arg('id'), @GqlUser() user)` mutation.
 
 ## Authorization
 
-Ver [02 — Escopo por usuário](./02-escopo-por-usuario.md).
+See [02 — Per-user scoping](./02-escopo-por-usuario.md).
 
-## Cascade behaviour (decisão travada)
+## Cascade behaviour (locked decision)
 
-`Transaction.categoryId` usa `onDelete: Restrict` (ver [`03-criar-transacao.md`](./03-criar-transacao.md)). Deletar categoria com transações **falha** com mensagem clara. Decisão deliberada — evita perda silenciosa; o frontend reroteia o usuário para mover/excluir transações primeiro.
+`Transaction.categoryId` uses `onDelete: Restrict` (see [`03-criar-transacao.md`](./03-criar-transacao.md)). Deleting a category with transactions **fails** with a clear message. Deliberate decision — it avoids silent data loss; the frontend redirects the user to move/delete the transactions first.
 
-Alternativa rejeitada: `onDelete: Cascade` apagaria as transações sem confirmação — perigoso.
+Rejected alternative: `onDelete: Cascade` would delete the transactions without confirmation — dangerous.
 
 ## Testing
 
 - `src/app/categories/delete-category.spec.ts`
-  - [x] delete de categoria sem transações vinculadas retorna sem erro.
-  - [ ] delete de categoria com transações vinculadas lança `Categoria possui transações associadas...`. _(deferred — depende do modelo `Transaction` em tarefa 03)_
-  - [x] id inexistente → `Categoria não encontrada`.
-  - [x] id de outro usuário → `Categoria não encontrada`.
+  - [x] deleting a category with no linked transactions returns without error.
+  - [ ] deleting a category with linked transactions throws `Category has associated transactions...`. _(deferred — depends on the `Transaction` model from tarefa 03)_
+  - [x] nonexistent id → `Category not found`.
+  - [x] another user's id → `Category not found`.
 - `src/graphql/resolvers/category.resolver.spec.ts`
-  - [x] mutation retorna `true` em sucesso.
-  - [ ] traduz `P2003` em mensagem amigável. _(deferred — depende do modelo `Transaction` em tarefa 03)_
+  - [x] mutation returns `true` on success.
+  - [ ] translates `P2003` into a friendly message. _(deferred — depends on the `Transaction` model from tarefa 03)_
 
 ## Acceptance criteria
 
-- [x] Delete sem transações vinculadas retorna `true`.
-- [ ] Delete com transações vinculadas lança `Categoria possui transações associadas e não pode ser excluída`. _(código pronto; teste depende de tarefa 03)_
-- [x] Id inexistente → `Categoria não encontrada`.
-- [x] Id alheio → `Categoria não encontrada`.
-- [x] Sem JWT → `Usuário não autenticado!`.
-- [x] Suite verde.
+- [x] Delete with no linked transactions returns `true`.
+- [ ] Delete with linked transactions throws `Category has associated transactions and cannot be deleted`. _(code ready; test depends on tarefa 03)_
+- [x] Nonexistent id → `Category not found`.
+- [x] Someone else's id → `Category not found`.
+- [x] No JWT → `User not authenticated!`.
+- [x] Suite green.
 
 ## Depends on
 
-- [07 — Criar categoria](./07-criar-categoria.md).
-- [03 — Criar transação](./03-criar-transacao.md) (define o FK que dispara o `Restrict`).
-- [01 — Criar conta e login](./01-criar-conta-e-login.md).
-- [02 — Escopo por usuário](./02-escopo-por-usuario.md).
+- [07 — Create category](./07-criar-categoria.md).
+- [03 — Create transaction](./03-criar-transacao.md) (defines the FK that triggers `Restrict`).
+- [01 — Create account and log in](./01-criar-conta-e-login.md).
+- [02 — Per-user scoping](./02-escopo-por-usuario.md).
 
 ## Out of scope
 
-- Mover transações em massa para outra categoria.
-- Soft delete / arquivamento.
+- Bulk-moving transactions to another category.
+- Soft delete / archiving.

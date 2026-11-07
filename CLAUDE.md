@@ -47,18 +47,18 @@ detail, the more specific one wins.
 - **Tests**: Vitest. Spec files are colocated next to source as `*.spec.ts`
   (backend) or `*.spec.tsx` (frontend). Run `pnpm test` from each package
   before committing.
-- **Languages**: User-facing strings — labels, button text, error messages,
-  toasts — are **Portuguese**. Everything else is **English**: code, comments,
-  variable names, test names, commit messages, PR titles, PR bodies. Even when
-  a `throw new Error('Categoria não encontrada')` carries a Portuguese
-  message, the surrounding code stays English.
+- **Languages**: Everything is **English** — user-facing strings (labels,
+  button text, error messages, toasts), routes (`/transactions`, `/categories`,
+  `/profile`, `/signup`), code, comments, variable names, test names, commit
+  messages, PR titles, and PR bodies. Money is still Brazilian reais: amounts
+  render as `R$ 1.234,56` and dates as `dd/mm/yy`.
 - **Filenames**: kebab-case (`update-profile.ts`, `category-card.tsx`).
   Functional/function-based exports; no default exports.
 - **Commits**: short English subject. No `feat:` prefix. No tarefa number.
   Never add Claude attribution to commits or PR bodies.
 - **GitHub**: drive everything via `gh` CLI — PRs, comments, checks. Don't
   paste URLs into a browser when `gh` covers it. PR titles/bodies are
-  English even though user-facing strings in the diff are Portuguese.
+  English.
 
 ## Cross-project workflow
 
@@ -88,7 +88,7 @@ uses.
 
 1. Start the backend: `cd backend && pnpm dev` → `http://localhost:4000/graphql`
 2. Optionally seed sample data: `cd backend && pnpm seed`
-   (creates `conta@teste.com` / `senha123` with 10 categorias + ~70 transações)
+   (creates `conta@teste.com` / `senha123` with 10 categories + ~70 transactions)
 3. Regenerate the frontend's typed GraphQL once after any schema change:
    `cd frontend && pnpm codegen` (or run `pnpm codegen:watch`).
 4. Start the frontend: `cd frontend && pnpm dev` → `http://localhost:5173`.
@@ -99,8 +99,8 @@ until `pnpm codegen` runs.
 ## Where decisions live
 
 - Money is integer cents in the backend (`amount: Int!`). The frontend formats
-  for display via `Intl.NumberFormat('pt-BR', { style: 'currency', currency:
-  'BRL' })`.
+  it for display as BRL (`R$ 1.234,56`) via `formatCurrencyCents()` in
+  `frontend/src/lib/format.ts`.
 - Auth lives in the backend: bcrypt + 1-day HS256 JWT. The frontend stores
   the token in a persisted Zustand store and clears it on logout.
 - The backend exposes `me` and `updateProfile`; e-mail and password are not

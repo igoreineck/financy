@@ -14,13 +14,13 @@ import { RegisterMutation } from './queries'
 
 const signUpSchema = z
   .object({
-    name: z.string().min(1, 'Nome obrigatório'),
-    email: z.string().email('Email inválido'),
-    password: z.string().min(8, 'A senha deve ter no mínimo 8 caracteres'),
+    name: z.string().min(1, 'Name is required'),
+    email: z.string().email('Invalid email'),
+    password: z.string().min(8, 'Password must be at least 8 characters'),
     confirmPassword: z.string(),
   })
   .refine(data => data.password === data.confirmPassword, {
-    message: 'As senhas não conferem',
+    message: 'Passwords do not match',
     path: ['confirmPassword'],
   })
 
@@ -62,32 +62,34 @@ export function SignUp() {
         variables: { data: { name, email, password } },
       })
       if (!result.data) {
-        toast.error('Não foi possível concluir o cadastro')
+        toast.error('Could not complete sign-up')
         return
       }
       setSession(result.data.register)
       navigate('/', { replace: true })
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : 'Erro ao cadastrar')
+      toast.error(err instanceof Error ? err.message : 'Failed to sign up')
     }
   })
 
   return (
     <AuthCard
-      title="Criar conta"
-      subtitle="Comece a controlar suas finanças ainda hoje"
+      title="Create account"
+      subtitle="Start taking control of your finances today"
       align="center"
       footer={
         <div className="flex w-full flex-col gap-4">
           <div className="flex items-center gap-3 text-xs text-gray-400">
             <span className="h-px flex-1 bg-gray-200" />
-            ou
+            or
             <span className="h-px flex-1 bg-gray-200" />
           </div>
-          <p className="text-center text-sm text-gray-500">Já tem uma conta?</p>
+          <p className="text-center text-sm text-gray-500">
+            Already have an account?
+          </p>
           <Button asChild variant="outline" className="w-full">
             <Link to="/login">
-              <LogIn className="size-4" /> Fazer login
+              <LogIn className="size-4" /> Log in
             </Link>
           </Button>
         </div>
@@ -96,12 +98,12 @@ export function SignUp() {
       <form className="flex flex-col gap-5" onSubmit={onSubmit} noValidate>
         <div className="flex flex-col gap-1.5">
           <Label htmlFor="name" state={errors.name ? 'error' : 'default'}>
-            Nome completo
+            Full name
           </Label>
           <Input
             id="name"
             type="text"
-            placeholder="Seu nome completo"
+            placeholder="Your full name"
             icon={<User />}
             error={Boolean(errors.name)}
             autoComplete="name"
@@ -114,12 +116,12 @@ export function SignUp() {
 
         <div className="flex flex-col gap-1.5">
           <Label htmlFor="email" state={errors.email ? 'error' : 'default'}>
-            E-mail
+            Email
           </Label>
           <Input
             id="email"
             type="email"
-            placeholder="mail@exemplo.com"
+            placeholder="mail@example.com"
             icon={<Mail />}
             error={Boolean(errors.email)}
             autoComplete="email"
@@ -135,11 +137,11 @@ export function SignUp() {
             htmlFor="password"
             state={errors.password ? 'error' : 'default'}
           >
-            Senha
+            Password
           </Label>
           <PasswordInput
             id="password"
-            placeholder="Digite sua senha"
+            placeholder="Enter your password"
             error={Boolean(errors.password)}
             autoComplete="new-password"
             {...register('password')}
@@ -150,7 +152,7 @@ export function SignUp() {
             </span>
           ) : (
             <span className="text-xs text-gray-500">
-              A senha deve ter no mínimo 8 caracteres
+              Password must be at least 8 characters
             </span>
           )}
         </div>
@@ -160,11 +162,11 @@ export function SignUp() {
             htmlFor="confirmPassword"
             state={errors.confirmPassword ? 'error' : 'default'}
           >
-            Confirmar senha
+            Confirm password
           </Label>
           <PasswordInput
             id="confirmPassword"
-            placeholder="Repita a senha"
+            placeholder="Repeat your password"
             error={Boolean(errors.confirmPassword)}
             autoComplete="new-password"
             {...register('confirmPassword')}
@@ -177,7 +179,7 @@ export function SignUp() {
         </div>
 
         <Button type="submit" disabled={loading} className="w-full">
-          {loading ? 'Cadastrando...' : 'Cadastrar'}
+          {loading ? 'Signing up...' : 'Sign up'}
         </Button>
       </form>
     </AuthCard>

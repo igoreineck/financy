@@ -47,14 +47,14 @@ export function CategoryCard({
           <IconButton
             variant="danger"
             size="sm"
-            aria-label={`Excluir ${category.name}`}
+            aria-label={`Delete ${category.name}`}
             onClick={onDelete}
           >
             <Trash2 />
           </IconButton>
           <IconButton
             size="sm"
-            aria-label={`Editar ${category.name}`}
+            aria-label={`Edit ${category.name}`}
             onClick={onEdit}
           >
             <Pencil />
@@ -74,7 +74,7 @@ export function CategoryCard({
       <div className="flex items-center justify-between gap-2">
         <Tag color={color}>{category.name}</Tag>
         <span className="text-xs font-medium text-gray-500">
-          {transactionCount} {transactionCount === 1 ? 'item' : 'itens'}
+          {transactionCount} {transactionCount === 1 ? 'item' : 'items'}
         </span>
       </div>
     </article>

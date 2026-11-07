@@ -1,20 +1,20 @@
-# Tarefa 04 — Transações CRUD
+# Tarefa 04 — Transactions CRUD
 
-> Origem: linhas 75–78 (criar/deletar/editar/listar transação) em `requisitos.md`.
-> Branch: `feat/04-transacoes-crud`. Workflow geral em [`README.md`](./README.md#workflow-per-tarefa).
+> Origin: lines 75–78 (create/delete/edit/list transaction) in `requisitos.md`.
+> Branch: `feat/04-transacoes-crud`. General workflow in [`README.md`](./README.md#workflow-per-tarefa).
 
-## Objetivo
+## Goal
 
-Página `/transacoes` com tabela + filtros + paginação + dialog create/edit + confirm de delete. Cobre as 4 operações de transação. Filtros e paginação são **client-side** porque o schema não tem args — documentar pra futura migração.
+`/transactions` page with table + filters + pagination + create/edit dialog + delete confirmation. Covers all 4 transaction operations. Filters and pagination are **client-side** because the schema has no args — document this for a future migration.
 
-## GraphQL surface (consumido)
+## GraphQL surface (consumed)
 
 ```graphql
 query ListTransactions {
   listTransactions {
     id
     description
-    amount       # Int (centavos)
+    amount       # Int (cents)
     type         # INCOME | EXPENSE
     occurredAt
     categoryId
@@ -41,29 +41,29 @@ mutation DeleteTransaction($id: ID!) {
 }
 ```
 
-Documentos em `src/pages/transactions/queries.graphql`.
+Documents in `src/pages/transactions/queries.graphql`.
 
 ## Files to add or change
 
-### Página e componentes
+### Page and components
 
 - `src/pages/transactions/transactions-page.tsx`
-  - Header: título "Transações", subtítulo, botão "Nova transação".
-  - Barra de filtros (search por descrição + tipo + categoria + período).
-  - Tabela com colunas: Descrição · Data · Categoria (Tag) · Tipo (TypeBadge) · Valor (com sinal) · Ações.
-  - Paginação: "1 a 10 | 27 resultados" no rodapé.
-  - Empty state quando zero transações ou filtro retorna zero.
-- `src/pages/transactions/components/transaction-row.tsx` — uma linha (description, formatted date, `<Tag>` da categoria, `<TypeBadge>`, `formatCurrencyCents(amount)` prefixado com `+`/`-`, icon-buttons edit/delete).
+  - Header: title "Transactions", subtitle, "New transaction" button.
+  - Filter bar (search by description + type + category + period).
+  - Table with columns: Description · Date · Category (Tag) · Type (TypeBadge) · Amount (signed) · Actions.
+  - Pagination: "1 to 10 | 27 results" in the footer.
+  - Empty state when there are zero transactions or the filter returns zero.
+- `src/pages/transactions/components/transaction-row.tsx` — one row (description, formatted date, category `<Tag>`, `<TypeBadge>`, `formatCurrencyCents(amount)` prefixed with `+`/`-`, edit/delete icon-buttons).
 - `src/pages/transactions/components/transaction-dialog.tsx`
   - Props: `{ open, onOpenChange, mode: 'create' | 'edit', initialValues? }`.
-  - Toggle Type (Despesa / Receita) no topo — visual destacado, controla cor do header.
-  - Inputs: descrição (text), valor (`<CurrencyInput>` que retorna centavos), data (input `type="date"`), categoria (`<Select>` populado por `ListCategories` da cache).
-  - RHF + Zod: descrição required, amount > 0, occurredAt válido, categoryId required.
+  - Type toggle (Expense / Income) at the top — highlighted visual, controls the header color.
+  - Inputs: description (text), amount (`<CurrencyInput>` returning cents), date (`type="date"` input), category (`<Select>` populated from `ListCategories` in the cache).
+  - RHF + Zod: description required, amount > 0, valid occurredAt, categoryId required.
 - `src/pages/transactions/components/transaction-filters.tsx`
-  - Search: input com ícone de lupa, filtra `description.toLowerCase().includes(query.toLowerCase())`.
-  - Tipo: select `Todos | Receita | Despesa`.
-  - Categoria: select populado por `ListCategories` + opção "Todas".
-  - Período: select `Este mês | Mês passado | Todo o período | Personalizado` (custom abre 2 date inputs).
+  - Search: input with a magnifier icon, filters `description.toLowerCase().includes(query.toLowerCase())`.
+  - Type: select `All | Income | Expense`.
+  - Category: select populated from `ListCategories` + an "All" option.
+  - Period: select `This month | Last month | All time | Custom` (custom opens 2 date inputs).
 - `src/pages/transactions/components/transaction-delete-confirm.tsx` — confirm dialog.
 
 ### Helpers
@@ -72,37 +72,37 @@ Documentos em `src/pages/transactions/queries.graphql`.
   - `formatCurrencyCents(cents: number): string` → `'R$ 12,34'`.
   - `parseCurrencyToCents(input: string): number` → `1234`.
   - `formatDate(iso: string): string` → `'30/11/25'`.
-- `src/components/ui/currency-input.tsx` — input com máscara live `R$ 0,00`. Emite centavos via `onChange(cents)`. Construído sobre o `<Input>` da tarefa 01.
-- `src/pages/transactions/hooks/use-filtered-transactions.ts` — recebe `transactions` + `filters` + `page` + `pageSize`, retorna `{ rows, total, totalPages }`.
+- `src/components/ui/currency-input.tsx` — input with a live `R$ 0,00` mask. Emits cents via `onChange(cents)`. Built on top of the `<Input>` from tarefa 01.
+- `src/pages/transactions/hooks/use-filtered-transactions.ts` — takes `transactions` + `filters` + `page` + `pageSize`, returns `{ rows, total, totalPages }`.
 
 ### Cache strategy
 
-- `createTransaction` / `updateTransaction` — `update(cache, { data })` insere/atualiza na lista da query `ListTransactions`.
-- `deleteTransaction` — `cache.modify` remove o id.
-- Erro do backend → toast com mensagem.
+- `createTransaction` / `updateTransaction` — `update(cache, { data })` inserts/updates in the `ListTransactions` query list.
+- `deleteTransaction` — `cache.modify` removes the id.
+- Backend error → toast with the message.
 
 ## Testing
 
 - [x] `pages/transactions/transactions-page.spec.tsx`
-  - Renderiza 10 linhas + indicador `1 a 10 | 27 resultados`.
-  - Click em "Próxima página" mostra restantes.
-  - Empty state quando filtro retorna vazio.
+  - Renders 10 rows + the `1 to 10 | 27 results` indicator.
+  - Clicking "Next page" shows the rest.
+  - Empty state when the filter returns nothing.
 - [x] `pages/transactions/components/transaction-filters.spec.tsx`
-  - Search filtra por descrição (case-insensitive, substring).
-  - Tipo filtra apenas INCOME / EXPENSE.
-  - Categoria filtra; "Todas" desliga o filtro.
-  - Período "Este mês" mostra só as do mês corrente; "Personalizado" filtra range custom.
-  - Filtros combinam (AND).
+  - Search filters by description (case-insensitive, substring).
+  - Type filters only INCOME / EXPENSE.
+  - Category filters; "All" turns the filter off.
+  - Period "This month" shows only the current month's; "Custom" filters a custom range.
+  - Filters combine (AND).
 - [x] `pages/transactions/components/transaction-dialog.spec.tsx`
-  - Toggle Despesa/Receita altera classe visível.
-  - `<CurrencyInput>` digitando "12,34" emite `1234`.
-  - Submit valida obrigatórios; submit válido chama mutation com input certo.
-  - Modo edit pre-popula tudo (incluindo categoria selecionada).
-- [x] `pages/transactions/components/transaction-delete-confirm.spec.tsx` — confirmar chama mutation; cancelar fecha.
+  - Expense/Income toggle changes the visible class.
+  - Typing "12,34" into `<CurrencyInput>` emits `1234`.
+  - Submit validates required fields; a valid submit calls the mutation with the right input.
+  - Edit mode pre-populates everything (including the selected category).
+- [x] `pages/transactions/components/transaction-delete-confirm.spec.tsx` — confirm calls the mutation; cancel closes.
 - [x] `pages/transactions/hooks/use-filtered-transactions.spec.ts`
-  - Total recalcula com filtros aplicados.
-  - Paginação respeita filtros.
-  - Trocar filtro reseta pra página 1.
+  - Total recalculates with filters applied.
+  - Pagination respects filters.
+  - Changing a filter resets to page 1.
 - [x] `lib/format.spec.ts`
   - `formatCurrencyCents(1234) === 'R$ 12,34'`.
   - `formatCurrencyCents(0) === 'R$ 0,00'`.
@@ -112,30 +112,30 @@ Documentos em `src/pages/transactions/queries.graphql`.
   - `parseCurrencyToCents('R$ 12.345,67') === 1234567`.
   - `formatDate('2025-11-30T00:00:00Z') === '30/11/25'`.
 - [x] `transactions.integration.spec.tsx` (MSW)
-  - Lista carrega; create insere linha; update atualiza linha; delete remove linha.
+  - List loads; create inserts a row; update updates the row; delete removes the row.
 
 ## Acceptance criteria
 
-- [x] Tabela com colunas: Descrição, Data, Categoria (Tag), Tipo (TypeBadge), Valor (formatado com sinal), Ações.
-- [x] "Nova transação" abre dialog limpo; edit abre pré-preenchido (incluindo categoria).
-- [x] Deletar pede confirmação; após confirmar, linha some.
-- [x] Filtros combinam (AND); paginação recomputa total com filtros aplicados.
-- [x] Valor enviado ao backend é Int em centavos.
-- [x] Toasts em sucesso e erro de cada operação.
-- [x] Linhas em `requisitos.md`: criar/deletar/editar/listar transação marcadas.
-- [x] `pnpm test` verde; `pnpm check` limpo; `pnpm tsc --noEmit` limpo.
-- [x] `docs/04-transacoes-crud.md` (este arquivo) com checkboxes preenchidos.
+- [x] Table with columns: Description, Date, Category (Tag), Type (TypeBadge), Amount (formatted with sign), Actions.
+- [x] "New transaction" opens a blank dialog; edit opens it pre-filled (including category).
+- [x] Deleting asks for confirmation; after confirming, the row disappears.
+- [x] Filters combine (AND); pagination recomputes the total with filters applied.
+- [x] The amount sent to the backend is an Int in cents.
+- [x] Toasts on success and error for each operation.
+- [x] Lines in `requisitos.md`: create/delete/edit/list transaction checked.
+- [x] `pnpm test` green; `pnpm check` clean; `pnpm tsc --noEmit` clean.
+- [x] `docs/04-transacoes-crud.md` (this file) with checkboxes filled in.
 
 ## Depends on
 
 - [`00-scaffolding.md`](./00-scaffolding.md), [`01-design-system.md`](./01-design-system.md), [`02-auth.md`](./02-auth.md).
-- [`03-categorias-crud.md`](./03-categorias-crud.md) — precisa de categorias pra escolher no select.
-- Backend `03/04/05/06` (transações CRUD) já mergeados.
+- [`03-categorias-crud.md`](./03-categorias-crud.md) — categories are needed to pick from in the select.
+- Backend `03/04/05/06` (transactions CRUD) already merged.
 
 ## Out of scope
 
-- Filtros server-side (backend não suporta args).
-- Transações recorrentes.
-- Anexos / comprovantes.
+- Server-side filters (the backend doesn't support args).
+- Recurring transactions.
+- Attachments / receipts.
 - Multi-currency.
-- Bulk delete / import CSV.
+- Bulk delete / CSV import.

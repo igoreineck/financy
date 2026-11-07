@@ -91,7 +91,7 @@ afterEach(async () => {
 })
 
 describe('<TransactionsPage />', () => {
-  it('renders 10 rows and shows "1 a 10 | 27 resultados"', async () => {
+  it('renders 10 rows and shows "1 to 10 | 27 results"', async () => {
     seed(makeTransactions(27))
     renderPage()
 
@@ -101,7 +101,7 @@ describe('<TransactionsPage />', () => {
     // 1 header row + 10 data rows
     expect(rows).toHaveLength(11)
 
-    expect(screen.getByText('1 a 10 | 27 resultados')).toBeInTheDocument()
+    expect(screen.getByText('1 to 10 | 27 results')).toBeInTheDocument()
   })
 
   it('navigates to the next page and shows the remaining rows', async () => {
@@ -111,13 +111,13 @@ describe('<TransactionsPage />', () => {
 
     await screen.findByText('Lançamento 1')
 
-    await user.click(screen.getByRole('button', { name: 'Próxima página' }))
+    await user.click(screen.getByRole('button', { name: 'Next page' }))
     expect(await screen.findByText('Lançamento 11')).toBeInTheDocument()
-    expect(screen.getByText('11 a 20 | 27 resultados')).toBeInTheDocument()
+    expect(screen.getByText('11 to 20 | 27 results')).toBeInTheDocument()
 
-    await user.click(screen.getByRole('button', { name: 'Próxima página' }))
+    await user.click(screen.getByRole('button', { name: 'Next page' }))
     expect(await screen.findByText('Lançamento 21')).toBeInTheDocument()
-    expect(screen.getByText('21 a 27 | 27 resultados')).toBeInTheDocument()
+    expect(screen.getByText('21 to 27 | 27 results')).toBeInTheDocument()
     expect(screen.getAllByRole('row')).toHaveLength(8)
   })
 
@@ -128,26 +128,26 @@ describe('<TransactionsPage />', () => {
 
     await screen.findByText('Lançamento 1')
 
-    await user.type(screen.getByLabelText('Buscar'), 'descrição inexistente')
+    await user.type(screen.getByLabelText('Search'), 'descrição inexistente')
 
-    expect(await screen.findByText('Nenhum resultado')).toBeInTheDocument()
+    expect(await screen.findByText('No results')).toBeInTheDocument()
     expect(
-      screen.getByText('Ajuste os filtros para ver outras transações'),
+      screen.getByText('Adjust the filters to see other transactions'),
     ).toBeInTheDocument()
   })
 
-  it('opens the create dialog when clicking "Nova transação"', async () => {
+  it('opens the create dialog when clicking "New transaction"', async () => {
     seed(makeTransactions(2))
     const user = userEvent.setup()
     renderPage()
 
     await screen.findByText('Lançamento 1')
     await user.click(
-      screen.getAllByRole('button', { name: /Nova transação/i })[0],
+      screen.getAllByRole('button', { name: /New transaction/i })[0],
     )
 
     expect(
-      await screen.findByRole('heading', { name: 'Nova transação' }),
+      await screen.findByRole('heading', { name: 'New transaction' }),
     ).toBeInTheDocument()
   })
 
@@ -155,9 +155,7 @@ describe('<TransactionsPage />', () => {
     seed([])
     renderPage()
 
-    expect(
-      await screen.findByText('Nenhuma transação ainda'),
-    ).toBeInTheDocument()
+    expect(await screen.findByText('No transactions yet')).toBeInTheDocument()
   })
 
   it('opens the delete confirm with the row description', async () => {
@@ -167,13 +165,13 @@ describe('<TransactionsPage />', () => {
 
     await screen.findByText('Lançamento 1')
     await user.click(
-      screen.getByRole('button', { name: 'Excluir Lançamento 1' }),
+      screen.getByRole('button', { name: 'Delete Lançamento 1' }),
     )
 
     const dialog = await screen.findByRole('dialog')
     expect(
-      within(dialog).getByRole('heading', { name: 'Excluir transação?' }),
+      within(dialog).getByRole('heading', { name: 'Delete transaction?' }),
     ).toBeInTheDocument()
-    expect(dialog).toHaveTextContent('"Lançamento 1" será removida.')
+    expect(dialog).toHaveTextContent('"Lançamento 1" will be removed.')
   })
 })

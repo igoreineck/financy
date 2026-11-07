@@ -42,7 +42,7 @@ describe('registerUser', () => {
         email: input.email,
         password: faker.internet.password({ length: 12 }),
       }),
-    ).rejects.toThrow('E-mail já cadastrado!')
+    ).rejects.toThrow('Email already registered!')
   })
 
   it('normalizes email casing and rejects duplicates regardless of case', async () => {
@@ -59,7 +59,7 @@ describe('registerUser', () => {
         email,
         password: faker.internet.password({ length: 12 }),
       }),
-    ).rejects.toThrow('E-mail já cadastrado!')
+    ).rejects.toThrow('Email already registered!')
   })
 
   it('returns a user object without the password field', async () => {

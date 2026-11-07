@@ -1,53 +1,53 @@
-### Descrição e requisitos funcionais do Back-end
+### Backend description and functional requirements
 
-Nesse projeto back-end, será desenvolvido uma API para gerenciar a organização das finanças.
+In this backend project, you will build an API to manage personal-finance organization.
 
-#### Funcionalidades e Regras
+#### Features and rules
 
-- O usuário pode criar uma conta e fazer login
-- O usuário pode ver e gerenciar apenas as transações e categorias criadas por ele
-- Deve ser possível criar uma transação
-- Deve ser possível deletar uma transação
-- Deve ser possível editar uma transação
-- Deve ser possível listar todas as transações
-- Deve ser possível criar uma categoria
-- Deve ser possível deletar uma categoria
-- Deve ser possível editar uma categoria
-- Deve ser possível listar todas as categorias
-
-------
-
-⚠️ Para esse desafio é esperado que você utilize o banco de dados SQLite. Caso prefira pode usar o Postgres como opção.
+- The user can create an account and log in
+- The user can only see and manage the transactions and categories they created
+- It must be possible to create a transaction
+- It must be possible to delete a transaction
+- It must be possible to edit a transaction
+- It must be possible to list all transactions
+- It must be possible to create a category
+- It must be possible to delete a category
+- It must be possible to edit a category
+- It must be possible to list all categories
 
 ------
 
-#### Variáveis ambiente
+⚠️ For this challenge you are expected to use the SQLite database. If you prefer, you may use Postgres instead.
 
-Todo projeto tem diversas configurações de variáveis que devem ser diferentes de acordo com o ambiente que ele é executado. Para isso, importante sabermos, de forma fácil e intuitiva, quais variáveis são essas. Então é obrigatório que esse projeto tenha um arquivo `.env.example` com as chaves necessárias.
+------
+
+#### Environment variables
+
+Every project has several configuration variables that must differ depending on the environment it runs in. So it's important to know, in an easy and intuitive way, which variables those are. Therefore this project must have a `.env.example` file with the required keys.
 
 ```
 JWT_SECRET=
 DATABASE_URL=
 ```
 
-Caso adicione variáveis adicionais, lembre-se de incluí-las no `.env.example`.
+If you add extra variables, remember to include them in `.env.example`.
 
-#### Requisitos Não Funcionais
+#### Non-functional requirements
 
-É obrigatório o uso de:
+The following are mandatory:
 
 - TypeScript
 - GraphQL
 - Prisma
 - SQLite
 
-#### Boas Práticas
+#### Good practices
 
-- Não se esqueça de habilitar o CORS na aplicação.
+- Don't forget to enable CORS in the application.
 
 
 
-### Projeto para ser usado como referência no backend
+### Reference project for the backend
 
 - Link: https://github.com/rocketseat-education/ftr-pos-360-mindshare/tree/main/backend
 
@@ -55,19 +55,19 @@ Caso adicione variáveis adicionais, lembre-se de incluí-las no `.env.example`.
 
 ## Tarefas
 
-- [x] O usuário pode criar uma conta e fazer login
-- [x] O usuário pode ver e gerenciar apenas as transações e categorias criadas por ele
-- [x] Deve ser possível criar uma transação
-- [x] Deve ser possível deletar uma transação
-- [x] Deve ser possível editar uma transação
-- [x] Deve ser possível listar todas as transações
-- [x] Deve ser possível criar uma categoria
-- [x] Deve ser possível deletar uma categoria
-- [x] Deve ser possível editar uma categoria
-- [x] Deve ser possível listar todas as categorias
+- [x] The user can create an account and log in
+- [x] The user can only see and manage the transactions and categories they created
+- [x] It must be possible to create a transaction
+- [x] It must be possible to delete a transaction
+- [x] It must be possible to edit a transaction
+- [x] It must be possible to list all transactions
+- [x] It must be possible to create a category
+- [x] It must be possible to delete a category
+- [x] It must be possible to edit a category
+- [x] It must be possible to list all categories
 
-## Nice to have (futuro)
+## Nice to have (future)
 
-Itens fora do escopo obrigatório do desafio, mantidos como ideias pra evoluir o projeto depois.
+Items outside the challenge's mandatory scope, kept as ideas for evolving the project later.
 
-- [ ] [Fortalecer autenticação (rotação, revogação e refresh tokens)](./docs/nice-to-have-fortalecer-autenticacao.md)
+- [ ] [Harden authentication (rotation, revocation, and refresh tokens)](./docs/nice-to-have-fortalecer-autenticacao.md)

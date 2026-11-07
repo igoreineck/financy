@@ -20,7 +20,7 @@ export async function createTransaction(
   const category = await prisma.category.findFirst({
     where: { id: input.categoryId, userId },
   })
-  if (!category) throw new Error('Categoria não encontrada')
+  if (!category) throw new Error('Category not found')
 
   return prisma.transaction.create({
     data: {

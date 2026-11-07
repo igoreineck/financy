@@ -46,10 +46,10 @@ export function CategoryDeleteConfirm({
     if (!category) return
     try {
       await deleteCategory({ variables: { id: category.id } })
-      toast.success('Categoria excluída')
+      toast.success('Category deleted')
       onOpenChange(false)
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : 'Erro ao excluir')
+      toast.error(err instanceof Error ? err.message : 'Failed to delete')
     }
   }
 
@@ -57,10 +57,10 @@ export function CategoryDeleteConfirm({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-sm">
         <DialogHeader>
-          <DialogTitle>Excluir categoria?</DialogTitle>
+          <DialogTitle>Delete category?</DialogTitle>
           <DialogDescription>
-            Esta ação não pode ser desfeita.
-            {category ? ` "${category.name}" será removida.` : ''}
+            This action cannot be undone.
+            {category ? ` "${category.name}" will be removed.` : ''}
           </DialogDescription>
         </DialogHeader>
         <DialogFooter>
@@ -70,7 +70,7 @@ export function CategoryDeleteConfirm({
             onClick={() => onOpenChange(false)}
             disabled={loading}
           >
-            Cancelar
+            Cancel
           </Button>
           <Button
             type="button"
@@ -78,7 +78,7 @@ export function CategoryDeleteConfirm({
             disabled={loading}
             className="bg-danger hover:bg-danger/90"
           >
-            {loading ? 'Excluindo...' : 'Excluir'}
+            {loading ? 'Deleting...' : 'Delete'}
           </Button>
         </DialogFooter>
       </DialogContent>

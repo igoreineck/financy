@@ -23,7 +23,7 @@ export const router = createBrowserRouter([
         ),
       },
       {
-        path: '/cadastro',
+        path: '/signup',
         element: (
           <PublicRoute>
             <SignUp />
@@ -40,9 +40,9 @@ export const router = createBrowserRouter([
     ),
     children: [
       { path: '/', element: <DashboardPage /> },
-      { path: '/transacoes', element: <TransactionsPage /> },
-      { path: '/categorias', element: <CategoriesPage /> },
-      { path: '/perfil', element: <ProfilePage /> },
+      { path: '/transactions', element: <TransactionsPage /> },
+      { path: '/categories', element: <CategoriesPage /> },
+      { path: '/profile', element: <ProfilePage /> },
     ],
   },
 ])

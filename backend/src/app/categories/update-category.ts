@@ -15,11 +15,11 @@ export async function updateCategory(
   userId: string,
 ): Promise<Category> {
   if (data.name === null || data.color === null || data.icon === null) {
-    throw new Error('Nome, cor e ícone não podem ser nulos')
+    throw new Error('Name, color, and icon cannot be null')
   }
 
   const existing = await prisma.category.findFirst({ where: { id, userId } })
-  if (!existing) throw new Error('Categoria não encontrada')
+  if (!existing) throw new Error('Category not found')
 
   return prisma.category.update({
     where: { id },

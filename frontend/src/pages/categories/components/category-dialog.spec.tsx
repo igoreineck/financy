@@ -38,18 +38,18 @@ describe('<CategoryDialog />', () => {
   it('renders in create mode with empty fields', () => {
     renderDialog()
     expect(
-      screen.getByRole('heading', { name: 'Nova categoria' }),
+      screen.getByRole('heading', { name: 'New category' }),
     ).toBeInTheDocument()
-    expect(screen.getByLabelText('Título')).toHaveValue('')
+    expect(screen.getByLabelText('Title')).toHaveValue('')
   })
 
   it('blocks submit when name, icon or color are missing', async () => {
     const user = userEvent.setup()
     renderDialog()
-    await user.click(screen.getByRole('button', { name: 'Salvar' }))
-    expect(await screen.findByText('Título obrigatório')).toBeInTheDocument()
-    expect(screen.getByText('Selecione um ícone')).toBeInTheDocument()
-    expect(screen.getByText('Selecione uma cor')).toBeInTheDocument()
+    await user.click(screen.getByRole('button', { name: 'Save' }))
+    expect(await screen.findByText('Title is required')).toBeInTheDocument()
+    expect(screen.getByText('Select an icon')).toBeInTheDocument()
+    expect(screen.getByText('Select a color')).toBeInTheDocument()
   })
 
   it('pre-populates fields in edit mode', () => {
@@ -63,8 +63,8 @@ describe('<CategoryDialog />', () => {
         color: 'orange',
       },
     })
-    expect(screen.getByLabelText('Título')).toHaveValue('Alimentação')
-    expect(screen.getByLabelText('Descrição')).toHaveValue('Comida em geral')
+    expect(screen.getByLabelText('Title')).toHaveValue('Alimentação')
+    expect(screen.getByLabelText('Description')).toHaveValue('Comida em geral')
     expect(screen.getByRole('button', { name: 'utensils' })).toHaveAttribute(
       'aria-pressed',
       'true',
@@ -103,12 +103,12 @@ describe('<CategoryDialog />', () => {
     const user = userEvent.setup()
     renderDialog({ onOpenChange })
 
-    await user.type(screen.getByLabelText('Título'), 'Lazer')
+    await user.type(screen.getByLabelText('Title'), 'Lazer')
     await user.click(screen.getByRole('button', { name: 'ticket' }))
     await user.click(screen.getByRole('button', { name: 'purple' }))
-    await user.click(screen.getByRole('button', { name: 'Salvar' }))
+    await user.click(screen.getByRole('button', { name: 'Save' }))
 
-    await screen.findByText('Categoria criada')
+    await screen.findByText('Category created')
     expect(onOpenChange).toHaveBeenCalledWith(false)
     expect(captured[0]).toEqual({
       data: {
@@ -125,7 +125,7 @@ describe('<CategoryDialog />', () => {
     const onOpenChange = vi.fn()
     renderDialog({ onOpenChange })
 
-    await user.click(screen.getByRole('button', { name: 'Fechar' }))
+    await user.click(screen.getByRole('button', { name: 'Close' }))
     expect(onOpenChange).toHaveBeenCalledWith(false)
   })
 })

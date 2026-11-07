@@ -20,16 +20,16 @@ The backend lives in `../backend/`. Its GraphQL schema (`../backend/schema.graph
 All 6 tarefas are merged on `main`. The app boots into login, supports the full
 sign-up/login flow, gates protected routes via Zustand, and exposes:
 
-- **Dashboard** (`/`) — stat cards (saldo, receitas, despesas do mês), top-5
+- **Dashboard** (`/`) — stat cards (total balance, monthly income, monthly expenses), top-5
   recent transactions and top-5 most-used categories of the current month,
-  empty state with an inline "+ Nova transação" dialog.
-- **Transações** (`/transacoes`) — table with type/category/description filters,
+  empty state with an inline "+ New transaction" dialog.
+- **Transactions** (`/transactions`) — table with type/category/description filters,
   client-side pagination (10 per page), create/edit/delete via dialog.
-- **Categorias** (`/categorias`) — grid of cards with stats (total categorias,
-  total transações, mais usada), create/edit/delete via dialog, color + icon
+- **Categories** (`/categories`) — grid of cards with stats (total categories,
+  total transactions, most used), create/edit/delete via dialog, color + icon
   pickers.
-- **Perfil** (`/perfil`) — form to edit `name`; e-mail is read-only. Avatar in
-  the navbar opens a dropdown with "Meu perfil" + "Sair da conta". Logout
+- **Profile** (`/profile`) — form to edit `name`; email is read-only. Avatar in
+  the navbar opens a dropdown with "My profile" + "Log out". Logout
   clears Apollo cache + the persisted Zustand store and redirects to `/login`.
 
 Each tarefa lives as a scope doc in [`docs/`](./docs); checkboxes there reflect
@@ -39,12 +39,12 @@ not new modules.
 | # | Doc | Scope |
 | - | --- | ----- |
 | 00 | [`docs/00-scaffolding.md`](./docs/00-scaffolding.md) | Vite + deps + Apollo + tooling |
-| 01 | [`docs/01-design-system.md`](./docs/01-design-system.md) | Tokens em `@theme` + primitivos em `src/components/ui/` |
-| 02 | [`docs/02-auth.md`](./docs/02-auth.md) | Login + cadastro + auth store + route guards |
-| 03 | [`docs/03-categorias-crud.md`](./docs/03-categorias-crud.md) | Categorias: list + CRUD |
-| 04 | [`docs/04-transacoes-crud.md`](./docs/04-transacoes-crud.md) | Transações: tabela + filtros + paginação + CRUD |
-| 05 | [`docs/05-dashboard.md`](./docs/05-dashboard.md) | Dashboard: stats + recentes + sumário |
-| 06 | [`docs/06-perfil-logout.md`](./docs/06-perfil-logout.md) | Perfil + user-menu + logout |
+| 01 | [`docs/01-design-system.md`](./docs/01-design-system.md) | Tokens in `@theme` + primitives in `src/components/ui/` |
+| 02 | [`docs/02-auth.md`](./docs/02-auth.md) | Login + sign-up + auth store + route guards |
+| 03 | [`docs/03-categorias-crud.md`](./docs/03-categorias-crud.md) | Categories: list + CRUD |
+| 04 | [`docs/04-transacoes-crud.md`](./docs/04-transacoes-crud.md) | Transactions: table + filters + pagination + CRUD |
+| 05 | [`docs/05-dashboard.md`](./docs/05-dashboard.md) | Dashboard: stats + recent + summary |
+| 06 | [`docs/06-perfil-logout.md`](./docs/06-perfil-logout.md) | Profile + user menu + logout |
 
 ## Workflow per tarefa
 
@@ -72,8 +72,7 @@ git commit -m "<short English summary>"
 git push -u origin feat/NN-slug
 
 # 6. Open a draft PR — always use the gh CLI, never the GitHub web UI.
-#    PR title and body are written in English. User-facing strings inside the
-#    code diff stay in Portuguese, but the PR copy itself is always English.
+#    PR title and body are written in English, like everything else.
 gh pr create --draft \
   --title "<short English title>" \
   --body "$(cat <<'EOF'
@@ -123,8 +122,8 @@ pnpm codegen                                      # generates src/gql/ from sche
 pnpm dev                                          # http://localhost:5173
 ```
 
-The seed populates 10 categorias and ~70 transações spread over 5 months — handy
-for exercising the dashboard, filters, and pagination in `/transacoes`.
+The seed populates 10 categories and ~70 transactions spread over 5 months — handy
+for exercising the dashboard, filters, and pagination in `/transactions`.
 
 ## Mandatory constraints (from `requisitos.md`)
 
@@ -152,7 +151,7 @@ Conventions Biome can't enforce:
 - **Filenames are kebab-case**: `transaction-form.tsx`, `category-list.tsx`. Test files are `*.spec.tsx` colocated next to source.
 - **Functional components, named exports** everywhere. No default exports.
 - **`@/*` alias** for any cross-folder import inside `src/`. Avoid `../../`.
-- **Portuguese only in user-facing strings** — labels, button text, error messages rendered to the user. **Everything else is English**: code, comments, commits, PR descriptions, test names (`describe`/`it`), variable names, internal types. Test assertions that quote a thrown error keep the Portuguese inside the quoted string, but the `it(...)` description itself stays English.
+- **English everywhere** — labels, button text, error messages rendered to the user, routes, code, comments, commits, PR descriptions, test names (`describe`/`it`), variable names, internal types. Money stays BRL: format with `formatCurrencyCents()` (`R$ 1.234,56`) and dates with `formatDate()` (`dd/mm/yy`).
 - **Tailwind classes**: prefer tokens from `@theme` (e.g. `bg-brand-base`, `text-gray-500`) over raw hexes. Combine classes via `cn()` from `@/lib/utils`.
 
 ## Architecture
@@ -235,7 +234,7 @@ integration tests (MSW + full pages). Run `pnpm test` from a fresh clone after
 4. **Auth guard tests** — `<ProtectedRoute>` redirects when `isAuthenticated=false`; `<PublicRoute>` redirects to `/` when authenticated.
 5. **Integration specs** (e.g. `*.integration.spec.tsx`) — full page mounted with MSW driving the GraphQL surface; assert on user-visible behavior, not implementation details.
 
-**Choose tests by realism, not by checklist.** Add a case when a real user could plausibly hit it (submitting an empty form, the backend returning `Categoria já existe`, navigating away mid-mutation, logging out then back in). Skip contrived permutations unless the code actually branches on them. When a doc's listed cases feel thin, extend them — but only with cases that pull their weight.
+**Choose tests by realism, not by checklist.** Add a case when a real user could plausibly hit it (submitting an empty form, the backend returning `Email already registered!`, navigating away mid-mutation, logging out then back in). Skip contrived permutations unless the code actually branches on them. When a doc's listed cases feel thin, extend them — but only with cases that pull their weight.
 
 **Gotcha with `findBy*` + fake timers**: `findBy*` polls with `setTimeout`, which fake timers freeze. If a test needs `vi.setSystemTime`, either inject the reference date into the hook under test or use `vi.useFakeTimers({ shouldAdvanceTime: true })`. The dashboard integration spec opts for the inject path — it computes seed `occurredAt` relative to the real `new Date()` instead of mocking time.
 
@@ -265,10 +264,10 @@ Never edit `src/gql/`. Never commit it (it's in `.gitignore`). If a teammate's s
 
 ## Error handling
 
-- Apollo errors surface via `useMutation`/`useQuery`'s `error` object. Show them to the user as `sonner` toasts; the backend already writes Portuguese error messages.
+- Apollo errors surface via `useMutation`/`useQuery`'s `error` object. Show them to the user as `sonner` toasts; the backend already writes user-facing (English) error messages.
 - For validation, Zod's `safeParse` returns `error.issues[]` — map `issues[0].message` next to the field, or to a toast if it's a global error.
 - Never `console.error(err)` in production paths. Bubble the message up; the toast is the user-facing log.
-- 401-equivalent (`Não autenticado`/invalid token) responses should clear the auth store and redirect to `/`. Implementation lands with the Apollo `errorLink` in tarefa 02.
+- 401-equivalent (`User not authenticated!`/invalid token) responses should clear the auth store and redirect to `/`. Implementation lands with the Apollo `errorLink` in tarefa 02.
 
 ## Validation
 

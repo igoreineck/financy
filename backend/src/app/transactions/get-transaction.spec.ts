@@ -56,7 +56,7 @@ describe('getTransaction', () => {
     const user = await makeUser()
 
     await expect(getTransaction(faker.string.uuid(), user.id)).rejects.toThrow(
-      'Transação não encontrada',
+      'Transaction not found',
     )
   })
 
@@ -67,7 +67,7 @@ describe('getTransaction', () => {
     const transaction = await makeTransaction(owner.id, category.id)
 
     await expect(getTransaction(transaction.id, attacker.id)).rejects.toThrow(
-      'Transação não encontrada',
+      'Transaction not found',
     )
   })
 })

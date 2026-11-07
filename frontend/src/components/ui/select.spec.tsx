@@ -31,7 +31,7 @@ function ControlledSelect({
         onValueChange?.(next)
       }}
     >
-      <SelectTrigger aria-label="Categoria">
+      <SelectTrigger aria-label="Category">
         <SelectValue placeholder="Escolha" />
       </SelectTrigger>
       <SelectContent>
@@ -48,7 +48,7 @@ describe('<Select />', () => {
     const onValueChange = vi.fn()
     render(<ControlledSelect onValueChange={onValueChange} />)
 
-    await user.click(screen.getByRole('combobox', { name: 'Categoria' }))
+    await user.click(screen.getByRole('combobox', { name: 'Category' }))
     await user.click(await screen.findByText('Option 2'))
 
     expect(onValueChange).toHaveBeenCalledWith('opt-2')
